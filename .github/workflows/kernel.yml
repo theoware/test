@@ -30,7 +30,7 @@ jobs:
     - name: Checkout kernel
       uses: actions/checkout@main
       with:
-        repository: DhineshCool/cybertron
+        repository: LineageOS/android_kernel_motorola_sdm632
         path: kernel
 
     - name: Setup env
