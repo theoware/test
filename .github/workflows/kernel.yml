@@ -29,7 +29,8 @@ jobs:
         chmod +x scripts/make_linux.py 
 
     - name: Building all containers
-      run: sh scripts/build_containers.sh
+      working-directory: scripts/
+      run: sh build_containers.sh
 
     - name: Running a container
       run: |
