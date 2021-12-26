@@ -1,0 +1,36 @@
+name: Docker
+
+on:
+  workflow_dispatch
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@main
+      with:
+        repository: theoware/kernel-build-containers
+    
+    - uses: actions/checkout@main
+      with:
+        repository: DhineshCool/cybertron
+
+    - name: Building all containers
+      run: sh build_containers.sh
+
+    - name: Running a container
+      run: |
+        mkdir -p out/
+        sh ./start_container.sh clang-13 . out/
+
+    - name: Building Linux kernel
+      run: python3 make_linux.py -a arm64 -k ~/linux/experiment.config -s . -o out/ -c clang-13 -- -j$(nproc)
+
+    - name: Upload out dir
+      uses: actions/upload-artifact@main
+      with:
+        name: kernel
+        path: out/
+        if-no-files-found: error
