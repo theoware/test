@@ -17,6 +17,14 @@ jobs:
       with:
         repository: DhineshCool/cybertron
 
+    - name: Mark as executable
+      run: |
+        chmod +x build_containers.sh 
+        chmod +x finish_container.sh 
+        chmod +x rm_containers.sh 
+        chmod +x start_container.sh 
+        chmod +x make_linux.py 
+
     - name: Building all containers
       run: sh build_containers.sh
 
