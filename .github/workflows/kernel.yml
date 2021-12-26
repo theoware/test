@@ -15,17 +15,20 @@ jobs:
         wget https://github.com/theoware/Kernel-Actions/raw/main/build.sh
         chmod +x build.sh 
 
-    - uses: actions/checkout@main
+    - name: Checkout proton clang
+      uses: actions/checkout@main
       with:
         repository: kdrag0n/proton-clang
         path: clang
 
-    - uses: actions/checkout@main
+    - name: Checkout AnyKernel3
+      uses: actions/checkout@main
       with:
         repository: theoware/AnyKernel3
         path: AnyKernel3
 
-    - uses: actions/checkout@main
+    - name: Checkout kernel
+      uses: actions/checkout@main
       with:
         repository: DhineshCool/cybertron
         path: kernel
