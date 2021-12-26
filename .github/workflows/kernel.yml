@@ -88,7 +88,6 @@ jobs:
 
           if [[ ! -d clang-llvm  ]]
           then
-            msg "|| Cloning Clang-13 ||"
             git clone --depth=1 https://github.com/kdrag0n/proton-clang.git clang-llvm
             TC_DIR=$KERNEL_DIR/clang-llvm
           else
@@ -97,7 +96,6 @@ jobs:
 
           if [[ ! -d AnyKernel3  ]]
           then
-            msg "|| Cloning Anykernel3 ||"
             git clone --depth 1 --no-single-branch https://github.com/theoware/AnyKernel3.git
           fi
 
