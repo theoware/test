@@ -10,31 +10,10 @@ jobs:
 
     steps:
 
-    - name: Checkout proton clang
-      uses: actions/checkout@main
-      with:
-        repository: kdrag0n/proton-clang
-        path: clang
-
-    - name: Checkout AnyKernel3
-      uses: actions/checkout@main
-      with:
-        repository: theoware/AnyKernel3
-        path: AnyKernel3
-
-    - name: Checkout kernel
-      uses: actions/checkout@main
-      with:
-        repository: SuperiorOS-Devices/kernel_motorola_payton
-        path: kernel
-
     - name: Checkout scripts
       uses: actions/checkout@main
       with:
         repository: daoudeddy/Kernel-Actions
-
-    - name: Setup env
-      run: sudo apt-get install device-tree-compiler bc cpio ccache zip gcc
 
     - name: Run a script
       run: |
@@ -66,7 +45,7 @@ jobs:
         export ZIPNAME=cybertron.zip
         export ARCH=arm64
         export SUBARCH=arm64
-        export CLANG_PATH=/home/runner/work/Kernel-Actions/Kernel-Actions/clang/bin
+        export CLANG_PATH=${{ github.workspace }}clang/bin
         PATH=/usr/lib/ccache:${PATH}
         export PATH=${CLANG_PATH}:${PATH}
         export CLANG_TRIPLE=aarch64-linux-gnu-
