@@ -28,12 +28,12 @@ jobs:
         echo
         echo "AnyKernel3 Repo"
         echo
-        git clone --depth=1 https://github.com/theoware/AnyKernel3.git
+        git clone --depth=1 https://github.com/osm0sis/AnyKernel3.git
 
         echo
         echo "Cloning Kernel Repo"
         echo
-        git clone --depth=1 https://github.com/DhineshCool/cybertron.git kernel
+        git clone --depth=1 https://github.com/LineageOS/android_kernel_xiaomi_surya.git kernel
 
         echo
         echo "Setting up env"
@@ -42,10 +42,10 @@ jobs:
         sudo apt-get install device-tree-compiler bc cpio ccache zip
 
         mkdir -p out
-        export ZIPNAME=cybertron.zip
+        export ZIPNAME=Surya-Kernel.zip
         export ARCH=arm64
         export SUBARCH=arm64
-        export CLANG_PATH=${{ github.workspace }}clang/bin
+        export CLANG_PATH=/home/runner/work/Kernel-Actions/Kernel-Actions/clang/bin
         PATH=/usr/lib/ccache:${PATH}
         export PATH=${CLANG_PATH}:${PATH}
         export CLANG_TRIPLE=aarch64-linux-gnu-
@@ -82,7 +82,7 @@ jobs:
         echo "Build The Good Stuff"
         echo 
 
-        make -j$(nproc) O=out CC="ccache clang" AR=llvm-ar NM=llvm-nm OBJCOPY=llvm-objcopy OBJDUMP=llvm-objdump STRIP=llvm-strip Image.gz-dtb
+        make -j8 O=out CC="ccache clang" AR=llvm-ar NM=llvm-nm OBJCOPY=llvm-objcopy OBJDUMP=llvm-objdump STRIP=llvm-strip Image.gz-dtb
 
         cd ..
 
@@ -93,6 +93,9 @@ jobs:
         cp anykernel.patch ./AnyKernel3
 
         cd AnyKernel3
+
+        git apply anykernel.patch
+        rm anykernel.patch
 
         zip "../$ZIPNAME" * -x '*.git*' README.md *placeholder
     - uses: actions/upload-artifact@main
