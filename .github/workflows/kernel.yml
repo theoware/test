@@ -62,7 +62,7 @@ jobs:
         echo
         echo "Set DEFCONFIG"
         echo 
-        make cybertron_defconfig CC=clang O=out 
+        make cybertron_payton_defconfig CC=clang O=out 
 
         echo
         echo "Build The Good Stuff"
