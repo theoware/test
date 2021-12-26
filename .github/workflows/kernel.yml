@@ -19,6 +19,7 @@ jobs:
 
     - name: Mark as executable
       run: |
+        ls -R
         chmod +x build_containers.sh 
         chmod +x finish_container.sh 
         chmod +x rm_containers.sh 
