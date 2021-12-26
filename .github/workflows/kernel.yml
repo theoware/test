@@ -101,7 +101,6 @@ jobs:
 
           if [[ ! -d arm-linux-androideabi-4.9 ]] && [[ ! -d aarch64-linux-android-4.9 ]]
           then
-            msg "|| Cloning arm-linux-androideabi-4.9 and aarch64-linux-android-4.9 ||"
             git clone --depth 1 --no-single-branch https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9.git
             git clone --depth 1 --no-single-branch https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9.git
             cd arm-linux-androideabi-4.9
@@ -193,7 +192,6 @@ jobs:
         }
 
         gen_zip() {
-          msg "|| Zipping into a flashable zip ||"
           mv "$KERNEL_DIR"/out/arch/arm64/boot/$FILES AnyKernel3/$FILES
           if [ $BUILD_DTBO = 1 ]
           then
@@ -205,18 +203,11 @@ jobs:
           ## Prepare a final zip variable
           ZIP_FINAL="$ZIPNAME-$DEVICE-$DATE"
 
-          if [ $SIGN = 1 ]
-          then
-            ## Sign the zip before sending it to telegram
-            if [ "$PTTG" = 1 ]
-            then
-              msg "|| Signing Zip ||"
-              tg_post_msg "<code>Signing Zip file with AOSP keys..</code>"
-            fi
-            curl -sLo zipsigner-3.0.jar https://github.com/Magisk-Modules-Repo/zipsigner/raw/master/bin/zipsigner-3.0-dexed.jar
-            java -jar zipsigner-3.0.jar "$ZIP_FINAL".zip "$ZIP_FINAL"-signed.zip
-            ZIP_FINAL="$ZIP_FINAL-signed"
-          fi
+          ## Sign the zip before sending it to telegram
+          tg_post_msg "<code>Signing Zip file with AOSP keys..</code>"
+          curl -sLo zipsigner-3.0.jar https://github.com/Magisk-Modules-Repo/zipsigner/raw/master/bin/zipsigner-3.0-dexed.jar
+          java -jar zipsigner-3.0.jar "$ZIP_FINAL".zip "$ZIP_FINAL"-signed.zip
+          ZIP_FINAL="$ZIP_FINAL-signed"
 
           tg_post_build "$ZIP_FINAL.zip" "Build took : $((DIFF / 60)) minute(s) and $((DIFF % 60)) second(s)"
           cd ..
