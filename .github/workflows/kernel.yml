@@ -29,9 +29,9 @@ jobs:
         path: kernel
 
     - name: Setup env
-      run: sudo apt-get install device-tree-compiler bc cpio ccache zip
+      run: sudo apt-get install device-tree-compiler bc cpio ccache zip gcc
 
-    - name: Run a  script
+    - name: Run a script
       run: |
         mkdir -p out
         export ZIPNAME=cybertron.zip
