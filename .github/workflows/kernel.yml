@@ -205,6 +205,7 @@ jobs:
           curl -sLo zipsigner-3.0.jar https://github.com/Magisk-Modules-Repo/zipsigner/raw/master/bin/zipsigner-3.0-dexed.jar
           java -jar zipsigner-3.0.jar "$ZIP_FINAL".zip "$ZIP_FINAL"-signed.zip
           ZIP_FINAL="$ZIP_FINAL-signed"
+          echo ::set-output name=version::$ZIP_FINAL
 
           tg_post_build "$ZIP_FINAL.zip" "Build took : $((DIFF / 60)) minute(s) and $((DIFF % 60)) second(s)"
           cd ..
@@ -218,8 +219,18 @@ jobs:
         then
           tg_post_build "error.log" "$CHATID" "Debug Mode Logs"
         fi
+
+    - name: Extract final kernel
+      run: unzip AnyKernel3/${{ steps.get_version.outputs.version }}.zip -d unzipped/
+
     - uses: actions/upload-artifact@main
       with:
         name: kernel
         path: | 
           ./kernel/out/arch/arm64/
+
+    - uses: actions/upload-artifact@main
+      with:
+        name: flashablezip
+        path: | 
+          ./unzipped/
