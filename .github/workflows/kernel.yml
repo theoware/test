@@ -192,10 +192,6 @@ jobs:
 
         gen_zip() {
           mv "$KERNEL_DIR"/out/arch/arm64/boot/$FILES AnyKernel3/$FILES
-          if [ $BUILD_DTBO = 1 ]
-          then
-            mv "$KERNEL_DIR"/out/arch/arm64/boot/dtbo.img AnyKernel3/dtbo.img
-          fi
           cdir AnyKernel3
           zip -r $ZIPNAME-$DEVICE-"$DATE" . -x ".git*" -x "README.md" -x "*.zip"
 
