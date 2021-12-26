@@ -12,11 +12,15 @@ jobs:
 
     - uses: actions/checkout@main
 
+    - uses: actions/checkout@main
+      with:
+        repository: theoware/cybertron
+        path: cyber
+
     - name: Run a script
       run: |
-        git clone https://github.com/theoware/cybertron/ cyber
         cd cyber
         git remote add EL https://github.com/kdrag0n/proton_zf6
         git fetch EL 
         git cherry-pick 6e87fec9a3df5a05dea34ab0a8647ee1ffcd1a6f
-        git cherry-pick https://github.com/kdrag0n/proton_zf6/commit/68acd6966ac98
+        git cherry-pick 68acd6966ac98c4610813cec759afb33015d2329
