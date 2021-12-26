@@ -9,18 +9,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-    - name: Checkout proton clang
-      uses: actions/checkout@main
-      with:
-        repository: kdrag0n/proton-clang
-        path: clang-llvm
-
-    - name: Checkout AnyKernel3
-      uses: actions/checkout@main
-      with:
-        repository: theoware/AnyKernel3
-        path: AnyKernel3
-
     - name: Checkout kernel
       uses: actions/checkout@main
       with:
@@ -84,7 +72,6 @@ jobs:
         # The defult directory where the kernel should be placed
         KERNEL_DIR="$(pwd)"
         BASEDIR="$(basename "$KERNEL_DIR")"
-        PATH="${KERNEL_DIR}/clang-llvm/bin:${KERNEL_DIR}/aarch64-linux-android-4.9/bin:${KERNEL_DIR}/arm-linux-androideabi-4.9/bin:${PATH}"
 
         # The name of the Kernel, to name the ZIP
         ZIPNAME="cybertron"
@@ -360,6 +347,7 @@ jobs:
           fi
 
           msg "|| Started Compilation ||"
+          PATH="${KERNEL_DIR}/clang-llvm/bin:${KERNEL_DIR}/aarch64-linux-android-4.9/bin:${KERNEL_DIR}/arm-linux-androideabi-4.9/bin:${PATH}"
           make -kj"$PROCS" O=out \
             NM=llvm-nm \
             OBJCOPY=llvm-objcopy \
