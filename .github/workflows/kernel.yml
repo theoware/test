@@ -9,40 +9,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@main
-      with:
-        repository: theoware/kernel-build-containers
-        path: scripts
-    
-    - uses: actions/checkout@main
-      with:
-        repository: DhineshCool/cybertron
-        path: kernel
 
     - name: Mark as executable
       run: |
-        ls -R scripts/
-        chmod +x scripts/build_containers.sh 
-        chmod +x scripts/finish_container.sh 
-        chmod +x scripts/rm_containers.sh 
-        chmod +x scripts/start_container.sh 
-        chmod +x scripts/make_linux.py 
+        wget https://github.com/theoware/Kernel-Actions/raw/main/build.sh
+        chmod +x build.sh 
 
-    - name: Building all containers
-      working-directory: scripts/
-      run: sh build_containers.sh
-
-    - name: Running a container
-      run: |
-        mkdir -p kernel/out/
-        sh ./scripts/start_container.sh clang-13 kernel/ kernel/out/
-
-    - name: Building Linux kernel
-      run: python3 scripts/make_linux.py -a arm64 -s kernel/ -o kernel/out/ -c clang-13 -- -j$(nproc)
-
-    - name: Upload out dir
-      uses: actions/upload-artifact@main
+    - name: Run a one-line script
+      run: sh ./build.sh
+    - uses: actions/upload-artifact@main
       with:
         name: kernel
-        path: kernel/out/
-        if-no-files-found: error
+        path: | 
+          ./kernel/out/arch/arm64/boot/
