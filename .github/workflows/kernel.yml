@@ -84,6 +84,7 @@ jobs:
         # The defult directory where the kernel should be placed
         KERNEL_DIR="$(pwd)"
         BASEDIR="$(basename "$KERNEL_DIR")"
+        PATH="${KERNEL_DIR}/clang-llvm/bin:${KERNEL_DIR}/aarch64-linux-android-4.9/bin:${KERNEL_DIR}/arm-linux-androideabi-4.9/bin:${PATH}"
 
         # The name of the Kernel, to name the ZIP
         ZIPNAME="cybertron"
@@ -275,8 +276,6 @@ jobs:
           BOT_MSG_URL="https://api.telegram.org/bot${{secrets.TOKEN}}/sendMessage"
           BOT_BUILD_URL="https://api.telegram.org/bot${{secrets.TOKEN}}/sendDocument"
           PROCS=$(nproc --all)
-
-            PATH="${KERNEL_DIR}/clang-llvm/bin:${KERNEL_DIR}/aarch64-linux-android-4.9/bin:${KERNEL_DIR}/arm-linux-androideabi-4.9/bin:${PATH}"
 
           export KBUILD_BUILD_USER ARCH SUBARCH PATH \
             KBUILD_COMPILER_STRING BOT_MSG_URL \
