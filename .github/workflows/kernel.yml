@@ -28,7 +28,7 @@ jobs:
         path: kernel
 
     - name: Setup env
-      run: sudo apt-get install device-tree-compiler bc cpio ccache zip gcc
+      run: sudo apt-get install device-tree-compiler bc cpio ccache zip gcc make gcc-aarch64-linux-gnu binutils-aarch64-linux-gnu
 
     - name: Run a script
       run: |
