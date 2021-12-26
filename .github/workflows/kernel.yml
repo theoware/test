@@ -183,7 +183,6 @@ jobs:
 
             if [ -f "$KERNEL_DIR"/out/arch/arm64/boot/$FILES ]
             then
-              msg "|| Kernel successfully compiled ||"
                 gen_zip
             else
                 tg_post_build "error.log" "*Build failed to compile after $((DIFF / 60)) minute(s) and $((DIFF % 60)) seconds*"
