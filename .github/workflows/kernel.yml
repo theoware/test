@@ -122,7 +122,7 @@ jobs:
           BOT_MSG_URL="https://api.telegram.org/bot$TOKEN/sendMessage"
           BOT_BUILD_URL="https://api.telegram.org/bot$TOKEN/sendDocument"
 
-          SERVER_URL="https://github.com/${{ GITHUB.REPOSITORY }}/runs/${{ GITHUB.RUN.ID }}"
+          SERVER_URL="https://github.com/${{ GITHUB.REPOSITORY }}/runs/${{ GITHUB.RUN_ID }}"
 
           export KBUILD_BUILD_USER ARCH SUBARCH PATH \
             KBUILD_COMPILER_STRING BOT_MSG_URL \
