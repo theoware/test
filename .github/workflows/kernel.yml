@@ -10,11 +10,6 @@ jobs:
 
     steps:
 
-    - name: Mark as executable
-      run: |
-        wget https://github.com/theoware/Kernel-Actions/raw/main/build.sh
-        chmod +x build.sh 
-
     - name: Checkout proton clang
       uses: actions/checkout@main
       with:
@@ -30,7 +25,7 @@ jobs:
     - name: Checkout kernel
       uses: actions/checkout@main
       with:
-        repository: LineageOS/android_kernel_motorola_sdm632
+        repository: SuperiorOS-Devices/kernel_motorola_payton
         path: kernel
 
     - name: Setup env
@@ -67,7 +62,7 @@ jobs:
         echo
         echo "Set DEFCONFIG"
         echo 
-        make cybertron_payton_defconfig CC=clang O=out 
+        make cybertron_defconfig CC=clang O=out 
 
         echo
         echo "Build The Good Stuff"
