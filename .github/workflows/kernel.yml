@@ -200,7 +200,6 @@ jobs:
 
           ## Prepare a final zip variable
           ZIP_FINAL="$ZIPNAME-$DEVICE-$DATE"
-          echo ::set-output name=version::$ZIP_FINAL
 
           tg_post_build "$ZIP_FINAL.zip" "Build took : $((DIFF / 60)) minute(s) and $((DIFF % 60)) second(s)"
           cd ..
@@ -209,6 +208,8 @@ jobs:
         clone
         exports
         build_kernel
+
+        echo ::set-output name=version::$ZIP_FINAL
 
         if [ $LOG_DEBUG = "1" ]
         then
