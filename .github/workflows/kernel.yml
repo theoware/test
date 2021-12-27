@@ -17,11 +17,6 @@ jobs:
     - name: Setup env
       run: sudo apt-get install device-tree-compiler bc cpio zip gcc make
 
-    - uses: actions/setup-java@main
-      with:
-        distribution: 'temurin'
-        java-version: '17'
-
     - name: Run a script
       run: |
         #! /bin/bash
