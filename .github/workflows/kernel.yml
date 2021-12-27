@@ -204,15 +204,18 @@ jobs:
         exports
         build_kernel
 
-        echo ::set-output name=version::$ZIP_FINAL
-
         if [ $LOG_DEBUG = "1" ]
         then
           tg_post_build "error.log" "$CHATID" "Debug Mode Logs"
         fi
 
+    - name: Get filename
+      id: get_name
+      run: echo ::set-output name=name::$(cd AnyKernel3/ && find . -type f -name *-*-*.zip && cd ..)
+
     - name: Extract final kernel
-      run: unzip AnyKernel3/${{ steps.get_version.outputs.version }}.zip -d unzipped/
+      run: |
+        unzip $(find AnyKernel3/ -type f -name *-*-*.zip) -d unzipped/
 
     - uses: actions/upload-artifact@main
       with:
@@ -222,6 +225,6 @@ jobs:
 
     - uses: actions/upload-artifact@main
       with:
-        name: flashablezip
+        name: ${{ steps.get_name.outputs.name }}
         path: | 
           ./unzipped/
