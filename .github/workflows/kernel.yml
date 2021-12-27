@@ -46,6 +46,22 @@ jobs:
     - name: Setup envoirement
       run: sudo apt-get install device-tree-compiler bc cpio zip gcc make
 
+    - name: Correct names
+      run: |
+        for i in clang-llvm/aarch64-linux-gnu/bin/
+        do
+        FNAME=$(basename ${i})
+        FPATH=$(dirname ${i})
+        DNAME=$(basename ${FNAME})
+        mv ${i} ${FPATH}/aarch64-linux-android-${FNAME}
+        done
+        for i in clang-llvm/arm-linux-gnueabi/bin/
+        do
+        FNAME=$(basename ${i})
+        FPATH=$(dirname ${i})
+        mv ${i} ${FPATH}/arm-linux-gnueabi-${FNAME}
+        done
+
     - name: Run a script
       run: |
         # Bail out if script fails
@@ -120,8 +136,8 @@ jobs:
 
         tg_post_msg "<b>$KBUILD_BUILD_VERSION CI Build Triggered</b>%0A<b>Host: </b><code>$DISTRO</code>%0A<b>Kernel Version : </b><code>$KERVER</code>%0A<b>Date : </b><code>$(TZ=Europe/Berlin date)</code>%0A<b>Device : </b><code>$MODEL [$DEVICE]</code>%0A<b>Pipeline Host : </b><code>$KBUILD_BUILD_HOST</code>%0A<b>Host Core Count : </b><code>$(nproc --all)</code>%0A<b>Compiler Used : </b><code>$KBUILD_COMPILER_STRING</code>%0a<b>Branch : </b><code>$CI_BRANCH</code>%0A<b>Top Commit : </b><code>$COMMIT_HEAD</code>%0A<a href='$SERVER_URL'>Link</a>"
 
-        CROSS_COMPILE="aarch64-linux-android-"
-        CROSS_COMPILE_ARM32="arm-linux-androideabi-"
+        CROSS_COMPILE="aarch64-linux-gnu-"
+        CROSS_COMPILE_ARM32="arm-linux-gnueabi-"
         export CROSS_COMPILE CROSS_COMPILE_ARM32
 
         make O=out $DEFCONFIG
@@ -132,7 +148,7 @@ jobs:
                   ARCH=arm64 \
                   CC=clang \
         CLANG_TRIPLE=aarch64-linux-gnu- \
-        CROSS_COMPILE=aarch64-linux-android-
+        CROSS_COMPILE=aarch64-linux-gnu-
 
         "${MAKE[@]}" 2>&1 | tee error.log
 
