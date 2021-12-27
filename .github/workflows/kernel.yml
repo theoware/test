@@ -45,8 +45,6 @@ jobs:
 
     - name: Run a script
       run: |
-        #! /bin/bash
-
         # Script For Building Android arm64 Kernel
         #
         # Copyright (c) 2018-2021 Panchajanya1999 <rsk52959@gmail.com>
@@ -93,7 +91,9 @@ jobs:
 
         # Set Date 
         DATE=$(TZ=Europe/Berlin date +"%Y%m%d-%T")
-        
+
+        TC_DIR=$KERNEL_DIR/clang-llvm
+
         KBUILD_BUILD_USER=$AUTHOR
         SUBARCH=$ARCH
 
@@ -104,8 +104,6 @@ jobs:
         BOT_BUILD_URL="https://api.telegram.org/bot$TOKEN/sendDocument"
 
         SERVER_URL="https://github.com/${{ GITHUB.REPOSITORY }}/actions/runs/${{ GITHUB.RUN_ID }}"
-
-        TC_DIR=$KERNEL_DIR/clang-llvm
 
         export KBUILD_BUILD_USER ARCH SUBARCH PATH \
         KBUILD_COMPILER_STRING BOT_MSG_URL \
