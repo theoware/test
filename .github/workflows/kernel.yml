@@ -14,40 +14,58 @@ jobs:
       with:
         repository: DhineshCool/cybertron
 
-    - name: Setup env
+    - name: Checkout clang
+      uses: actions/checkout@main
+      with:
+        repository: kdrag0n/proton-clang
+        path: clang-llvm
+
+    - name: Checkout AnyKernel3
+      uses: actions/checkout@main
+      with:
+        repository: theoware/AnyKernel3
+        path: AnyKernel3
+
+    - name: Checkout arm-linux-androideabi-4.9
+      uses: actions/checkout@main
+      with:
+        repository: theoware/arm-linux-androideabi-4.9
+        path: arm-linux-androideabi-4.9
+
+    - name: Checkout aarch64-linux-android-4.9
+      uses: actions/checkout@main
+      with:
+        repository: theoware/aarch64-linux-android-4.9
+        path: aarch64-linux-android-4.9
+
+    - name: Setup envoirement
       run: sudo apt-get install device-tree-compiler bc cpio zip gcc make
 
     - name: Run a script
       run: |
         #! /bin/bash
-        # shellcheck disable=SC2154
 
-         # Script For Building Android arm64 Kernel
-         #
-         # Copyright (c) 2018-2021 Panchajanya1999 <rsk52959@gmail.com>
-         #
-         # Licensed under the Apache License, Version 2.0 (the "License");
-         # you may not use this file except in compliance with the License.
-         # You may obtain a copy of the License at
-         #
-         #      http://www.apache.org/licenses/LICENSE-2.0
-         #
-         # Unless required by applicable law or agreed to in writing, software
-         # distributed under the License is distributed on an "AS IS" BASIS,
-         # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-         # See the License for the specific language governing permissions and
-         # limitations under the License.
-         #
-
-        #Kernel building script
+        # Script For Building Android arm64 Kernel
+        #
+        # Copyright (c) 2018-2021 Panchajanya1999 <rsk52959@gmail.com>
+        #
+        # Licensed under the Apache License, Version 2.0 (the "License");
+        # you may not use this file except in compliance with the License.
+        # You may obtain a copy of the License at
+        #
+        #      http://www.apache.org/licenses/LICENSE-2.0
+        #
+        # Unless required by applicable law or agreed to in writing, software
+        # distributed under the License is distributed on an "AS IS" BASIS,
+        # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+        # See the License for the specific language governing permissions and
+        # limitations under the License.
+        #
 
         # Bail out if script fails
         set -e
 
-        ##------------------------------------------------------##
-        ##----------Basic Informations, COMPULSORY--------------##
-
-        # The defult directory where the kernel should be placed
+        #Basic variables
         KERNEL_DIR="$(pwd)"
         BASEDIR="$(basename "$KERNEL_DIR")"
         TOKEN=${{ secrets.TOKEN }}
@@ -61,53 +79,18 @@ jobs:
         LOG_DEBUG=0
         ZIPNAME=cybertron
 
-        # shellcheck source=/etc/os-release
+        #get varaibles for telegram message
         DISTRO=$(source /etc/os-release && echo "${NAME}")
         KBUILD_BUILD_HOST=$(uname -a | awk '{print $2}')
         CI_BRANCH=$(git rev-parse --abbrev-ref HEAD)
-        TERM=xterm
-        export KBUILD_BUILD_HOST CI_BRANCH TERM
-
-        #Check Kernel Version
         KERVER=$(make kernelversion)
-
+        export KBUILD_BUILD_HOST CI_BRANCH KERVER
 
         # Set a commit head
         COMMIT_HEAD=$(git log --oneline -1)
 
         # Set Date 
         DATE=$(TZ=Europe/Berlin date +"%Y%m%d-%T")
-
-        #Now Its time for other stuffs like cloning, exporting, etc
-
-         clone() {
-          echo " "
-
-          if [[ ! -d clang-llvm  ]]
-          then
-            git clone --depth=1 https://github.com/kdrag0n/proton-clang.git clang-llvm
-            TC_DIR=$KERNEL_DIR/clang-llvm
-          else
-            TC_DIR=$KERNEL_DIR/clang-llvm
-          fi
-
-          if [[ ! -d AnyKernel3  ]]
-          then
-            git clone --depth 1 --no-single-branch https://github.com/theoware/AnyKernel3.git
-          fi
-
-          if [[ ! -d arm-linux-androideabi-4.9 ]] && [[ ! -d aarch64-linux-android-4.9 ]]
-          then
-            git clone --depth 1 --no-single-branch https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9.git
-            git clone --depth 1 --no-single-branch https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9.git
-            cd arm-linux-androideabi-4.9
-            git reset --hard 4d16d93f49c2b5ecdd0f12c38d194835dd595603
-            cd ..
-            cd aarch64-linux-android-4.9
-            git reset --hard 0a0604336d4d1067aa1aaef8d3779b31fcee841d
-            cd ..
-          fi
-        }
 
         exports() {
           KBUILD_BUILD_USER=$AUTHOR
@@ -121,10 +104,12 @@ jobs:
 
           SERVER_URL="https://github.com/${{ GITHUB.REPOSITORY }}/actions/runs/${{ GITHUB.RUN_ID }}"
 
+          TC_DIR=$KERNEL_DIR/clang-llvm
+
           export KBUILD_BUILD_USER ARCH SUBARCH PATH \
             KBUILD_COMPILER_STRING BOT_MSG_URL \
-            BOT_BUILD_URL SERVER_URL \
-            CROSS_COMPILE_ARM32 CROSS_COMPILE 
+            BOT_BUILD_URL SERVER_URL TC_DIR \
+            CROSS_COMPILE_ARM32 CROSS_COMPILE
         }
 
         ##---------------------------------------------------------##
@@ -203,7 +188,6 @@ jobs:
           cd ..
         }
 
-        clone
         exports
         build_kernel
 
