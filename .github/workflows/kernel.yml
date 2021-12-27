@@ -12,7 +12,7 @@ jobs:
     - name: Checkout kernel
       uses: actions/checkout@main
       with:
-        repository: theoware/cybertron
+        repository: DhineshCool/cybertron
 
     - name: Setup env
       run: sudo apt-get install device-tree-compiler bc cpio zip gcc make
@@ -93,7 +93,7 @@ jobs:
 
           if [[ ! -d AnyKernel3  ]]
           then
-            git clone --depth 1 --no-single-branch https://github.com/theoware/AnyKernel3.git
+            git clone --depth 1 --no-single-branch https://github.com/DhineshCool/AnyKernel3.git
           fi
 
           if [[ ! -d arm-linux-androideabi-4.9 ]] && [[ ! -d aarch64-linux-android-4.9 ]]
