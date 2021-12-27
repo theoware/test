@@ -191,7 +191,10 @@ jobs:
           mv "$KERNEL_DIR"/out/arch/arm64/boot/$FILES AnyKernel3/$FILES
           cd AnyKernel3
           mv $FILES zImage
-          zip -r $ZIPNAME-$DEVICE-"$DATE" . -x .git* -x README.md
+          rm -rf .git/
+          rm -rf .github/
+          rm -f README.md
+          zip -9 -r $ZIPNAME-$DEVICE-"$DATE" .
 
           ## Prepare a final zip variable
           ZIP_FINAL="$ZIPNAME-$DEVICE-$DATE"
