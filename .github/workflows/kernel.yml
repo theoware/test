@@ -225,6 +225,6 @@ jobs:
 
     - uses: actions/upload-artifact@main
       with:
-        name: ${{ steps.get_name.outputs.name }}
+        name: "${{ steps.get_name.outputs.name }}"
         path: | 
           ./unzipped/
