@@ -31,12 +31,14 @@ jobs:
       with:
         repository: theoware/arm-linux-androideabi-4.9
         path: arm-linux-androideabi-4.9
+        ref: master
 
     - name: Checkout aarch64-linux-android-4.9
       uses: actions/checkout@main
       with:
         repository: theoware/aarch64-linux-android-4.9
         path: aarch64-linux-android-4.9
+        ref: master
 
     - name: Setup envoirement
       run: sudo apt-get install device-tree-compiler bc cpio zip gcc make
