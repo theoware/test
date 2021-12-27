@@ -63,7 +63,6 @@ jobs:
         mv clang-llvm/arm-linux-gnueabi/bin/as clang-llvm/arm-linux-gnueabi/bin/arm-linux-androideabi-as
         mv clang-llvm/arm-linux-gnueabi/bin/ld clang-llvm/arm-linux-gnueabi/bin/arm-linux-androideabi-ld
         mv clang-llvm/arm-linux-gnueabi/bin/ld.bfd clang-llvm/arm-linux-gnueabi/bin/arm-linux-androideabi-ld.bdf
-        mv clang-llvm/arm-linux-gnueabi/bin/ld.gold clang-llvm/arm-linux-gnueabi/bin/arm-linux-androideabi-ld.gold
         mv clang-llvm/arm-linux-gnueabi/bin/nm clang-llvm/arm-linux-gnueabi/bin/arm-linux-androideabi-nm
         mv clang-llvm/arm-linux-gnueabi/bin/objcopy clang-llvm/arm-linux-gnueabi/bin/arm-linux-androideabi-objcopy
         mv clang-llvm/arm-linux-gnueabi/bin/objdump clang-llvm/arm-linux-gnueabi/bin/arm-linux-androideabi-objdump
