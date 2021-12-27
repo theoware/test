@@ -17,4 +17,4 @@ jobs:
 
     - name: Run a script
       run: |
-        qemu-system-aarch64 -M versatilepb -kernel ./zImage -dtb ./sdm630-payton-p0a.dtb -nographic -append "ignore_loglevel log_buf_len=10M print_fatal_signals=1 LOGLEVEL=8 earlyprintk=vga,keep sched_debug"
+        qemu-system-aarch64 -M versatilepb -kernel ./zImage -dtb ./sdm630-payton-p0a.dtb -soundhw all -nographic -append "ignore_loglevel log_buf_len=10M print_fatal_signals=1 LOGLEVEL=8 earlyprintk=vga,keep sched_debug"
