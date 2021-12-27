@@ -43,20 +43,6 @@ jobs:
         repository: theoware/AnyKernel3
         path: AnyKernel3
 
-    - name: Checkout arm-linux-androideabi-4.9
-      uses: actions/checkout@main
-      with:
-        repository: theoware/arm-linux-androideabi-4.9
-        path: arm-linux-androideabi-4.9
-        token: ${{ secrets.GH_PAT }}
-
-    - name: Checkout aarch64-linux-android-4.9
-      uses: actions/checkout@main
-      with:
-        repository: theoware/aarch64-linux-android-4.9
-        path: aarch64-linux-android-4.9
-        token: ${{ secrets.GH_PAT }}
-
     - name: Setup envoirement
       run: sudo apt-get install device-tree-compiler bc cpio zip gcc make
 
@@ -99,7 +85,7 @@ jobs:
         SUBARCH=$ARCH
 
         KBUILD_COMPILER_STRING=$("$TC_DIR"/bin/clang --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')
-        PATH="${KERNEL_DIR}/clang-llvm/bin:${KERNEL_DIR}/aarch64-linux-android-4.9/bin:${KERNEL_DIR}/arm-linux-androideabi-4.9/bin:$TC_DIR/bin/:$TC_DIR/aarch64-linux-gnu/bin/:$PATH"
+        PATH="${TC_DIR}/bin:${TC_DIR}/aarch64-linux-gnu/bin:${TC_DIR}/arm-linux-gnueabi/bin:$TC_DIR/bin/:$PATH"
 
         BOT_MSG_URL="https://api.telegram.org/bot$TOKEN/sendMessage"
         BOT_BUILD_URL="https://api.telegram.org/bot$TOKEN/sendDocument"
