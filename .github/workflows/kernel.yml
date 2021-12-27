@@ -211,7 +211,7 @@ jobs:
 
     - name: Get filename
       id: get_name
-      run: echo ::set-output name=name::$(find . -type f -name "*-*-*.zip" -printf '%P\n')
+      run: echo ::set-output name=name::$(find AnyKernel3/ -type f -name "*-*-*.zip" -printf '%P\n')
 
     - name: Extract final kernel
       run: |
