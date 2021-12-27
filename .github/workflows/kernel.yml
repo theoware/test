@@ -195,16 +195,11 @@ jobs:
         gen_zip() {
           mv "$KERNEL_DIR"/out/arch/arm64/boot/$FILES AnyKernel3/$FILES
           cd AnyKernel3
-          zip -r $ZIPNAME-$DEVICE-"$DATE" . -x ".git*" -x "README.md" -x "*.zip"
+          mv $FILES zImage
+          zip -r $ZIPNAME-$DEVICE-"$DATE" . -x .git .github README.md *placeholder
 
           ## Prepare a final zip variable
           ZIP_FINAL="$ZIPNAME-$DEVICE-$DATE"
-
-          ## Sign the zip before sending it to telegram
-          tg_post_msg "<code>Signing Zip file with AOSP keys..</code>"
-          curl -sLo zipsigner-3.0.jar https://github.com/Magisk-Modules-Repo/zipsigner/raw/master/bin/zipsigner-3.0-dexed.jar
-          java -jar zipsigner-3.0.jar "$ZIP_FINAL".zip "$ZIP_FINAL"-signed.zip
-          ZIP_FINAL="$ZIP_FINAL-signed"
           echo ::set-output name=version::$ZIP_FINAL
 
           tg_post_build "$ZIP_FINAL.zip" "Build took : $((DIFF / 60)) minute(s) and $((DIFF % 60)) second(s)"
