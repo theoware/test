@@ -13,7 +13,7 @@ jobs:
     - uses: actions/checkout@main
 
     - name: Setup env
-      run: sudo apt-get install qemu-system-arm alsa-base
+      run: sudo apt-get install qemu-system-arm alsa-*
 
     - name: Run a script
       run: |
