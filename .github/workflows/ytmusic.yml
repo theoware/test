@@ -1,0 +1,60 @@
+name: Build YouTube Music
+
+on:
+  - push
+
+jobs:
+  build:
+    name: Build YouTube Music
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: true
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+
+    steps:
+      - uses: actions/checkout@main
+        with:
+          repository: th-ch/youtube-music
+
+      - name: Setup NodeJS
+        uses: actions/setup-node@main
+        with:
+          node-version: "14.x"
+
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+
+      - uses: actions/cache@main
+        id: yarn-cache
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - name: Install dependencies
+        run: yarn --frozen-lockfile
+
+      - name: Test
+        uses: GabrielBB/xvfb-action@master
+        with:
+          run: yarn test
+
+      - name: Build on Linux
+        if: startsWith(matrix.os, 'ubuntu')
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }}
+        run: |
+          yarn run build:linux
+          ls -R
+
+      - name: Build on Windows
+        if: startsWith(matrix.os, 'windows')
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }}
+        run: |
+          yarn run build:win
+          dir /w
+
