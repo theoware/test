@@ -58,7 +58,6 @@ jobs:
           Get-ChildItem . -Recurse
 
       - name: Get version
-        if: startsWith(matrix.os, 'ubuntu')
         id: get_version
         run: |
           echo ::set-output name=version::$(git describe --abbrev=0 --tags)
