@@ -15,7 +15,7 @@ jobs:
       - uses: actions/checkout@main
         with:
           repository: th-ch/youtube-music
-          fetch_depth: 0
+          fetch-depth: 0
 
       - name: Setup NodeJS
         uses: actions/setup-node@main
