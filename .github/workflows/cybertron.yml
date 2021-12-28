@@ -42,7 +42,7 @@ jobs:
       with:
         repository: theoware/AnyKernel3
         path: AnyKernel3
-        ref: cybertron_payton
+        ref: payton_cybertron
 
     - name: Setup envoirement
       run: sudo apt-get install zip make
