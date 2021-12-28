@@ -49,20 +49,13 @@ jobs:
 
       - name: Build on Linux
         if: startsWith(matrix.os, 'ubuntu')
-        env:
-          GH_TOKEN: ${{ secrets.GH_PAT }}
         run: |
           yarn run build:linux
 
       - name: Build on Windows
         if: startsWith(matrix.os, 'windows')
-        env:
-          GH_TOKEN: ${{ secrets.GH_PAT }}
         run: |
           yarn run build:win
-
-      - id: get_version
-        uses: battila7/get-version-action@master
 
       - name: Upload AppImage
         if: startsWith(matrix.os, 'ubuntu')
