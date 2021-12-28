@@ -55,58 +55,55 @@ jobs:
           GH_TOKEN: ${{ secrets.GH_PAT }}
         run: |
           yarn run build:win
-          Get-ChildItem . -Recurse
 
-      - name: Get version
-        id: get_version
-        run: |
-          echo ::set-output name=version::$(git describe --abbrev=0 --tags)
+      - id: get_version
+        uses: battila7/get-version-action@master
 
       - name: Upload AppImage
         if: startsWith(matrix.os, 'ubuntu')
         uses: actions/upload-artifact@main
         with:
-          name: YouTube-Music-${{ steps.get_version.outputs.version }}.AppImage
-          path: "./dist/YouTube Music-${{ steps.get_version.outputs.version }}.AppImage"
+          name: YouTube-Music-${{ steps.get_version.outputs.version-without-v }}.AppImage
+          path: "./dist/YouTube Music-${{ steps.get_version.outputs.version-without-v }}.AppImage"
 
       - name: Upload Snap
         if: startsWith(matrix.os, 'ubuntu')
         uses: actions/upload-artifact@main
         with:
-          name: YouTube-Music-${{ steps.get_version.outputs.version }}_amd64.snap
-          path: "./dist/youtube-music_${{ steps.get_version.outputs.version }}_amd64.snap"
+          name: YouTube-Music-${{ steps.get_version.outputs.version-without-v }}_amd64.snap
+          path: "./dist/youtube-music_${{ steps.get_version.outputs.version-without-v }}_amd64.snap"
 
       - name: Upload freebsd
         if: startsWith(matrix.os, 'ubuntu')
         uses: actions/upload-artifact@main
         with:
-          name: YouTube-Music-${{ steps.get_version.outputs.version }}.freebsd
-          path: "./dist/youtube-music-${{ steps.get_version.outputs.version }}.freebsd"
+          name: YouTube-Music-${{ steps.get_version.outputs.version-without-v }}.freebsd
+          path: "./dist/youtube-music-${{ steps.get_version.outputs.version-without-v }}.freebsd"
 
       - name: Upload deb
         if: startsWith(matrix.os, 'ubuntu')
         uses: actions/upload-artifact@main
         with:
-          name: YouTube-Music-${{ steps.get_version.outputs.version }}_amd64.deb
-          path: "./dist/youtube-music_${{ steps.get_version.outputs.version }}_amd64.deb"
+          name: YouTube-Music-${{ steps.get_version.outputs.version-without-v }}_amd64.deb
+          path: "./dist/youtube-music_${{ steps.get_version.outputs.version-without-v }}_amd64.deb"
 
       - name: Upload rpm
         if: startsWith(matrix.os, 'ubuntu')
         uses: actions/upload-artifact@main
         with:
-          name: YouTube-Music-${{ steps.get_version.outputs.version }}.x86_64.rpm
-          path: "./dist/youtube-music-${{ steps.get_version.outputs.version }}.x86_64.rpm"
+          name: YouTube-Music-${{ steps.get_version.outputs.version-without-v }}.x86_64.rpm
+          path: "./dist/youtube-music-${{ steps.get_version.outputs.version-without-v }}.x86_64.rpm"
 
       - name: Upload exe
         if: startsWith(matrix.os, 'Windows')
         uses: actions/upload-artifact@main
         with:
-          name: YouTube-Music-Setup-${{ steps.get_version.outputs.version }}.exe
-          path: "./dist/YouTube Music Setup ${{ steps.get_version.outputs.version }}.exe"
+          name: YouTube-Music-Setup-${{ steps.get_version.outputs.version-without-v }}.exe
+          path: "./dist/YouTube Music Setup ${{ steps.get_version.outputs.version-without-v }}.exe"
 
       - name: Upload blockmap
         if: startsWith(matrix.os, 'Windows')
         uses: actions/upload-artifact@main
         with:
-          name: YouTube-Music-Setup-${{ steps.get_version.outputs.version }}.exe.blockmap
-          path: "./dist/YouTube Music Setup ${{ steps.get_version.outputs.version }}.exe.blockmap"
+          name: YouTube-Music-Setup-${{ steps.get_version.outputs.version-without-v }}.exe.blockmap
+          path: "./dist/YouTube Music Setup ${{ steps.get_version.outputs.version-without-v }}.exe.blockmap"
