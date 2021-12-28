@@ -55,5 +55,5 @@ jobs:
           GH_TOKEN: ${{ secrets.GH_PAT }}
         run: |
           yarn run build:win
-          dir /w
+          Get-ChildItem . -Recurse
 
