@@ -1,7 +1,6 @@
 name: Build YouTube Music
 
-on:
-  - push
+on: workflow_dispatch
 
 jobs:
   build:
