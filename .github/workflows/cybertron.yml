@@ -44,7 +44,7 @@ jobs:
         path: AnyKernel3
 
     - name: Setup envoirement
-      run: sudo apt-get install device-tree-compiler bc cpio zip gcc make
+      run: sudo apt-get install zip make
 
     - name: Correct names
       run: |
