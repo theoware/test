@@ -44,7 +44,7 @@ jobs:
         path: AnyKernel3
 
     - name: Setup envoirement
-      run: sudo apt-get install bc cpio zip gcc make
+      run: sudo apt-get install zip make
 
     - name: Correct names
       run: |
@@ -78,8 +78,8 @@ jobs:
         # Basic variables
         KERNEL_DIR="$(pwd)"
         BASEDIR="$(basename "$KERNEL_DIR")"
-        TOKEN=${{ secrets.TELEGRAM_TOKEN }}
-        CHATID=${{ secrets.TELEGRAM_TO }}
+        TOKEN=${{ secrets.TOKEN }}
+        CHATID=${{ secrets.CHAT_ID }}
         AUTHOR=theoware
         ARCH=arm64
         DEFCONFIG=dxt_defconfig
