@@ -15,6 +15,6 @@ jobs:
 
     - name: Run a script
       run: |
-        wget -q https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/master/clang-r437112/bin.tar.gz -O clang.tar.gz
+        wget -q https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/master/clang-r437112.tar.gz -O clang.tar.gz
         tar -xzf clang.tar.gz
         bin/clang --version
