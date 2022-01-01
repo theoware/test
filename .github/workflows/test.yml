@@ -10,11 +10,8 @@ jobs:
 
     steps:
 
-    - uses: actions/checkout@main
-      with:
-        repository: DhineshCool/cybertron
-
     - name: Run a script
       run: |
-        wget https://github.com/theoware/test/raw/main/testscript.sh
-        bash testscript.sh 
+        wget https://github.com/llvm/llvm-project/releases/download/llvmorg-13.0.0/clang+llvm-13.0.0-x86_64-linux-gnu-ubuntu-20.04.tar.xz -O clangllvm.tar.xz
+        tar -xf clangllvm.tar.xz
+        ls -R .
