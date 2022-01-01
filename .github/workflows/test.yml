@@ -12,10 +12,7 @@ jobs:
 
     - name: Run a script
       run: |
-        wget -q https://github.com/llvm/llvm-project/releases/download/llvmorg-13.0.0/clang+llvm-13.0.0-aarch64-linux-gnu.tar.xz -O aarch64-linux-gnu.tar.xz
-        mkdir aarch64-linux-gnu/
-        tar -xJf aarch64-linux-gnu.tar.xz -C aarch64-linux-gnu/
-        wget -q https://github.com/llvm/llvm-project/releases/download/llvmorg-13.0.0/clang+llvm-13.0.0-armv7a-linux-gnueabihf.tar.xz -O arm-linux-gnueabi.tar.xz
-        mkdir arm-linux-gnueabi/
-        tar -xJf arm-linux-gnueabi.tar.xz -C arm-linux-gnueabi/
+        wget -q https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/master/clang-r437112/bin.tar.gz -O clang.tar.gz
+        mkdir clang/
+        tar -xzf clang.tar.gz -C clang
         ls -R .
