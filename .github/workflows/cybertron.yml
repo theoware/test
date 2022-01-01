@@ -76,7 +76,7 @@ jobs:
         # Set Date 
         DATE=$(TZ=Europe/Berlin date +"%Y%m%d-%T")
 
-        wget -q https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/master/clang-r437112/bin.tar.gz -O clang.tar.gz
+        wget -q https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/master/clang-r437112.tar.gz -O clang.tar.gz
         mkdir clang/
         tar -xzf clang.tar.gz -C clang
 
