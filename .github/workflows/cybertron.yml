@@ -18,7 +18,10 @@
 name: Cybertron
 
 on:
-  workflow_dispatch
+  push:
+    paths:
+      .github/workflows/cybertron.yml
+  workflow_dispatch:
 
 jobs:
   build:
