@@ -3,7 +3,7 @@ name: Test
 on:
   push:
     paths:
-      .github/workflows/cybertron.yml
+      .github/workflows/test.yml
   workflow_dispatch:
 
 jobs:
