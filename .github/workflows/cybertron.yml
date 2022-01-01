@@ -31,12 +31,6 @@ jobs:
       with:
         repository: DhineshCool/cybertron
 
-    - name: Checkout clang
-      uses: actions/checkout@main
-      with:
-        repository: kdrag0n/proton-clang
-        path: clang-llvm
-
     - name: Checkout AnyKernel3
       uses: actions/checkout@main
       with:
@@ -45,31 +39,7 @@ jobs:
         ref: payton_cybertron
 
     - name: Setup envoirement
-      run: sudo apt-get install zip make
-
-    - name: Correct names
-      run: |
-        mv clang-llvm/aarch64-linux-gnu/bin/ar clang-llvm/aarch64-linux-gnu/bin/aarch64-linux-android-ar
-        mv clang-llvm/aarch64-linux-gnu/bin/as clang-llvm/aarch64-linux-gnu/bin/aarch64-linux-android-as
-        mv clang-llvm/aarch64-linux-gnu/bin/ld clang-llvm/aarch64-linux-gnu/bin/aarch64-linux-android-ld
-        mv clang-llvm/aarch64-linux-gnu/bin/ld.bfd clang-llvm/aarch64-linux-gnu/bin/aarch64-linux-android-ld.bdf
-        mv clang-llvm/aarch64-linux-gnu/bin/ld.gold clang-llvm/aarch64-linux-gnu/bin/aarch64-linux-android-ld.gold
-        mv clang-llvm/aarch64-linux-gnu/bin/nm clang-llvm/aarch64-linux-gnu/bin/aarch64-linux-android-nm
-        mv clang-llvm/aarch64-linux-gnu/bin/objcopy clang-llvm/aarch64-linux-gnu/bin/aarch64-linux-android-objcopy
-        mv clang-llvm/aarch64-linux-gnu/bin/objdump clang-llvm/aarch64-linux-gnu/bin/aarch64-linux-android-objdump
-        mv clang-llvm/aarch64-linux-gnu/bin/ranlib clang-llvm/aarch64-linux-gnu/bin/aarch64-linux-android-ranlib
-        mv clang-llvm/aarch64-linux-gnu/bin/readelf clang-llvm/aarch64-linux-gnu/bin/aarch64-linux-android-readelf
-        mv clang-llvm/aarch64-linux-gnu/bin/strip clang-llvm/aarch64-linux-gnu/bin/aarch64-linux-android-strip
-        mv clang-llvm/arm-linux-gnueabi/bin/ar clang-llvm/arm-linux-gnueabi/bin/arm-linux-androideabi-ar
-        mv clang-llvm/arm-linux-gnueabi/bin/as clang-llvm/arm-linux-gnueabi/bin/arm-linux-androideabi-as
-        mv clang-llvm/arm-linux-gnueabi/bin/ld clang-llvm/arm-linux-gnueabi/bin/arm-linux-androideabi-ld
-        mv clang-llvm/arm-linux-gnueabi/bin/ld.bfd clang-llvm/arm-linux-gnueabi/bin/arm-linux-androideabi-ld.bdf
-        mv clang-llvm/arm-linux-gnueabi/bin/nm clang-llvm/arm-linux-gnueabi/bin/arm-linux-androideabi-nm
-        mv clang-llvm/arm-linux-gnueabi/bin/objcopy clang-llvm/arm-linux-gnueabi/bin/arm-linux-androideabi-objcopy
-        mv clang-llvm/arm-linux-gnueabi/bin/objdump clang-llvm/arm-linux-gnueabi/bin/arm-linux-androideabi-objdump
-        mv clang-llvm/arm-linux-gnueabi/bin/ranlib clang-llvm/arm-linux-gnueabi/bin/arm-linux-androideabi-ranlib
-        mv clang-llvm/arm-linux-gnueabi/bin/readelf clang-llvm/arm-linux-gnueabi/bin/arm-linux-androideabi-readelf
-        mv clang-llvm/arm-linux-gnueabi/bin/strip clang-llvm/arm-linux-gnueabi/bin/arm-linux-androideabi-strip
+      run: sudo apt-get install zip make gcc-aarch64-linux-gnu gcc-arm-linux-gnueabi
 
     - name: Run a script
       run: |
@@ -103,19 +73,26 @@ jobs:
         # Set Date 
         DATE=$(TZ=Europe/Berlin date +"%Y%m%d-%T")
 
+        wget -q https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/master/clang-r437112/bin.tar.gz -O clang.tar.gz
+        mkdir clang/
+        tar -xzf clang.tar.gz -C clang
+
         #Set Toolchain dir
-        TC_DIR=$KERNEL_DIR/clang-llvm
+        TC_DIR=$KERNEL_DIR/clang
 
         KBUILD_BUILD_USER=$AUTHOR
         SUBARCH=$ARCH
 
         KBUILD_COMPILER_STRING=$("$TC_DIR"/bin/clang --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')
-        PATH="${TC_DIR}/bin:${TC_DIR}/aarch64-linux-gnu/bin:${TC_DIR}/arm-linux-gnueabi/bin:$TC_DIR/bin/:$PATH"
+        PATH="${TC_DIR}/bin:${PATH}"
 
         BOT_MSG_URL="https://api.telegram.org/bot$TOKEN/sendMessage"
         BOT_BUILD_URL="https://api.telegram.org/bot$TOKEN/sendDocument"
 
         SERVER_URL="https://github.com/${{ GITHUB.REPOSITORY }}/actions/runs/${{ GITHUB.RUN_ID }}"
+
+        CROSS_COMPILE="aarch64-linux-gnu-"
+        CROSS_COMPILE_ARM32="arm-linux-gnueabi-"
 
         export KBUILD_BUILD_USER ARCH SUBARCH PATH \
         KBUILD_COMPILER_STRING BOT_MSG_URL \
@@ -144,10 +121,6 @@ jobs:
         make clean && make mrproper && rm -rf out
 
         tg_post_msg "<b>$KBUILD_BUILD_VERSION CI Build Triggered</b>%0A<b>Host: </b><code>$DISTRO</code>%0A<b>Kernel Version : </b><code>$KERVER</code>%0A<b>Date : </b><code>$(TZ=Europe/Berlin date)</code>%0A<b>Device : </b><code>$MODEL [$DEVICE]</code>%0A<b>Pipeline Host : </b><code>$KBUILD_BUILD_HOST</code>%0A<b>Host Core Count : </b><code>$(nproc --all)</code>%0A<b>Compiler Used : </b><code>$KBUILD_COMPILER_STRING</code>%0a<b>Branch : </b><code>$CI_BRANCH</code>%0A<b>Top Commit : </b><code>$COMMIT_HEAD</code>%0A<a href='$SERVER_URL'>Link</a>"
-
-        CROSS_COMPILE="aarch64-linux-android-"
-        CROSS_COMPILE_ARM32="arm-linux-androideabi-"
-        export CROSS_COMPILE CROSS_COMPILE_ARM32
 
         make O=out $DEFCONFIG
 
