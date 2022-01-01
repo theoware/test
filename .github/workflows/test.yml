@@ -12,6 +12,8 @@ jobs:
 
     - name: Run a script
       run: |
-        wget https://github.com/llvm/llvm-project/releases/download/llvmorg-13.0.0/clang+llvm-13.0.0-x86_64-linux-gnu-ubuntu-20.04.tar.xz -O clangllvm.tar.xz
-        tar -xf clangllvm.tar.xz
+        wget -q https://github.com/llvm/llvm-project/releases/download/llvmorg-13.0.0/clang+llvm-13.0.0-aarch64-linux-gnu.tar.xz -O aarch64-linux-gnu.tar.xz
+        tar -xf aarch64-linux-gnu.tar.xz -C aarch64-linux-gnu
+        wget -q https://github.com/llvm/llvm-project/releases/download/llvmorg-13.0.0/clang+llvm-13.0.0-armv7a-linux-gnueabihf.tar.xz -O arm-linux-gnueabi.tar.xz
+        tar -xf arm-linux-gnueabi .tar.xz -C arm-linux-gnueabi 
         ls -R .
