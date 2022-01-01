@@ -125,17 +125,12 @@ jobs:
 
         BUILD_START=$(date +"%s")
 
-        CROSS_COMPILE="aarch64-linux-gnu-"
-        CROSS_COMPILE_ARM32="arm-linux-gnueabi-"
-        export CROSS_COMPILE CROSS_COMPILE_ARM32
-
         make -j$(nproc --all) O=out \
                   ARCH=arm64 \
                   CC=clang \
         CLANG_TRIPLE=aarch64-linux-gnu- \
-        CROSS_COMPILE=aarch64-linux-gnu-
-
-        "${MAKE[@]}" 2>&1 | tee error.log
+        CROSS_COMPILE=aarch64-linux-gnu- \
+        CROSS_COMPILE_ARM32=arm-linux-gnueabi-
 
         BUILD_END=$(date +"%s")
         DIFF=$((BUILD_END - BUILD_START))
@@ -155,14 +150,8 @@ jobs:
 
           tg_post_build "$ZIP_FINAL.zip" "Build took : $((DIFF / 60)) minute(s) and $((DIFF % 60)) second(s)"
           cd ..
-        else
-            tg_post_build "error.log" "*Build failed to compile after $((DIFF / 60)) minute(s) and $((DIFF % 60)) seconds*"
         fi
 
-        if [ $LOG_DEBUG = "1" ]
-        then
-          tg_post_build "error.log" "$CHATID" "Debug Mode Logs"
-        fi
 
     - name: Get filename
       id: get_name
