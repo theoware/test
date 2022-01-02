@@ -46,7 +46,7 @@ jobs:
         mkdir build && cd build
         export TARGET=aarch64-linux-android
         export PREFIX=/usr/local/$TARGET
-        ../gcc-4.9/configure --target=$TARGET --prefix=$PREFIX --without-headers --with-gnu-as --with-gnu-ld --enable-languages=c,c++
+        ../gcc-4.9/configure --target=$TARGET --prefix=$PREFIX --without-headers --with-gnu-as --with-gnu-ld --with-gmp, --with-mpfr --with-mpc --enable-languages=c
         make -j8 && sudo make install
 
     - name: Debug
