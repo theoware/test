@@ -7,8 +7,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
-    name: Build
+  binutils:
+    name: binutils
     runs-on: ubuntu-latest
 
     steps:
@@ -16,15 +16,12 @@ jobs:
     - name: Run a script
       run: |
         git clone https://android.googlesource.com/toolchain/binutils .
-        git clone https://android.googlesource.com/platform/bionic
-        git clone https://android.googlesource.com/toolchain/gcc/
         export TARGET=aarch64-linux-android
         export PREFIX=/usr/local/$TARGET
         mkdir build && cd build
         ../binutils-2.27/configure --target=$TARGET --prefix=$PREFIX --enable-werror=no
         make -j$(nproc --all) && sudo make install
-        aarch64-linux-android-ar
-    
+
     - name: Debug
       run: |
         ls -R .
@@ -32,3 +29,36 @@ jobs:
     - name: Debug build
       run: |
         ls -R build/
+
+    - name: Debug programs
+      run: |
+        ls -R /usr/bin/
+
+  gcc:
+    name: GCC
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - name: GCC
+      run: |
+        rm -rf .
+        git clone https://android.googlesource.com/toolchain/gcc/ .
+        mkdir build && cd build
+        export TARGET=aarch64-linux-android
+        export PREFIX=/usr/local/$TARGET
+        ../gcc-4.9/configure --target=$TARGET --prefix=$PREFIX --without-headers --with-gnu-as --with-gnu-ld --enable-languages=c,c++
+        make -j8 && sudo make install
+
+    - name: Debug
+      run: |
+        ls -R .
+
+    - name: Debug build
+      run: |
+        ls -R build/
+
+    - name: Debug programs
+      run: |
+        ls -R /usr/bin/
+        aarch64-linux-android-ar
