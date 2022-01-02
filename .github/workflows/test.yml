@@ -13,51 +13,40 @@ jobs:
 
     steps:
 
+    - name: Checkout proton clang build
+      uses: actions/checkout@main
+      with:
+        repository: kdrag0n/proton-clang-build
+
+    - name: Install dependends
+      run: |
+        sudo apt install bc \
+            binutils-dev \
+            bison \
+            ca-certificates \
+            ccache \
+            clang \
+            cmake \
+            curl \
+            file \
+            flex \
+            gcc \
+            g++ \
+            git \
+            libelf-dev \
+            libssl-dev \
+            make \
+            ninja-build \
+            python3 \
+            texinfo \
+            u-boot-tools \
+            xz-utils \
+            zlib1g-dev
+
     - name: Run a script
       run: |
-        git clone https://android.googlesource.com/toolchain/binutils .
-        export TARGET=aarch64-linux-android
-        export PREFIX=/usr/local/$TARGET
-        mkdir build && cd build
-        ../binutils-2.27/configure --target=$TARGET --prefix=$PREFIX --enable-werror=no
-        make -j$(nproc --all) && sudo make install
+        CC=clang CFLAGS= CXX=clang++ CXXFLAGS= ./build-llvm.py ...
 
     - name: Debug
       run: |
         ls -R .
-
-    - name: Debug build
-      run: |
-        ls -R build/
-
-    - name: Debug programs
-      run: |
-        ls -R /usr/bin/
-
-  gcc:
-    name: GCC
-    runs-on: ubuntu-latest
-
-    steps:
-
-    - name: GCC
-      run: |
-        git clone https://android.googlesource.com/toolchain/gcc/ .
-        mkdir build && cd build
-        export TARGET=aarch64-linux-android
-        export PREFIX=/usr/local/$TARGET
-        ../gcc-4.9/configure --target=$TARGET --prefix=$PREFIX --without-headers --with-gnu-as --with-gnu-ld --with-gmp, --with-mpfr --with-mpc --enable-languages=c
-        make -j8 && sudo make install
-
-    - name: Debug
-      run: |
-        ls -R .
-
-    - name: Debug build
-      run: |
-        ls -R build/
-
-    - name: Debug programs
-      run: |
-        ls -R /usr/bin/
-        aarch64-linux-android-ar
