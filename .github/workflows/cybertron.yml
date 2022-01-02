@@ -56,27 +56,14 @@ jobs:
 
     - name: Correct names
       run: |
-        mv clang-llvm/aarch64-linux-gnu/bin/ar clang-llvm/aarch64-linux-gnu/bin/aarch64-linux-android-ar
-        mv clang-llvm/aarch64-linux-gnu/bin/as clang-llvm/aarch64-linux-gnu/bin/aarch64-linux-android-as
-        mv clang-llvm/aarch64-linux-gnu/bin/ld clang-llvm/aarch64-linux-gnu/bin/aarch64-linux-android-ld
-        mv clang-llvm/aarch64-linux-gnu/bin/ld.bfd clang-llvm/aarch64-linux-gnu/bin/aarch64-linux-android-ld.bdf
-        mv clang-llvm/aarch64-linux-gnu/bin/ld.gold clang-llvm/aarch64-linux-gnu/bin/aarch64-linux-android-ld.gold
-        mv clang-llvm/aarch64-linux-gnu/bin/nm clang-llvm/aarch64-linux-gnu/bin/aarch64-linux-android-nm
-        mv clang-llvm/aarch64-linux-gnu/bin/objcopy clang-llvm/aarch64-linux-gnu/bin/aarch64-linux-android-objcopy
-        mv clang-llvm/aarch64-linux-gnu/bin/objdump clang-llvm/aarch64-linux-gnu/bin/aarch64-linux-android-objdump
-        mv clang-llvm/aarch64-linux-gnu/bin/ranlib clang-llvm/aarch64-linux-gnu/bin/aarch64-linux-android-ranlib
-        mv clang-llvm/aarch64-linux-gnu/bin/readelf clang-llvm/aarch64-linux-gnu/bin/aarch64-linux-android-readelf
-        mv clang-llvm/aarch64-linux-gnu/bin/strip clang-llvm/aarch64-linux-gnu/bin/aarch64-linux-android-strip
-        mv clang-llvm/arm-linux-gnueabi/bin/ar clang-llvm/arm-linux-gnueabi/bin/arm-linux-androideabi-ar
-        mv clang-llvm/arm-linux-gnueabi/bin/as clang-llvm/arm-linux-gnueabi/bin/arm-linux-androideabi-as
-        mv clang-llvm/arm-linux-gnueabi/bin/ld clang-llvm/arm-linux-gnueabi/bin/arm-linux-androideabi-ld
-        mv clang-llvm/arm-linux-gnueabi/bin/ld.bfd clang-llvm/arm-linux-gnueabi/bin/arm-linux-androideabi-ld.bdf
-        mv clang-llvm/arm-linux-gnueabi/bin/nm clang-llvm/arm-linux-gnueabi/bin/arm-linux-androideabi-nm
-        mv clang-llvm/arm-linux-gnueabi/bin/objcopy clang-llvm/arm-linux-gnueabi/bin/arm-linux-androideabi-objcopy
-        mv clang-llvm/arm-linux-gnueabi/bin/objdump clang-llvm/arm-linux-gnueabi/bin/arm-linux-androideabi-objdump
-        mv clang-llvm/arm-linux-gnueabi/bin/ranlib clang-llvm/arm-linux-gnueabi/bin/arm-linux-androideabi-ranlib
-        mv clang-llvm/arm-linux-gnueabi/bin/readelf clang-llvm/arm-linux-gnueabi/bin/arm-linux-androideabi-readelf
-        mv clang-llvm/arm-linux-gnueabi/bin/strip clang-llvm/arm-linux-gnueabi/bin/arm-linux-androideabi-strip
+        for f in ./clang-llvm/aarch64-linux-gnu/bin/; do
+            mv "clang-llvm/aarch64-linux-gnu/bin/$f" "clang-llvm/aarch64-linux-gnu/bin/aarch64-linux-gnu-$f"
+            echo "Moved $f"
+        done
+        for f in ./clang-llvm/arm-linux-gnueabi/bin/; do
+            mv "clang-llvm/arm-linux-gnueabi/bin/$f" "clang-llvm/arm-linux-gnueabi/bin/arm-linux-gnueabi-$f"
+            echo "Moved $f"
+        done
 
     - name: Run a script
       run: |
@@ -159,8 +146,8 @@ jobs:
                   ARCH=arm64 \
                   CC=clang \
         CLANG_TRIPLE=aarch64-linux-gnu- \
-        CROSS_COMPILE=aarch64-linux-android- \
-        CROSS_COMPILE_ARM32=arm-linux-androideabi-
+        CROSS_COMPILE=aarch64-linux-gnu- \
+        CROSS_COMPILE_ARM32=arm-linux-gnueabi-
 
         "${MAKE[@]}" 2>&1 | tee error.log
 
