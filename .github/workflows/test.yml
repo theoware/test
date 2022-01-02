@@ -21,7 +21,7 @@ jobs:
         export TARGET=aarch64-linux-android
         export PREFIX=/usr/local/$TARGET
         mkdir build && cd build
-        ../binutils/configure --target=$TARGET --prefix=$PREFIX --enable-werror=no
+        ../binutils/binutils-2.27/configure --target=$TARGET --prefix=$PREFIX --enable-werror=no
         make -j$(nproc --all) && sudo make install
     
     - name: Debug
