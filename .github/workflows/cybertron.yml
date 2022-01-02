@@ -124,11 +124,10 @@ jobs:
         BUILD_START=$(date +"%s")
 
         make -j$(nproc --all) O=out \
-                  ARCH=arm64 \
-                  CC=clang \
-        CLANG_TRIPLE=llvm- \
-        CROSS_COMPILE=llvm- \
-        CROSS_COMPILE_ARM32=llvm-
+                              ARCH=arm64 \
+        CC=clang LD=ld.lld AR=llvm-ar NM=llvm-nm STRIP=llvm-strip \
+        OBJCOPY=llvm-objcopy OBJDUMP=llvm-objdump READELF=llvm-readelf \
+        HOSTCC=clang HOSTCXX=clang++ HOSTAR=llvm-ar HOSTLD=ld.lld
 
         BUILD_END=$(date +"%s")
         DIFF=$((BUILD_END - BUILD_START))
