@@ -33,6 +33,7 @@ jobs:
       uses: actions/checkout@main
       with:
         repository: DhineshCool/cybertron
+        ref: v2.7
 
     - name: Checkout AnyKernel3
       uses: actions/checkout@main
@@ -40,9 +41,6 @@ jobs:
         repository: theoware/AnyKernel3
         path: AnyKernel3
         ref: payton_cybertron
-
-    - name: Setup envoirement
-      run: sudo apt-get install gcc-aarch64-linux-gnu gcc-arm-linux-gnueabi
 
     - name: Run a script
       run: |
@@ -87,7 +85,7 @@ jobs:
         SUBARCH=$ARCH
 
         KBUILD_COMPILER_STRING=$("$TC_DIR"/bin/clang --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')
-        PATH="${PATH}:${TC_DIR}/bin"
+        PATH="${TC_DIR}/bin:${PATH}"
 
         BOT_MSG_URL="https://api.telegram.org/bot$TOKEN/sendMessage"
         BOT_BUILD_URL="https://api.telegram.org/bot$TOKEN/sendDocument"
@@ -128,9 +126,9 @@ jobs:
         make -j$(nproc --all) O=out \
                   ARCH=arm64 \
                   CC=clang \
-        CLANG_TRIPLE=aarch64-linux-gnu- \
-        CROSS_COMPILE=aarch64-linux-gnu- \
-        CROSS_COMPILE_ARM32=arm-linux-gnueabi-
+        CLANG_TRIPLE=llvm- \
+        CROSS_COMPILE=llvm- \
+        CROSS_COMPILE_ARM32=llvm-
 
         BUILD_END=$(date +"%s")
         DIFF=$((BUILD_END - BUILD_START))
