@@ -15,6 +15,19 @@ jobs:
 
     - name: Run a script
       run: |
-        wget -q https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/master/clang-r437112.tar.gz -O clang.tar.gz
-        tar -xzf clang.tar.gz
-        bin/clang --version
+        git clone https://android.googlesource.com/toolchain/binutils
+        git clone https://android.googlesource.com/platform/bionic
+        git clone https://android.googlesource.com/toolchain/binutils
+        export TARGET=aarch64-linux-android
+        export PREFIX=/usr/local/$TARGET
+        mkdir build && cd build
+        ../binutils/configure --target=$TARGET --prefix=$PREFIX --enable-werror=no
+        make -j$(nproc --all) && sudo make install
+    
+    - name: Debug
+      run: |
+        ls -R .
+
+    - name: Debug build
+      run: |
+        ls -R build/
