@@ -42,7 +42,6 @@ jobs:
 
     - name: GCC
       run: |
-        rm -rf .
         git clone https://android.googlesource.com/toolchain/gcc/ .
         mkdir build && cd build
         export TARGET=aarch64-linux-android
