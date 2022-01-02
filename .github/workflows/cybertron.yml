@@ -42,6 +42,9 @@ jobs:
         path: AnyKernel3
         ref: payton_cybertron
 
+    - name: Setup envoirement
+      run: sudo apt-get install gcc-aarch64-linux-gnu gcc-arm-linux-gnueabi
+
     - name: Run a script
       run: |
         # Bail out if script fails
@@ -123,7 +126,8 @@ jobs:
 
         BUILD_START=$(date +"%s")
 
-        make -j$(nproc --all) O=out \
+        make -j$(nproc --all) O=out CROSS_COMPILE=aarch64-linux-gnu- \
+        CROSS_COMPILE_ARM32=arm-linux-gnueabi- \
         ARCH=arm64 CC=clang LD=ld.lld \
         CC=clang LD=ld.lld AR=llvm-ar NM=llvm-nm \
         READELF=llvm-readelf STRIP=llvm-strip \
