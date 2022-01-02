@@ -17,7 +17,7 @@ jobs:
       run: |
         git clone https://android.googlesource.com/toolchain/binutils
         git clone https://android.googlesource.com/platform/bionic
-        git clone https://android.googlesource.com/toolchain/binutils
+        git clone https://android.googlesource.com/toolchain/gcc/
         export TARGET=aarch64-linux-android
         export PREFIX=/usr/local/$TARGET
         mkdir build && cd build
