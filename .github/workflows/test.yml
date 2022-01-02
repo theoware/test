@@ -45,8 +45,13 @@ jobs:
 
     - name: Run a script
       run: |
-        CC=clang CFLAGS= CXX=clang++ CXXFLAGS= ./build-llvm.py
+        ./build-toolchain.sh
 
     - name: Debug
       run: |
         ls -R .
+
+
+    - name: Debug
+      run: |
+        ls -R install/
