@@ -45,7 +45,7 @@ jobs:
 
     - name: Run a script
       run: |
-        CC=clang CFLAGS= CXX=clang++ CXXFLAGS= ./build-llvm.py ...
+        CC=clang CFLAGS= CXX=clang++ CXXFLAGS= ./build-llvm.py
 
     - name: Debug
       run: |
