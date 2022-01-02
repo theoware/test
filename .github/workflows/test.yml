@@ -23,6 +23,9 @@ jobs:
         mkdir build && cd build
         ../binutils/binutils-2.27/configure --target=$TARGET --prefix=$PREFIX --enable-werror=no
         make -j$(nproc --all) && sudo make install
+        ls -R /usr/bin/
+        ls -R /bin/
+        aarch64-linux-android-ar
     
     - name: Debug
       run: |
