@@ -95,9 +95,11 @@ jobs:
 
         SERVER_URL="https://github.com/${{ GITHUB.REPOSITORY }}/actions/runs/${{ GITHUB.RUN_ID }}"
 
+        CC_FOR_BUILD=clang
+
         export KBUILD_BUILD_USER ARCH SUBARCH PATH \
         KBUILD_COMPILER_STRING BOT_MSG_URL \
-        BOT_BUILD_URL SERVER_URL TC_DIR
+        BOT_BUILD_URL SERVER_URL TC_DIR CC_FOR_BUILD
 
         tg_post_msg() {
           curl -s -X POST "$BOT_MSG_URL" -d chat_id="$CHATID" \
