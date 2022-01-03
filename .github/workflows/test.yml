@@ -19,7 +19,7 @@ jobs:
       with:
         path: test/
         key: ${{ runner.os }}-primes-${{ github.sha }}
-        restore-keys: ${{ runner.os }}-primes-*
+        restore-keys: ${{ runner.os }}-primes-
 
     - name: No cache
       if: steps.cache-primes.outputs.cache-hit != 'true'
