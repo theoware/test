@@ -7,51 +7,26 @@ on:
   workflow_dispatch:
 
 jobs:
-  binutils:
-    name: binutils
+  test:
+    name: Test
     runs-on: ubuntu-latest
 
     steps:
 
-    - name: Checkout proton clang build
-      uses: actions/checkout@main
+    - name: Cache Primes
+      id: cache-primes
+      uses: actions/cache@main
       with:
-        repository: kdrag0n/proton-clang-build
+        path: test/
+        key: ${{ runner.os }}-primes
 
-    - name: Install dependends
-      run: |
-        sudo apt install bc \
-            binutils-dev \
-            bison \
-            ca-certificates \
-            ccache \
-            clang \
-            cmake \
-            curl \
-            file \
-            flex \
-            gcc \
-            g++ \
-            git \
-            libelf-dev \
-            libssl-dev \
-            make \
-            ninja-build \
-            python3 \
-            texinfo \
-            u-boot-tools \
-            xz-utils \
-            zlib1g-dev
+    - name: No cache
+      if: steps.cache-primes.outputs.cache-hit != 'true'
+      run: echo "no cache found"
 
-    - name: Run a script
-      run: |
-        ./build-toolchain.sh
+    - name: Cache
+      if: steps.cache-primes.outputs.cache-hit == 'true'
+      run: echo "cache found" && cat test/test
 
-    - name: Debug
-      run: |
-        ls -R .
-
-
-    - name: Debug
-      run: |
-        ls -R install/
+    - name: New
+      run: echo 1234 > test/test
