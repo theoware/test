@@ -13,9 +13,21 @@ jobs:
 
     steps:
 
-      - name: Add incremential option
-        id: incre
-        run: echo ::set-output name=name::$(echo '-i')
+    - name: Cache Primes
+      id: cache-primes
+      uses: actions/cache@main
+      with:
+        path: test/
+        key: ${{ runner.os }}-primes-${{ github.sha }}
+        restore-key: ${{ runner.os }}-primes-*
 
-      - name: Test
-        run: echo "${{ steps.incre.outputs.name }}"
+    - name: No cache
+      if: steps.cache-primes.outputs.cache-hit != 'true'
+      run: echo "no cache found"
+
+    - name: Cache
+      if: steps.cache-primes.outputs.cache-hit == 'true'
+      run: echo "cache found" && cat test/test
+
+    - name: New
+      run: mkdir -p test/ && echo 12345 > test/test
