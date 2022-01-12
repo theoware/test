@@ -29,4 +29,5 @@ jobs:
           python toolchain/llvm_android/build.py
 
       - name: Debug
+        run: |
           ls -R .
