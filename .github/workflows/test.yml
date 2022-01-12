@@ -13,9 +13,11 @@ jobs:
 
       - name: Install dependencies
         run: |
+          sudo apt-get update
+          sudo apt-get install repo
           sudo apt-get update -y
           sudo apt-get upgrade -y
-          sudo apt-get install -y --no-install-recommends bc bison ca-certificates clang cmake curl file flex gcc g++ git libelf-dev libssl-dev lld jq make ninja-build patchelf python3 repo texinfo xz-utils zlib1g-dev
+          sudo apt-get install -y --no-install-recommends cmake curl make python3 repo
 
       - name: Download source code
         run: |
@@ -26,6 +28,5 @@ jobs:
         run: |
           python toolchain/llvm_android/build.py
 
-      - name: Set executable rpaths so setting LD_LIBRARY_PATH isn't necessary
-        run: |
+      - name: Debug
           ls -R .
