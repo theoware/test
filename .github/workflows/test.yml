@@ -15,7 +15,7 @@ jobs:
         run: |
           sudo apt-get update -y
           sudo apt-get upgrade -y
-          sudo apt-get install -y --no-install-recommends cmake curl make python3 repo
+          sudo apt-get install -y --no-install-recommends cmake curl make python3
 
       - name: Download source code
         run: |
