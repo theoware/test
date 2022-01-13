@@ -36,9 +36,10 @@ jobs:
           chmod +x ./convert.sh
           ./convert.sh wim "." 0
 
-      - name: Debug
+      - name: Get file name
+        id: iso
         run: |
-          ls -R .
+          echo "::set-output name=name::$(find . -name *.iso -type f)"
 
       - name: Release & Assets
         uses: Hs1r1us/Release-AIO@v1.0
@@ -46,6 +47,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: 
-            ${{ github.event.inputs.build }}
-          asset_files: "*.iso"
+            ${{ steps.iso.outputs.name }}
+          asset_files: ${{ steps.iso.outputs.name }}
           draft: true
