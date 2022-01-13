@@ -61,5 +61,5 @@ jobs:
         with:
           tag_name: 
             ${{ GITHUB.INPUTS.BUILD }}
-          asset_files: "*.iso"
+          asset_files: "UUPs/*.iso"
           draft: true
