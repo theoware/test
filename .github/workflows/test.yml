@@ -1,35 +1,42 @@
 name: Test
 
 on:
-  push:
-    paths:
-      .github/workflows/test.yml
   workflow_dispatch:
+    inputs:
+      build:
+      lang:
+      edition:
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
 
+      - uses: actions/checkout@main
+        with:
+          repository: Philogag/UUPdump-TravisCI
+
       - name: Install dependencies
         run: |
-          sudo apt-get update -y
-          sudo apt-get upgrade -y
-          sudo apt-get install -y --no-install-recommends cmake curl make python3
+          sudo apt-get install aria2 cabextract wimtools chntpw genisoimage
+          chmod +x uup_download_linux.sh
 
-      - name: Download source code
+      - name: Run
+        env:
+          BUILD: ${{ GITHUB.INPUTS.BUILD }}
+          LANG: ${{ GITHUB.INPUTS.LANG }}
+          EDITION: ${{ GITHUB.INPUTS.EDITION }}
         run: |
-          mkdir -p ~/.bin
-          PATH="${HOME}/.bin:${PATH}"
-          curl https://storage.googleapis.com/git-repo-downloads/repo > ~/.bin/repo
-          chmod a+rx ~/.bin/repo
-          repo init -u https://android.googlesource.com/platform/manifest -b llvm-toolchain
-          repo sync -c
-
-      - name: Build clang
-        run: |
-          python toolchain/llvm_android/build.py
+          bash ./uup_download_linux.sh
 
       - name: Debug
         run: |
           ls -R .
+
+      - name: Release & Assets
+        uses: Hs1r1us/Release-AIO@v1.0
+        with:
+          tag_name: 
+            ${{ GITHUB.INPUTS.BUILD }}
+          asset_files: "*.iso"
+          draft: true
