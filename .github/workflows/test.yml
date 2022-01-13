@@ -25,7 +25,7 @@ jobs:
           tempScript="aria2_script.$RANDOM.txt"
 
           echo "Retrieving aria2 script..."
-          aria2c --no-conf --log-level=info --log="aria2_download.log" -o"$tempScript" --allow-overwrite=true --auto-file-renaming=false "https://uupdump.net/get.php?id=${{ GITHUB.EVENTS.INPUTS.BUILD }}&pack=${{ GITHUB.EVENTS.INPUTS.LANG }}&edition=${{ GITHUB.EVENTS.INPUTS.EDITION }}&aria2=2"
+          aria2c --no-conf --log-level=info --log="aria2_download.log" -o"$tempScript" --allow-overwrite=true --auto-file-renaming=false "https://uupdump.net/get.php?id=${{ github.event.inputs.build }}&pack=${{ github.event.inputs.lang }}&edition=${{ github.event.inputs.edition }}&aria2=2"
           if [ $? != 0 ]; then
             echo "Failed to retrieve aria2 script"
             exit 1
@@ -60,6 +60,6 @@ jobs:
         uses: Hs1r1us/Release-AIO@v1.0
         with:
           tag_name: 
-            ${{ GITHUB.EVENTS.INPUTS.BUILD }}
+            ${{ github.event.inputs.build }}
           asset_files: "UUPs/*.iso"
           draft: true
