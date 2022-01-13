@@ -4,17 +4,16 @@ on:
   workflow_dispatch:
     inputs:
       build:
+        required: true
       lang:
+        required: true
       edition:
+        required: true
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-
-      - uses: actions/checkout@main
-        with:
-          repository: Philogag/UUPdump-TravisCI
 
       - name: Install dependencies
         run: |
@@ -22,12 +21,37 @@ jobs:
           chmod +x uup_download_linux.sh
 
       - name: Run
-        env:
-          BUILD: ${{ GITHUB.INPUTS.BUILD }}
-          LANG: ${{ GITHUB.INPUTS.LANG }}
-          EDITION: ${{ GITHUB.INPUTS.EDITION }}
         run: |
-          bash ./uup_download_linux.sh
+          destDir="UUPs"
+          tempScript="aria2_script.$RANDOM.txt"
+
+          echo "Retrieving aria2 script..."
+          aria2c --no-conf --log-level=info --log="aria2_download.log" -o"$tempScript" --allow-overwrite=true --auto-file-renaming=false "https://uupdump.net/get.php?id=${{ GITHUB.INPUTS.BUILD }}&pack=${{ GITHUB.INPUTS.LANG }}&edition=${{ GITHUB.INPUTS.EDITION }}&aria2=2"
+          if [ $? != 0 ]; then
+            echo "Failed to retrieve aria2 script"
+            exit 1
+          fi
+
+          detectedError=`grep '#UUPDUMP_ERROR:' "$tempScript" | sed 's/#UUPDUMP_ERROR://g'`
+          if [ ! -z $detectedError ]; then
+              echo "Unable to retrieve data from Windows Update servers. Reason: $detectedError"
+              echo "If this problem persists, most likely the set you are attempting to download was removed from Windows Update servers."
+              exit 1
+          fi
+
+          echo ""
+          echo "Attempting to download files..."
+          aria2c --no-conf --log-level=info --log="aria2_download.log" -x16 -s16 -j5 -c -R -d"$destDir" -i"$tempScript"
+          if [ $? != 0 ]; then
+            echo "We have encountered an error while downloading files."
+            exit 1
+          fi
+
+          echo ""
+          if [ -e ./files/convert.sh ]; then
+            chmod +x ./files/convert.sh
+            ./files/convert.sh wim "$destDir" 0
+          fi
 
       - name: Debug
         run: |
