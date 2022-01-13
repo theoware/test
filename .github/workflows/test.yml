@@ -7,8 +7,10 @@ on:
         required: true
       lang:
         required: true
+        default: de-de
       edition:
         required: true
+        default: PROFESSIONAL
 
 jobs:
   build:
