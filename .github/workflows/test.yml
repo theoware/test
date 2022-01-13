@@ -15,42 +15,24 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
+      - uses: actions/checkout@main
+        with:
+          repository: uup-dump/converter
+
       - name: Install dependencies
         run: |
           sudo apt-get install aria2 cabextract wimtools chntpw genisoimage
 
-      - name: Run
+      - name: Retrieve aria2 script
         run: |
-          destDir="UUPs"
-          tempScript="aria2_script.$RANDOM.txt"
+          aria2c --no-conf --log-level=info --log="aria2_download.log" -o"aria2_script.txt" --allow-overwrite=true --auto-file-renaming=false "https://uupdump.net/get.php?id=${{ github.event.inputs.build }}&pack=${{ github.event.inputs.lang }}&edition=${{ github.event.inputs.edition }}&aria2=2"
 
-          echo "Retrieving aria2 script..."
-          aria2c --no-conf --log-level=info --log="aria2_download.log" -o"$tempScript" --allow-overwrite=true --auto-file-renaming=false "https://uupdump.net/get.php?id=${{ github.event.inputs.build }}&pack=${{ github.event.inputs.lang }}&edition=${{ github.event.inputs.edition }}&aria2=2"
-          if [ $? != 0 ]; then
-            echo "Failed to retrieve aria2 script"
-            exit 1
-          fi
+      - name: Download files
+        run: |
+          aria2c --no-conf --log-level=info --log="aria2_download.log" -x16 -s16 -j5 -c -R -d"." -i"aria2_script.txt"
 
-          detectedError=`grep '#UUPDUMP_ERROR:' "$tempScript" | sed 's/#UUPDUMP_ERROR://g'`
-          if [ ! -z $detectedError ]; then
-              echo "Unable to retrieve data from Windows Update servers. Reason: $detectedError"
-              echo "If this problem persists, most likely the set you are attempting to download was removed from Windows Update servers."
-              exit 1
-          fi
-
-          echo ""
-          echo "Attempting to download files..."
-          aria2c --no-conf --log-level=info --log="aria2_download.log" -x16 -s16 -j5 -c -R -d"$destDir" -i"$tempScript"
-          if [ $? != 0 ]; then
-            echo "We have encountered an error while downloading files."
-            exit 1
-          fi
-
-          echo ""
-          if [ -e ./files/convert.sh ]; then
-            chmod +x ./files/convert.sh
-            ./files/convert.sh wim "$destDir" 0
-          fi
+          chmod +x ./convert.sh
+          ./convert.sh wim "." 0
 
       - name: Debug
         run: |
@@ -58,8 +40,10 @@ jobs:
 
       - name: Release & Assets
         uses: Hs1r1us/Release-AIO@v1.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: 
             ${{ github.event.inputs.build }}
-          asset_files: "UUPs/*.iso"
+          asset_files: "*.iso"
           draft: true
