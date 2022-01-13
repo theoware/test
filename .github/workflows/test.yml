@@ -39,6 +39,8 @@ jobs:
       - name: Get file name
         id: iso
         run: |
+          find . -name *.iso -type f
+          ls -R .
           echo "::set-output name=name::$(find . -name *.iso -type f)"
 
       - name: Release & Assets
@@ -46,7 +48,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: 
-            ${{ steps.iso.outputs.name }}
+          tag_name: ${{ steps.iso.outputs.name }}
           asset_files: ${{ steps.iso.outputs.name }}
           draft: true
