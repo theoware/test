@@ -39,13 +39,9 @@ jobs:
       - name: Get file name
         id: iso
         run: |
-          echo "::set-output name=name::$(find . -name *.ISO -type f)"
+          echo "::set-output name=name::$(find * -name *.ISO -type f)"
 
-      - name: Release & Assets
-        uses: Hs1r1us/Release-AIO@v1.0
+      - name: Create release
+        run: gh release create -d -t  ./${{ steps.iso.outputs.name }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ steps.iso.outputs.name }}
-          asset_files: ${{ steps.iso.outputs.name }}
-          draft: true
