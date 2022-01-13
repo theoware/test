@@ -39,9 +39,7 @@ jobs:
       - name: Get file name
         id: iso
         run: |
-          find . -name *.ISO -type f
-          ls -R .
-          echo "::set-output name=name::$(find . -name *.iso -type f)"
+          echo "::set-output name=name::$(find . -name *.ISO -type f)"
 
       - name: Release & Assets
         uses: Hs1r1us/Release-AIO@v1.0
