@@ -31,6 +31,8 @@ jobs:
         run: |
           aria2c --no-conf --log-level=info --log="aria2_download.log" -x16 -s16 -j5 -c -R -d"." -i"aria2_script.txt"
 
+      - name: Convert
+        run: |
           chmod +x ./convert.sh
           ./convert.sh wim "." 0
 
