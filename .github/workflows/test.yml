@@ -42,6 +42,6 @@ jobs:
           echo "::set-output name=name::$(find * -name *.ISO -type f)"
 
       - name: Create release
-        run: gh release create -d -t  ./${{ steps.iso.outputs.name }}
+        run: gh release create -d -t "${{ steps.iso.outputs.name }}" "./${{ steps.iso.outputs.name }}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
