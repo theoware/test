@@ -16,12 +16,11 @@ jobs:
     steps:
 
       - uses: actions/checkout@main
-        with:
-          repository: uup-dump/converter
 
       - name: Install dependencies
         run: |
           sudo apt-get install aria2 cabextract wimtools chntpw genisoimage
+          wget https://raw.githubusercontent.com/uup-dump/converter/master/convert.sh
 
       - name: Retrieve aria2 script
         run: |
