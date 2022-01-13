@@ -18,7 +18,6 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get install aria2 cabextract wimtools chntpw genisoimage
-          chmod +x uup_download_linux.sh
 
       - name: Run
         run: |
