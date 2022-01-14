@@ -57,8 +57,6 @@ jobs:
           release_name: ${{ steps.iso.outputs.name }}
           draft: true
 
-      - run: ls -R .
-
       - name: Upload ISO
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
