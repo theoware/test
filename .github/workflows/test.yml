@@ -78,7 +78,7 @@ jobs:
           fi
 
       - name: Upload ISO Part 1
-        if: steps.upl.outputs.01 == true
+        if: ${{ steps.upl.outputs.01 }} == true
         uses: actions/upload-release-asset@main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -89,7 +89,7 @@ jobs:
           asset_content_type: application/zip
 
       - name: Upload ISO Part 2
-        if: steps.upl.outputs.02 == true
+        if: ${{ steps.upl.outputs.02 }} == true
         uses: actions/upload-release-asset@main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -100,7 +100,7 @@ jobs:
           asset_content_type: application/zip
 
       - name: Upload ISO Part 3
-        if: steps.upl.outputs.03 == true
+        if: ${{ steps.upl.outputs.03 }} == true
         uses: actions/upload-release-asset@main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -111,7 +111,7 @@ jobs:
           asset_content_type: application/zip
 
       - name: Upload ISO Part 4
-        if: steps.upl.outputs.04 == true
+        if: ${{ steps.upl.outputs.04 }} == true
         uses: actions/upload-release-asset@main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
