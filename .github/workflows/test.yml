@@ -90,6 +90,8 @@ jobs:
           fi
 
       - name: Brotli compression
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           brotli -w 0 -Z ${{ steps.iso.outputs.name }} -o ${{ steps.iso.outputs.name }}.brotli
           split --bytes=2147483647 --numeric-suffixes $(find * -name *.brotli -type f) $(find * -name *.brotli -type f)
