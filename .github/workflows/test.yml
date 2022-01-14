@@ -57,23 +57,25 @@ jobs:
           release_name: ${{ steps.iso.outputs.name }}
           draft: true
 
+      - run: ls -R .
+
       - name: Upload ISO
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           if [ -f ${{ steps.iso.outputs.name }}01 ]; 
           then
-          gh release upload ${{ steps.iso.outputs.name }} ${{ steps.iso.outputs.name }}01
+          gh release upload --clobber ${{ steps.iso.outputs.name }} ${{ steps.iso.outputs.name }}01
           fi
           if [ -f ${{ steps.iso.outputs.name }}02 ]; 
           then
-          gh release upload ${{ steps.iso.outputs.name }} ${{ steps.iso.outputs.name }}02
+          gh release upload --clobber ${{ steps.iso.outputs.name }} ${{ steps.iso.outputs.name }}02
           fi
           if [ -f ${{ steps.iso.outputs.name }}03 ]; 
           then
-          gh release upload ${{ steps.iso.outputs.name }} ${{ steps.iso.outputs.name }}03
+          gh release upload --clobber ${{ steps.iso.outputs.name }} ${{ steps.iso.outputs.name }}03
           fi
           if [ -f ${{ steps.iso.outputs.name }}04 ]; 
           then
-          gh release upload ${{ steps.iso.outputs.name }} ${{ steps.iso.outputs.name }}04
+          gh release upload --clobber ${{ steps.iso.outputs.name }} ${{ steps.iso.outputs.name }}04
           fi
