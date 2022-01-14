@@ -58,6 +58,7 @@ jobs:
           draft: true
 
       - name: Upload ISO
+        id: upl
         run: |
           if [ -f ${{ steps.iso.outputs.name }}01 ]; 
           then
@@ -77,7 +78,7 @@ jobs:
           fi
 
       - name: Upload ISO Part 1
-        if: steps.iso.outputs.01 == true
+        if: steps.upl.outputs.01 == true
         uses: actions/upload-release-asset@main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -88,7 +89,7 @@ jobs:
           asset_content_type: application/zip
 
       - name: Upload ISO Part 2
-        if: steps.iso.outputs.02 == true
+        if: steps.upl.outputs.02 == true
         uses: actions/upload-release-asset@main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -99,7 +100,7 @@ jobs:
           asset_content_type: application/zip
 
       - name: Upload ISO Part 3
-        if: steps.iso.outputs.03 == true
+        if: steps.upl.outputs.03 == true
         uses: actions/upload-release-asset@main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -110,7 +111,7 @@ jobs:
           asset_content_type: application/zip
 
       - name: Upload ISO Part 4
-        if: steps.iso.outputs.04 == true
+        if: steps.upl.outputs.04 == true
         uses: actions/upload-release-asset@main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
