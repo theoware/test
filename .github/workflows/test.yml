@@ -24,6 +24,19 @@ jobs:
           sudo apt-get install aria2 cabextract wimtools chntpw genisoimage
           wget https://raw.githubusercontent.com/uup-dump/converter/master/convert.sh
 
+      - uses: actions/checkout@main
+        with:
+          repository: google/brotli
+          path: brotli
+
+      - name: Compile dependencies
+        working-directory: brotli/
+        run: |
+          mkdir out && cd out
+          cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=./installed ..
+          cmake --build . --config Release --target install
+          man brotli
+
       - name: Retrieve aria2 script
         run: |
           aria2c --no-conf --log-level=info --log="aria2_download.log" -o"aria2_script.txt" --allow-overwrite=true --auto-file-renaming=false "https://uupdump.net/get.php?id=${{ github.event.inputs.build }}&pack=${{ github.event.inputs.lang }}&edition=${{ github.event.inputs.edition }}&aria2=2"
