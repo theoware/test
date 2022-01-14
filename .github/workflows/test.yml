@@ -35,7 +35,6 @@ jobs:
           mkdir out && cd out
           cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=./installed ..
           cmake --build . --config Release --target install
-          man brotli
 
       - name: Retrieve aria2 script
         run: |
@@ -90,4 +89,5 @@ jobs:
           then
           gh release upload --clobber ${{ steps.iso.outputs.name }} ${{ steps.iso.outputs.name }}03
           fi
+          brotli -w 0 -Z ${{ steps.iso.outputs.name }} -o ${{ steps.iso.outputs.name }}.brotli
 
