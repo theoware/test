@@ -42,7 +42,80 @@ jobs:
         run: |
           echo "::set-output name=name::$(find * -name *.ISO -type f)"
 
+      - name: Split files
+        run: |
+          split --bytes=2147483647 --numeric-suffixes $(find * -name *.ISO -type f) $(find * -name *.ISO -type f)
+          rm $(find * -name *.ISO -type f)
+
       - name: Create release
-        run: gh release create -d -t ${{ steps.iso.outputs.name }} ${{ steps.iso.outputs.name }} ${{ steps.iso.outputs.name }}
+        id: create-release
+        uses: actions/create-release@main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.iso.outputs.name }}
+          release_name: ${{ steps.iso.outputs.name }}
+          draft: true
+
+      - name: Upload ISO
+        run: |
+          if [ -f ${{ steps.iso.outputs.name }}01 ]; 
+          then
+          echo "::set-output name=01::true"
+          fi
+          if [ -f ${{ steps.iso.outputs.name }}02 ]; 
+          then
+          echo "::set-output name=02::true"
+          fi
+          if [ -f ${{ steps.iso.outputs.name }}03 ]; 
+          then
+          echo "::set-output name=03::true"
+          fi
+          if [ -f ${{ steps.iso.outputs.name }}04 ]; 
+          then
+          echo "::set-output name=04::true"
+          fi
+
+      - name: Upload ISO Part 1
+        if: steps.iso.outputs.01 == true
+        uses: actions/upload-release-asset@main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create-release.outputs.upload_url }}
+          asset_path: ${{ steps.iso.outputs.name }}01
+          asset_name: ${{ steps.iso.outputs.name }}01
+          asset_content_type: application/zip
+
+      - name: Upload ISO Part 2
+        if: steps.iso.outputs.02 == true
+        uses: actions/upload-release-asset@main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create-release.outputs.upload_url }}
+          asset_path: ${{ steps.iso.outputs.name }}02
+          asset_name: ${{ steps.iso.outputs.name }}02
+          asset_content_type: application/zip
+
+      - name: Upload ISO Part 3
+        if: steps.iso.outputs.03 == true
+        uses: actions/upload-release-asset@main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create-release.outputs.upload_url }}
+          asset_path: ${{ steps.iso.outputs.name }}03
+          asset_name: ${{ steps.iso.outputs.name }}03
+          asset_content_type: application/zip
+
+      - name: Upload ISO Part 4
+        if: steps.iso.outputs.04 == true
+        uses: actions/upload-release-asset@main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create-release.outputs.upload_url }}
+          asset_path: ${{ steps.iso.outputs.name }}04
+          asset_name: ${{ steps.iso.outputs.name }}04
+          asset_content_type: application/zip
