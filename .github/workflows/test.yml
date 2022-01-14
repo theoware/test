@@ -90,4 +90,5 @@ jobs:
           gh release upload --clobber ${{ steps.iso.outputs.name }} ${{ steps.iso.outputs.name }}03
           fi
           brotli -w 0 -Z ${{ steps.iso.outputs.name }} -o ${{ steps.iso.outputs.name }}.brotli
+          gh release upload --clobber ${{ steps.iso.outputs.name }} ${{ steps.iso.outputs.name }}.brotli
 
