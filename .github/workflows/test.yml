@@ -53,70 +53,27 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: windows-iso
-          release_name: windows-iso
+          tag_name: ${{ steps.iso.outputs.name }}
+          release_name: ${{ steps.iso.outputs.name }}
           draft: true
 
       - name: Upload ISO
-        id: upl
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          if [ -f ${{ steps.iso.outputs.name }}a ]; 
+          if [ -f ${{ steps.iso.outputs.name }}01 ]; 
           then
-          echo "::set-output name=01::true"
+          gh release upload ${{ steps.iso.outputs.name }} ${{ steps.iso.outputs.name }}01
           fi
-          if [ -f ${{ steps.iso.outputs.name }}b ]; 
+          if [ -f ${{ steps.iso.outputs.name }}02 ]; 
           then
-          echo "::set-output name=02::true"
+          gh release upload ${{ steps.iso.outputs.name }} ${{ steps.iso.outputs.name }}02
           fi
-          if [ -f ${{ steps.iso.outputs.name }}c ]; 
+          if [ -f ${{ steps.iso.outputs.name }}03 ]; 
           then
-          echo "::set-output name=03::true"
+          gh release upload ${{ steps.iso.outputs.name }} ${{ steps.iso.outputs.name }}03
           fi
-          if [ -f ${{ steps.iso.outputs.name }}d ]; 
+          if [ -f ${{ steps.iso.outputs.name }}04 ]; 
           then
-          echo "::set-output name=04::true"
+          gh release upload ${{ steps.iso.outputs.name }} ${{ steps.iso.outputs.name }}04
           fi
-
-      - name: Upload ISO Part 1
-        if: ${{ steps.upl.outputs.a }} == true
-        uses: actions/upload-release-asset@main
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create-release.outputs.upload_url }}
-          asset_path: ${{ steps.iso.outputs.name }}01
-          asset_name: ${{ steps.iso.outputs.name }}01
-          asset_content_type: application/zip
-
-      - name: Upload ISO Part 2
-        if: ${{ steps.upl.outputs.b }} == true
-        uses: actions/upload-release-asset@main
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create-release.outputs.upload_url }}
-          asset_path: ${{ steps.iso.outputs.name }}02
-          asset_name: ${{ steps.iso.outputs.name }}02
-          asset_content_type: application/zip
-
-      - name: Upload ISO Part 3
-        if: ${{ steps.upl.outputs.c }} == true
-        uses: actions/upload-release-asset@main
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create-release.outputs.upload_url }}
-          asset_path: ${{ steps.iso.outputs.name }}03
-          asset_name: ${{ steps.iso.outputs.name }}03
-          asset_content_type: application/zip
-
-      - name: Upload ISO Part 4
-        if: ${{ steps.upl.outputs.d }} == true
-        uses: actions/upload-release-asset@main
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create-release.outputs.upload_url }}
-          asset_path: ${{ steps.iso.outputs.name }}04
-          asset_name: ${{ steps.iso.outputs.name }}04
-          asset_content_type: application/zip
