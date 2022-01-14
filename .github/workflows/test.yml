@@ -60,25 +60,25 @@ jobs:
       - name: Upload ISO
         id: upl
         run: |
-          if [ -f ${{ steps.iso.outputs.name }}01 ]; 
+          if [ -f ${{ steps.iso.outputs.name }}a ]; 
           then
           echo "::set-output name=01::true"
           fi
-          if [ -f ${{ steps.iso.outputs.name }}02 ]; 
+          if [ -f ${{ steps.iso.outputs.name }}b ]; 
           then
           echo "::set-output name=02::true"
           fi
-          if [ -f ${{ steps.iso.outputs.name }}03 ]; 
+          if [ -f ${{ steps.iso.outputs.name }}c ]; 
           then
           echo "::set-output name=03::true"
           fi
-          if [ -f ${{ steps.iso.outputs.name }}04 ]; 
+          if [ -f ${{ steps.iso.outputs.name }}d ]; 
           then
           echo "::set-output name=04::true"
           fi
 
       - name: Upload ISO Part 1
-        if: ${{ steps.upl.outputs.01 }} == true
+        if: ${{ steps.upl.outputs.a }} == true
         uses: actions/upload-release-asset@main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -89,7 +89,7 @@ jobs:
           asset_content_type: application/zip
 
       - name: Upload ISO Part 2
-        if: ${{ steps.upl.outputs.02 }} == true
+        if: ${{ steps.upl.outputs.b }} == true
         uses: actions/upload-release-asset@main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -100,7 +100,7 @@ jobs:
           asset_content_type: application/zip
 
       - name: Upload ISO Part 3
-        if: ${{ steps.upl.outputs.03 }} == true
+        if: ${{ steps.upl.outputs.c }} == true
         uses: actions/upload-release-asset@main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -111,7 +111,7 @@ jobs:
           asset_content_type: application/zip
 
       - name: Upload ISO Part 4
-        if: ${{ steps.upl.outputs.04 }} == true
+        if: ${{ steps.upl.outputs.d }} == true
         uses: actions/upload-release-asset@main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
