@@ -53,8 +53,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ steps.iso.outputs.name }}
-          release_name: ${{ steps.iso.outputs.name }}
+          tag_name: windows-iso
+          release_name: windows-iso
           draft: true
 
       - name: Upload ISO
