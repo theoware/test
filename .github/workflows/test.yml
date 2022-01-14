@@ -57,7 +57,6 @@ jobs:
       - name: Split files
         run: |
           split --bytes=2147483647 --numeric-suffixes $(find * -name *.ISO -type f) $(find * -name *.ISO -type f)
-          rm $(find * -name *.ISO -type f)
 
       - name: Create release
         id: create-release
