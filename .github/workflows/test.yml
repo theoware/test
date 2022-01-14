@@ -88,6 +88,24 @@ jobs:
           then
           gh release upload --clobber ${{ steps.iso.outputs.name }} ${{ steps.iso.outputs.name }}03
           fi
-          brotli -w 0 -Z ${{ steps.iso.outputs.name }} -o ${{ steps.iso.outputs.name }}.brotli
-          gh release upload --clobber ${{ steps.iso.outputs.name }} ${{ steps.iso.outputs.name }}.brotli
 
+      - name: Brotli compression
+        run: |
+          brotli -w 0 -Z ${{ steps.iso.outputs.name }} -o ${{ steps.iso.outputs.name }}.brotli
+          split --bytes=2147483647 --numeric-suffixes $(find * -name *.brotli -type f) $(find * -name *.brotli -type f)
+          if [ -f ${{ steps.iso.outputs.name }}.brotli00 ]; 
+          then
+          gh release upload --clobber ${{ steps.iso.outputs.name }} ${{ steps.iso.outputs.name }}.brotli00
+          fi
+          if [ -f ${{ steps.iso.outputs.name }}.brotli01 ]; 
+          then
+          gh release upload --clobber ${{ steps.iso.outputs.name }} ${{ steps.iso.outputs.name }}.brotli01
+          fi
+          if [ -f ${{ steps.iso.outputs.name }}.brotli02 ]; 
+          then
+          gh release upload --clobber ${{ steps.iso.outputs.name }} ${{ steps.iso.outputs.name }}.brotli02
+          fi
+          if [ -f ${{ steps.iso.outputs.name }}.brotli03 ]; 
+          then
+          gh release upload --clobber ${{ steps.iso.outputs.name }} ${{ steps.iso.outputs.name }}.brotli03
+          fi
