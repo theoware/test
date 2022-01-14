@@ -63,6 +63,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          if [ -f ${{ steps.iso.outputs.name }}00 ]; 
+          then
+          gh release upload --clobber ${{ steps.iso.outputs.name }} ${{ steps.iso.outputs.name }}00
+          fi
           if [ -f ${{ steps.iso.outputs.name }}01 ]; 
           then
           gh release upload --clobber ${{ steps.iso.outputs.name }} ${{ steps.iso.outputs.name }}01
@@ -75,7 +79,4 @@ jobs:
           then
           gh release upload --clobber ${{ steps.iso.outputs.name }} ${{ steps.iso.outputs.name }}03
           fi
-          if [ -f ${{ steps.iso.outputs.name }}04 ]; 
-          then
-          gh release upload --clobber ${{ steps.iso.outputs.name }} ${{ steps.iso.outputs.name }}04
-          fi
+
