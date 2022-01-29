@@ -10,15 +10,27 @@ jobs:
 
     steps:
 
-    - uses: actions/checkout@main
-      with:
-        repository: llvm/llvm-project
-        fetch-depth: 0
+      - name: Download scripts
+        uses: actions/checkout@main
+        with:
+          repository: ClangBuiltLinux/tc-build
 
-    - name: Set ref
-      run: git checkout $(git for-each-ref refs/tags --format='%(refname)' --sort=-taggerdate | grep llvmorg-13.... | cut -c11- | head -n 1)
+      - name: Download LLVM
+        uses: actions/checkout@main
+        with:
+          path: llvm-project/
+          repository: llvm/llvm-project
+          fetch-depth: 0
 
-    - name: Run a script
-      run: |
-        ls -R .
-        git describe --tags --abbrev=0
+      - name: Get ref
+        id: get-ref
+        run: echo "::set-output name=ref::$(git for-each-ref refs/tags --format='%(refname)' --sort=-taggerdate  | cut -c11- | grep ........13.... | head -n 1)"
+
+      - name: Checkout ref
+        run: git checkout ${{ steps.get-ref.outputs.ref }}
+
+      - name: Run a script
+        run: |
+          git for-each-ref refs/tags --format='%(refname)' --sort=-taggerdate  | cut -c11- | grep 13 | head -n 1
+          git for-each-ref refs/tags --format='%(refname)' --sort=-taggerdate  | cut -c11- | grep ........13.... | head -n 1
+          git describe --tags --abbrev=0
