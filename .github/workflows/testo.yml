@@ -11,13 +11,10 @@ jobs:
     steps:
 
     - uses: actions/checkout@main
-    - uses: actions/checkout@main
       with:
-        path: clang-llvm
-    - uses: actions/checkout@main
-      with:
-        path: anykernel
+        repository: llvm/llvm-project
+        ref: '*13*'
 
     - name: Run a script
       run: |
-        ls -R
+        ls -R .
