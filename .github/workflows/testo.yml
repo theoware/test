@@ -10,11 +10,16 @@ jobs:
 
     steps:
 
+    - name: Set ref
+      run: echo "::set-output name=ref::$(git for-each-ref refs/tags --format='%(refname)' --sort=-taggerdate | grep llvmorg-13.... | cut -c11- | head -n 1)"
+      id: set-ref
+
     - uses: actions/checkout@main
       with:
         repository: llvm/llvm-project
-        ref: '*13*'
+        ref: ${{ steps.set-ref.outputs.ref }}
 
     - name: Run a script
       run: |
         ls -R .
+        git describe --tags --abbrev=0
