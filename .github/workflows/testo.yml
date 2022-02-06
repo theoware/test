@@ -10,26 +10,11 @@ jobs:
 
     steps:
 
-      - name: Download scripts
-        uses: actions/checkout@main
-        with:
-          repository: ClangBuiltLinux/tc-build
-
-      - name: Download LLVM
-        uses: actions/checkout@main
-        with:
-          repository: llvm/llvm-project
-          fetch-depth: 0
-
-      - name: Get ref
-        id: get-ref
-        run: echo "::set-output name=ref::$(git for-each-ref refs/tags --format='%(refname)' --sort=-taggerdate  | cut -c11- | grep ........13.... | head -n 1)"
-
-      - name: Checkout ref
-        run: git checkout ${{ steps.get-ref.outputs.ref }}
-
       - name: Run a script
         run: |
-          git for-each-ref refs/tags --format='%(refname)' --sort=-taggerdate  | cut -c11- | grep 13 | head -n 1
-          git for-each-ref refs/tags --format='%(refname)' --sort=-taggerdate  | cut -c11- | grep ........13.... | head -n 1
-          git describe --tags --abbrev=0
+          sudo apt-get update -y
+          sudo apt-get upgrade -y
+          sudo apt-get install -y --no-install-recommends bc bison ca-certificates clang cmake curl file flex gcc g++ git libelf-dev libssl-dev lld jq make ninja-build patchelf python3 texinfo xz-utils zlib1g-dev
+
+      - name: Checkout ref
+        run: git --version
