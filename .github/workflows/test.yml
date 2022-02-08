@@ -22,7 +22,6 @@ jobs:
           rm bootstrap.py
 
       - name: Build
-        working-directory: mozilla-unified
         run: |
           ./mach build
           ./mach run
