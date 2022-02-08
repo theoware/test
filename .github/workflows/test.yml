@@ -18,7 +18,7 @@ jobs:
       - name: Bootstrap a copy of the Firefox source code
         run: |
           curl https://hg.mozilla.org/mozilla-central/raw-file/default/python/mozboot/bin/bootstrap.py -O
-          python3 bootstrap.py
+          python3 bootstrap.py --vcs=git .
           rm bootstrap.py
 
       - name: Build
