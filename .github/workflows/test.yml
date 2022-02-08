@@ -16,7 +16,7 @@ jobs:
 
       - name: Bootstrap a copy of the Firefox source code
         run: |
-          bootstrap.py
+          python bootstrap.py
 
       - name: Build
         working-directory: mozilla-unified
