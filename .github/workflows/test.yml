@@ -22,8 +22,21 @@ jobs:
         Invoke-WebRequest -Uri https://ftp.mozilla.org/pub/mozilla/libraries/win32/MozillaBuildSetup-Latest.exe -OutFile MozillaBuildSetup-Latest.exe 
         Start-Process "MozillaBuildSetup-Latest.exe"
 
+    - name: Cache
+      id: cache-source
+      uses: actions/cache@main
+      with:
+        path: mozilla-source/mozilla-unified
+        key: mozilla-unified-${{ GITHUB.SHA }}
+        restore-keys: mozilla-unified
+
+    - name: Update cached source code
+      if: steps.cache-source.outputs.cache-hit == 'true'
+      run: hg pull
 
     - name: Bootstrap a copy of the Firefox source code
+      c: true
+      if: steps.cache-source.outputs.cache-hit != 'true'
       run: |
         mkdir mozilla-source
         cd mozilla-source
@@ -33,4 +46,4 @@ jobs:
     - name: Build
       working-directory: mozilla-source/mozilla-unified
       run: |
-        ./mach build
+        ./mach.ps1 build
