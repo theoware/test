@@ -27,8 +27,8 @@ jobs:
       run: |
         mkdir mozilla-source
         cd mozilla-source
-        Invoke-WebRequest -Uri https://gist.github.com/theoware/6f04cad87db9b268a7cccf52889a807b/raw/d0e6f1a0dfeb1e1d00bfda417019da898c3df6c7/bootstrap.py -OutFile bootstrap.py
-        python3 bootstrap.py
+        Invoke-WebRequest -Uri https://hg.mozilla.org/mozilla-central/raw-file/default/python/mozboot/bin/bootstrap.py -OutFile bootstrap.py
+        python3 bootstrap.py --no-interactive
       
     - name: Build
       working-directory: mozilla-source/mozilla-unified
