@@ -15,4 +15,6 @@ jobs:
       run: |
         choco install mozillabuild
 
-    - run: Get-ChildItem -Recurse C:/,D:/ -Exclude C:\hostedtoolcache\,C:\Android
+    - run: |
+        Get-ChildItem -Recurse D:/
+        Get-ChildItem -Recurse C:/*ozilla*
