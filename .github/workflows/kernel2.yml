@@ -13,7 +13,6 @@ jobs:
 
     - name: Install Mozilla Build
       run: |
-        Invoke-WebRequest -Uri https://ftp.mozilla.org/pub/mozilla/libraries/win32/MozillaBuildSetup-Latest.exe -OutFile MozillaBuildSetup-Latest.exe 
-        Start-Process "MozillaBuildSetup-Latest.exe"
+        choco install mozillabuild
 
-    - run: Get-ChildItem -Recurse .
+    - run: Get-ChildItem -Recurse C:/,D:/
