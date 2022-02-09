@@ -46,4 +46,4 @@ jobs:
     - name: Build
       working-directory: mozilla-source/mozilla-unified
       run: |
-        ./mach.ps1 build
+        ./mach.ps1 --no-interactive build
