@@ -2,7 +2,7 @@ name: kernel2
 
 on:
   push:
-    paths: .github/workflows/test.yml
+    paths: .github/workflows/kernel2.yml
 
 jobs:
   build:
