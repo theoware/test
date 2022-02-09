@@ -30,9 +30,11 @@ jobs:
       run: hg pull
 
     - name: Bootstrap a copy of the Firefox source code
+      continue-on-error: true
       if: steps.cache-source.outputs.cache-hit != 'true'
       run: |
         mkdir mozilla-source
         cd mozilla-source
         Invoke-WebRequest -Uri https://hg.mozilla.org/mozilla-central/raw-file/default/python/mozboot/bin/bootstrap.py -OutFile bootstrap.py
         python3 bootstrap.py --no-interactive
+        ./mozilla-source/mozilla-unified/mach.ps1 --no-interactive bootstrap
