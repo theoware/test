@@ -1,20 +1,38 @@
 name: testo
 
 on:
-  workflow_dispatch
+  push:
+    paths: .github/workflows/testo.yml
+  workflow_dispatch:
 
 jobs:
   build:
     name: Build
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
 
-      - name: Run a script
-        run: |
-          sudo apt-get update -y
-          sudo apt-get upgrade -y
-          sudo apt-get install -y --no-install-recommends bc bison ca-certificates clang cmake curl file flex gcc g++ git libelf-dev libssl-dev lld jq make ninja-build patchelf python3 texinfo xz-utils zlib1g-dev
+    - name: Install Mozilla Build
+      run: |
+        Invoke-WebRequest -Uri https://ftp.mozilla.org/pub/mozilla/libraries/win32/MozillaBuildSetup-Latest.exe -OutFile MozillaBuildSetup-Latest.exe 
+        Start-Process "MozillaBuildSetup-Latest.exe"
 
-      - name: Checkout ref
-        run: git --version
+    - name: Cache
+      id: cache-source
+      uses: actions/cache@main
+      with:
+        path: mozilla-source/mozilla-unified
+        key: mozilla-unified-${{ GITHUB.SHA }}
+        restore-keys: mozilla-unified
+
+    - name: Update cached source code
+      if: steps.cache-source.outputs.cache-hit == 'true'
+      run: hg pull
+
+    - name: Bootstrap a copy of the Firefox source code
+      if: steps.cache-source.outputs.cache-hit != 'true'
+      run: |
+        mkdir mozilla-source
+        cd mozilla-source
+        Invoke-WebRequest -Uri https://hg.mozilla.org/mozilla-central/raw-file/default/python/mozboot/bin/bootstrap.py -OutFile bootstrap.py
+        python3 bootstrap.py --no-interactive
