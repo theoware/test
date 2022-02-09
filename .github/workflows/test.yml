@@ -27,7 +27,7 @@ jobs:
       run: |
         mkdir mozilla-source
         cd mozilla-source
-        wget https://hg.mozilla.org/mozilla-central/raw-file/default/python/mozboot/bin/bootstrap.py
+        Invoke-WebRequest -Uri https://hg.mozilla.org/mozilla-central/raw-file/default/python/mozboot/bin/bootstrap.py -OutFile bootstrap.py
         python3 bootstrap.py
       
     - name: Build
