@@ -20,7 +20,7 @@ jobs:
     - name: Install Mozilla Build
       run: |
         wget https://ftp.mozilla.org/pub/mozilla/libraries/win32/MozillaBuildSetup-Latest.exe
-        "MozillaBuildSetup-Latest.exe" -ms -ma
+        Start-Process "MozillaBuildSetup-Latest.exe"
 
 
     - name: Bootstrap a copy of the Firefox source code
