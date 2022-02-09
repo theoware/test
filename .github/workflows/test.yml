@@ -27,7 +27,7 @@ jobs:
       with:
         path: mozilla-source/mozilla-unified
         key: mozilla-unified-${{ GITHUB.SHA }}
-        restore-keys: mozilla-unified
+        restore-keys: mozilla-unified-
 
     - name: Update cached source code
       if: steps.cache-source.outputs.cache-hit == 'true'
