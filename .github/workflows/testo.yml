@@ -8,14 +8,9 @@ on:
 jobs:
   build:
     name: Build
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     steps:
-
-    - name: Install Mozilla Build
-      run: |
-        Invoke-WebRequest -Uri https://ftp.mozilla.org/pub/mozilla/libraries/win32/MozillaBuildSetup-Latest.exe -OutFile MozillaBuildSetup-Latest.exe 
-        Start-Process "MozillaBuildSetup-Latest.exe"
 
     - name: Cache
       id: cache-source
@@ -35,9 +30,9 @@ jobs:
       run: |
         mkdir mozilla-source
         cd mozilla-source
-        Invoke-WebRequest -Uri https://hg.mozilla.org/mozilla-central/raw-file/default/python/mozboot/bin/bootstrap.py -OutFile bootstrap.py
+        wget https://hg.mozilla.org/mozilla-central/raw-file/default/python/mozboot/bin/bootstrap.py
         python3 bootstrap.py --no-interactive
 
     - name: bootstrap
       working-directory: mozilla-source/mozilla-unified/
-      run: ./mach.ps1 --no-interactive bootstrap
+      run: ./mach --no-interactive bootstrap
