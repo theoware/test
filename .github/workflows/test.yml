@@ -25,7 +25,7 @@ jobs:
       id: cache-source
       uses: actions/cache@main
       with:
-        path: mozilla-source/mozilla-unified
+        path: mozilla-source/
         key: mozilla-unified-${{ GITHUB.SHA }}
         restore-keys: mozilla-unified-
 
@@ -47,3 +47,6 @@ jobs:
       working-directory: mozilla-source/mozilla-unified
       run: |
         ./mach.ps1 --no-interactive build
+        ./mach.ps1 --no-interactive package
+
+    - run: Get-ChildItem . -Recurse
