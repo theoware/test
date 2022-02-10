@@ -17,9 +17,24 @@ jobs:
         vs-prerelease: true
         msbuild-architecture: x64, x86
 
-    - name: Install Mozilla Build
+    - name: Install gn
       run: |
-        choco install mozillabuild -y --pre
+        Invoke-WebRequest -Uri https://chrome-infra-packages.appspot.com/dl/gn/gn/windows-amd64/+/latest -OutFile gn.zip
+        Expand-Archive -LiteralPath gn.zip -DestinationPath gn/
+        cd gn/
+        $env:Path += "$(PWD)"
+
+    - name: Install Windows Dev kit
+      run: choco install windows-sdk-10-version-1903-all -y --pre
+
+    - name: Install Cygwin
+      run: choco install cygwin -y --pre
+
+    - name: Install GnuWin32 CoreUtils
+      run: choco install gnuwin32-coreutils.install -y --pre
+
+    - name: Install Mozilla Build
+      run: choco install mozillabuild -y --pre
 
     - name: Cache
       id: cache-source
@@ -50,3 +65,34 @@ jobs:
         ./mach.ps1 --no-interactive package
 
     - run: Get-ChildItem . -Recurse
+
+  cache:
+    name: Cache
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - name: Cache
+      id: cache-source
+      uses: actions/cache@main
+      with:
+        path: mozilla-source/mozilla-unified
+        key: mozilla-unified-${{ GITHUB.SHA }}
+        restore-keys: mozilla-unified
+
+    - name: Update cached source code
+      if: steps.cache-source.outputs.cache-hit == 'true'
+      run: hg pull
+
+    - name: Bootstrap a copy of the Firefox source code
+      continue-on-error: true
+      if: steps.cache-source.outputs.cache-hit != 'true'
+      run: |
+        mkdir mozilla-source
+        cd mozilla-source
+        wget https://hg.mozilla.org/mozilla-central/raw-file/default/python/mozboot/bin/bootstrap.py
+        python3 bootstrap.py --no-interactive
+
+    - name: bootstrap
+      working-directory: mozilla-source/mozilla-unified/
+      run: ./mach --no-interactive bootstrap
