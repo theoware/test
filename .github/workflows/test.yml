@@ -16,31 +16,19 @@ jobs:
         sudo apt update
         sudo apt install wine wine64 winetricks mercurial
 
-    - name: Cache
-      id: cache-source
-      uses: actions/cache@main
-      with:
-        path: mozilla-unified
-        key: mozilla-unified-${{ GITHUB.SHA }}
-        restore-keys: mozilla-unified
-
-    - name: Update cached source code
-      if: steps.cache-source.outputs.cache-hit == 'true'
-      run: hg pull
-
-    - name: Bootstrap a copy of the Firefox source code
-      continue-on-error: true
-      if: steps.cache-source.outputs.cache-hit != 'true'
+    - name: Download source code
       run: |
-        wget https://hg.mozilla.org/mozilla-central/raw-file/default/python/mozboot/bin/bootstrap.py
-        python3 bootstrap.py --no-interactive
-
-    - name: bootstrap
-      working-directory: mozilla-unified/
-      run: ./mach --no-interactive bootstrap
+        wget https://archive.mozilla.org/pub/firefox/releases/97.0/source/firefox-97.0.source.tar.xz
+        tar -Jxf firefox-97.0.source.tar.xz
 
     - name: Add .mozconfig options
-      run: echo "ac_add_options --target=x86_64-pc-mingw32" >> mozilla-unified/.mozconfig
+      run: |
+        echo "ac_add_options --target=x86_64-pc-mingw32" >> mozilla-unified/.mozconfig
+        echo "ac_add_options --enable-official-branding" >> mozilla-unified/.mozconfig
+        echo "ac_add_options --disable-debug-symbols" >> mozilla-unified/.mozconfig
+        echo "ac_add_options --disable-crashreporter" >> mozilla-unified/.mozconfig
+        echo "ac_add_options --target=x86_64-pc-mingw32" >> mozilla-unified/.mozconfig
+        echo "unset MOZ_TELEMETRY_REPORTING" >> mozilla-unified/.mozconfig
 
     - name: Install Microsoft Visual C++
       run: winetricks vcrun2015
@@ -59,7 +47,16 @@ jobs:
         wget https://software-download.microsoft.com/download/sg/22000.194.210911-1543.co_release_svc_prod1_WindowsSDK.iso -O sdk.iso
         sudo mount sdk.iso windowssdk
 
+    - name: Compile
+      env:
+        WINDOWSSDKDIR: ${{ GITHUB.WORKSPACE }}/windowssdk
+      run: |
+        ./mach configure
+        ./mach build
+        ./mach package
+
     - name: Debug
+      if: always()
       env:
         WINDOWSSDKDIR: ${{ GITHUB.WORKSPACE }}/windowssdk
       run: ls -R .
