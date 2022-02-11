@@ -13,8 +13,9 @@ jobs:
 
     - name: Install dependencies
       run: |
+        sudo dpkg --add-architecture i386
         sudo apt update
-        sudo apt install wine wine64 winetricks mercurial
+        sudo apt install wine wine32 wine64 winetricks mercurial 
 
     - name: Download source code
       run: |
