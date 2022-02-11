@@ -19,3 +19,5 @@ jobs:
         tar -Jxf firefox-97.0.source.tar.xz -C mozilla-unified/
 
     - run: du -sh mozilla-unified/
+
+    - run: ls -A mozilla-unified/ | wc -l
