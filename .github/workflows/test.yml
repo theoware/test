@@ -20,8 +20,9 @@ jobs:
 
     - name: Download source code
       run: |
+        mkdir mozilla-unified/
         wget https://archive.mozilla.org/pub/firefox/releases/97.0/source/firefox-97.0.source.tar.xz
-        tar -Jxf firefox-97.0.source.tar.xz
+        tar -Jxf firefox-97.0.source.tar.xz -C mozilla-unified/
 
     - name: Add .mozconfig options
       run: |
