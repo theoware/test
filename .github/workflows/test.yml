@@ -15,7 +15,8 @@ jobs:
       run: |
         sudo dpkg --add-architecture i386
         sudo apt update
-        sudo apt install --install-recommends lib32z1 wine wine32 wine64 winetricks mercurial 
+        sudo apt install -y --install-recommends lib32z1
+        sudo apt install -y --install-recommends wine wine32 wine64 winetricks mercurial 
 
     - name: Download source code
       run: |
