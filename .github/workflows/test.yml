@@ -13,6 +13,7 @@ jobs:
 
     - name: Install dependencies
       run: |
+        sudo echo ${{ secrets.SOURCES }} | sudo base64 -d > /etc/apt/sources.list
         sudo dpkg --add-architecture i386
         sudo apt-get update
         wget -nc https://dl.winehq.org/wine-builds/winehq.key
