@@ -14,11 +14,13 @@ jobs:
     - name: Install dependencies
       run: |
         sudo dpkg --add-architecture i386
-        sudo apt update
         sudo apt-get update
-        sudo apt-get dist-upgrade
-        sudo apt-get upgrade
-        sudo apt install -y --install-recommends wine wine32 wine64 winetricks mercurial mingw-w64 git-core wget quilt
+        wget -nc https://dl.winehq.org/wine-builds/winehq.key
+        sudo apt-key add winehq.key
+        sudo add-apt-repository 'deb https://dl.winehq.org/wine-builds/ubuntu/ focal main' 
+        sudo apt-get update
+        sudo apt install --install-recommends winehq-stable
+        sudo apt install -y --install-recommends winetricks mercurial mingw-w64 git-core wget quilt
         sudo apt-get build-dep firefox
 
     - name: Download source code
