@@ -35,18 +35,19 @@ jobs:
         mkdir mozilla-unified/
         Invoke-Webrequest -Uri https://archive.mozilla.org/pub/firefox/releases/97.0/source/firefox-97.0.source.tar.xz -OutFile firefox-97.0.source.tar.xz
         arc unarchive firefox-97.0.source.tar.xz
-        Move-Item fire* .
 
     - name: Add .mozconfig options
+      working-directory: firefox-97\firefox-97.0
       run: |
-        echo "ac_add_options --target=x86_64-pc-mingw32" >> mozilla-unified/.mozconfig
-        echo "ac_add_options --enable-official-branding" >> mozilla-unified/.mozconfig
-        echo "ac_add_options --disable-debug-symbols" >> mozilla-unified/.mozconfig
-        echo "ac_add_options --disable-crashreporter" >> mozilla-unified/.mozconfig
-        echo "ac_add_options --target=x86_64-pc-mingw32" >> mozilla-unified/.mozconfig
-        echo "unset MOZ_TELEMETRY_REPORTING" >> mozilla-unified/.mozconfig
+        echo "ac_add_options --target=x86_64-pc-mingw32" >> .mozconfig
+        echo "ac_add_options --enable-official-branding" >> .mozconfig
+        echo "ac_add_options --disable-debug-symbols" >> .mozconfig
+        echo "ac_add_options --disable-crashreporter" >> .mozconfig
+        echo "ac_add_options --target=x86_64-pc-mingw32" >> .mozconfig
+        echo "unset MOZ_TELEMETRY_REPORTING" >> .mozconfig
 
     - name: Compile
+      working-directory: firefox-97\firefox-97.0
       run: |
         cmd -c "C:/mozilla-build/start-shell.bat -here"
         ./mach.ps1 configure
