@@ -13,6 +13,7 @@ jobs:
 
     - name: Install dependencies
       run: |
+        Import-Module Appx
         Invoke-Webrequest -Uri https://github.com/microsoft/winget-cli/releases/download/v1.2.10271/Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle
         Add-AppxPackage Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle
         winget install Microsoft.VC++2015-2022Redist-x86
