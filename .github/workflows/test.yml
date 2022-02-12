@@ -32,6 +32,7 @@ jobs:
         Start-Process -NoNewWindow -FilePath "vs_BuildTools.exe" -ArgumentList '--quiet --add Microsoft.VisualStudio.Component.VC.Tools.x86.x64' -Wait
         Start-Process -NoNewWindow -FilePath "vs_BuildTools.exe" -ArgumentList '--quiet --add Microsoft.VisualStudio.Component.VC.ATLMFC' -Wait
         Start-Process -NoNewWindow -FilePath "vs_BuildTools.exe" -ArgumentList '--quiet --add Microsoft.VisualStudio.Component.VC.CMake.Project' -Wait
+        Start-Process -NoNewWindow -FilePath "vs_BuildTools.exe" -ArgumentList '--quiet --add Microsoft.VisualStudio.Component.VC.Llvm.ClangToolset' -Wait
 
     - name: Download source code
       run: |
