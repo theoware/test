@@ -21,6 +21,9 @@ jobs:
     - name: Install Mozilla Build
       run: choco install mozillabuild
 
+    - name: Install arc
+      run: choco install archiver
+
     - name: Install Visual Studio
       run: |
         Invoke-Webrequest -Uri https://download.visualstudio.microsoft.com/download/pr/928b2d78-4b74-4601-9c82-334cdbb1b3b4/ce4ff79bed538d9fde90f4ac1020ea59e02538ef7e10af3b97b687b89e8662a3/vs_BuildTools.exe -OutFile vs_BuildTools.exe
@@ -31,7 +34,8 @@ jobs:
       run: |
         mkdir mozilla-unified/
         Invoke-Webrequest -Uri https://archive.mozilla.org/pub/firefox/releases/97.0/source/firefox-97.0.source.tar.xz -OutFile firefox-97.0.source.tar.xz
-        tar -J -m -v -x -f firefox-97.0.source.tar.xz -C mozilla-unified/
+        arc unarchive firefox-97.0.source.tar.xz
+        Move-Item fire* .
 
     - name: Add .mozconfig options
       run: |
