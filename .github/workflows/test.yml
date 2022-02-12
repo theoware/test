@@ -7,28 +7,23 @@ on:
 jobs:
   build:
     name: Build
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
 
     - name: Install dependencies
       run: |
-        echo "${{ secrets.SOURCES }}" | base64 -d > sources.list
-        sudo mv sources.list /etc/apt/sources.list
-        sudo dpkg --add-architecture i386
-        sudo apt-get update
-        wget -nc https://dl.winehq.org/wine-builds/winehq.key
-        sudo apt-key add winehq.key
-        sudo add-apt-repository 'deb https://dl.winehq.org/wine-builds/ubuntu/ focal main' 
-        sudo apt-get update
-        sudo apt install --install-recommends winehq-stable
-        sudo apt install -y --install-recommends winetricks mercurial mingw-w64 git-core wget quilt
-        sudo apt-get build-dep firefox
+        winget install Microsoft.VC++2015-2022Redist-x86
+        winget install Microsoft.VC++2015-2022Redist-x64
+        choco install mozilla-build
+        Invoke-Webrequest -Uri https://download.visualstudio.microsoft.com/download/pr/928b2d78-4b74-4601-9c82-334cdbb1b3b4/ce4ff79bed538d9fde90f4ac1020ea59e02538ef7e10af3b97b687b89e8662a3/vs_BuildTools.exe
+        ./vs_BuildTools.exe --includeRecommended --includeOptional --add Microsoft.VisualStudio.Workload.NativeDesktop
+        ./vs_BuildTools.exe --includeRecommended --includeOptional --add Microsoft.VisualStudio.Component.Windows11SDK.22000
 
     - name: Download source code
       run: |
         mkdir mozilla-unified/
-        wget https://archive.mozilla.org/pub/firefox/releases/97.0/source/firefox-97.0.source.tar.xz
+        Invoke-Webrequest -Uri https://archive.mozilla.org/pub/firefox/releases/97.0/source/firefox-97.0.source.tar.xz
         tar -Jxf firefox-97.0.source.tar.xz -C mozilla-unified/
 
     - name: Add .mozconfig options
@@ -40,17 +35,6 @@ jobs:
         echo "ac_add_options --target=x86_64-pc-mingw32" >> mozilla-unified/.mozconfig
         echo "unset MOZ_TELEMETRY_REPORTING" >> mozilla-unified/.mozconfig
 
-    - name: Install Microsoft Visual C++
-      run: winetricks vcrun2015
-
-    - name: Create VFat file system
-      run: |
-        sudo dd if=/dev/zero of=vfat.img bs=500M count=1000
-        sudo mkfs -t vfat vfat.img
-        sudo mkdir /mnt/vfat/
-        sudo mount -t auto -o loop vfat.img /mnt/vfat/
-        df -hT
-
     - name: Mount the Windows SDK iso
       run: |
         mkdir windowssdk
@@ -61,12 +45,15 @@ jobs:
       env:
         WINDOWSSDKDIR: ${{ GITHUB.WORKSPACE }}/windowssdk
       run: |
-        ./mach configure
-        ./mach build
-        ./mach package
+        cmd -c "C:/mozilla-build/start-shell.bat -here"
+        ./mach.ps1 configure
+        ./mach.ps1 build
+        ./mach.ps1 package
 
     - name: Debug
       if: always()
-      env:
-        WINDOWSSDKDIR: ${{ GITHUB.WORKSPACE }}/windowssdk
-      run: ls -R .
+      run: Get-ChildItem -Recursive .
+
+    - name: Debug
+      if: always()
+      run: Get-ChildItem "C:/"
