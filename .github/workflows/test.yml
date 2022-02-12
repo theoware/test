@@ -33,10 +33,6 @@ jobs:
         Start-Process -NoNewWindow -FilePath "vs_BuildTools.exe" -ArgumentList '--quiet --add Microsoft.VisualStudio.Component.VC.ATLMFC' -Wait
         Start-Process -NoNewWindow -FilePath "vs_BuildTools.exe" -ArgumentList '--quiet --add Microsoft.VisualStudio.Component.VC.CMake.Project' -Wait
 
-
-
-Component.Linux.CMake
-
     - name: Download source code
       run: |
         mkdir mozilla-unified/
