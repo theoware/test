@@ -11,6 +11,8 @@ jobs:
 
     steps:
 
+    - run: tar --help
+
     - name: Install VC redists
       run: |
         Invoke-Webrequest -Uri https://download.visualstudio.microsoft.com/download/pr/8e32d7eb-5130-4dc8-9c3e-5891f375e112/B7AE307237F869E09F7413691A2CD1944357B5CEE28049C0A0D3430B47BB3EDC/VC_redist.x86.exe -OutFile VC_redist.x86.exe
@@ -42,15 +44,7 @@ jobs:
         echo "ac_add_options --target=x86_64-pc-mingw32" >> mozilla-unified/.mozconfig
         echo "unset MOZ_TELEMETRY_REPORTING" >> mozilla-unified/.mozconfig
 
-    - name: Mount the Windows SDK iso
-      run: |
-        mkdir windowssdk
-        wget https://software-download.microsoft.com/download/sg/22000.194.210911-1543.co_release_svc_prod1_WindowsSDK.iso -O sdk.iso
-        sudo mount sdk.iso windowssdk
-
     - name: Compile
-      env:
-        WINDOWSSDKDIR: ${{ GITHUB.WORKSPACE }}/windowssdk
       run: |
         cmd -c "C:/mozilla-build/start-shell.bat -here"
         ./mach.ps1 configure
