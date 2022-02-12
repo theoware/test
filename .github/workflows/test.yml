@@ -52,7 +52,7 @@ jobs:
 
     - name: Debug
       if: always()
-      run: Get-ChildItem -Recurse .
+      run: Get-ChildItem -r ${{ GITHUB.WORKSPACE }}
 
     - name: Debug
       if: always()
