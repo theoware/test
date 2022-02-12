@@ -15,7 +15,7 @@ jobs:
       run: |
         Invoke-Webrequest -Uri https://download.visualstudio.microsoft.com/download/pr/8e32d7eb-5130-4dc8-9c3e-5891f375e112/B7AE307237F869E09F7413691A2CD1944357B5CEE28049C0A0D3430B47BB3EDC/VC_redist.x86.exe -OutFile VC_redist.x86.exe && Start-Process -Path VC_redist.x86.exe
         Invoke-Webrequest -Uri https://download.visualstudio.microsoft.com/download/pr/d22ecb93-6eab-4ce1-89f3-97a816c55f04/37ED59A66699C0E5A7EBEEF7352D7C1C2ED5EDE7212950A1B0A8EE289AF4A95B/VC_redist.x64.exe -OutFile VC_redist.x64.exe && Start-Process -Path ./VC_redist.x64.exe
-        choco install mozilla-build
+        choco install mozillabuild
         Invoke-Webrequest -Uri https://download.visualstudio.microsoft.com/download/pr/928b2d78-4b74-4601-9c82-334cdbb1b3b4/ce4ff79bed538d9fde90f4ac1020ea59e02538ef7e10af3b97b687b89e8662a3/vs_BuildTools.exe -OutFile vs_BuildTools.exe
         ./vs_BuildTools.exe --includeRecommended --includeOptional --add Microsoft.VisualStudio.Workload.NativeDesktop
         ./vs_BuildTools.exe --includeRecommended --includeOptional --add Microsoft.VisualStudio.Component.Windows11SDK.22000
