@@ -30,6 +30,8 @@ jobs:
         Start-Process -NoNewWindow -FilePath "vs_BuildTools.exe" -ArgumentList '--quiet --includeRecommended --includeOptional --add Microsoft.VisualStudio.Workload.NativeDesktop' -Wait
         Start-Process -NoNewWindow -FilePath "vs_BuildTools.exe" -ArgumentList '--quiet --includeRecommended --includeOptional --add Microsoft.VisualStudio.Component.Windows11SDK.22000' -Wait
         Start-Process -NoNewWindow -FilePath "vs_BuildTools.exe" -ArgumentList '--quiet --includeRecommended --includeOptional --add Microsoft.VisualStudio.Component.VC.Tools.x86.x64' -Wait
+        Start-Process -NoNewWindow -FilePath "vs_BuildTools.exe" -ArgumentList '--quiet --includeRecommended --includeOptional --add Microsoft.VisualStudio.Component.VC.ATLMFC' -Wait
+
     - name: Download source code
       run: |
         mkdir mozilla-unified/
