@@ -31,12 +31,8 @@ jobs:
     - name: Install dependencies
       run: |
         choco feature disable --name showDownloadProgress
-        choco install -y --pre mozillabuild archiver ninja cmake msys2-installer
+        choco install -y --pre mozillabuild archiver ninja cmake msys2-installer llvm
         pip install psutil
-
-    - name: Find pacman
-      run: |
-        bash -l -c "find / -name *pacman*"
 
     - name: Download source code
       run: |
