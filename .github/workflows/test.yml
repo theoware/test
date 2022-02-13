@@ -36,6 +36,8 @@ jobs:
         Get-ChildItem -Recurse "C:\Program Files\LLVM\"
         Copy-Item "C:\Program Files\LLVM\bin\llvm-ar.exe" "C:\Program Files\LLVM\bin\llvm-dlltool.exe"
 
+    - run: nasm --version
+
     - name: Download source code
       run: |
         mkdir mozilla-unified/
