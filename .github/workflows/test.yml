@@ -37,6 +37,7 @@ jobs:
     - name: Install LLVM
       run: |
         bash -l -c "ls /usr/bin/"
+        bash -l -c "find / -name *pacman*"
         bash -l -c "pacman -S mingw-w64-x86_64-llvm"
 
     - name: Download source code
