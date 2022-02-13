@@ -11,10 +11,11 @@ jobs:
 
     steps:
 
-    - name: Install Chocolatey dependencies
+    - name: Install dependencies
       run: |
         choco feature disable --name showDownloadProgress
-        choco install -y --pre mozillabuild archiver ninja cmake gnuwin psutil
+        choco install -y --pre mozillabuild archiver ninja cmake gnuwin
+        pip install psutil
 
     - name: Install VC redists
       run: |
@@ -32,7 +33,6 @@ jobs:
       run: |
         regsvr32 /S "C:\BuildTools\DIA SDK\bin\amd64\msdia140.dll"
         regsvr32 /S "C:\BuildTools\DIA SDK\bin\msdia140.dll"
-
 
     - name: Download source code
       run: |
