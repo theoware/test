@@ -11,12 +11,6 @@ jobs:
 
     steps:
 
-    - name: Install dependencies
-      run: |
-        choco feature disable --name showDownloadProgress
-        choco install -y --pre mozillabuild archiver ninja cmake msys2
-        pip install psutil
-
     - name: Install VC redists
       run: |
         Invoke-Webrequest -Uri https://download.visualstudio.microsoft.com/download/pr/8e32d7eb-5130-4dc8-9c3e-5891f375e112/B7AE307237F869E09F7413691A2CD1944357B5CEE28049C0A0D3430B47BB3EDC/VC_redist.x86.exe -OutFile VC_redist.x86.exe
@@ -33,6 +27,12 @@ jobs:
       run: |
         regsvr32 /S "C:\BuildTools\DIA SDK\bin\amd64\msdia140.dll"
         regsvr32 /S "C:\BuildTools\DIA SDK\bin\msdia140.dll"
+
+    - name: Install dependencies
+      run: |
+        choco feature disable --name showDownloadProgress
+        choco install -y --pre mozillabuild archiver ninja cmake msys2
+        pip install psutil
 
     - name: Download source code
       run: |
