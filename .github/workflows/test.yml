@@ -33,7 +33,8 @@ jobs:
         choco feature disable --name showDownloadProgress
         choco install -y --pre mozillabuild archiver ninja cmake msys2-installer nasm
         pip install psutil
-        Get-ChildItem -Recurse "C:\Program Files\LLVM\"
+        Get-ChildItem -Recurse "C:\Program Files\NASM\"
+        setx Path "%Path%;C:\Program Files\NASM\"
         Copy-Item "C:\Program Files\LLVM\bin\llvm-ar.exe" "C:\Program Files\LLVM\bin\llvm-dlltool.exe"
 
     - run: nasm --version
