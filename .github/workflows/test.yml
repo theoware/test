@@ -14,7 +14,7 @@ jobs:
     - name: Install dependencies
       run: |
         choco feature disable --name showDownloadProgress
-        choco install -y --pre mozillabuild archiver ninja cmake gnuwin
+        choco install -y --pre mozillabuild archiver ninja cmake msys2
         pip install psutil
 
     - name: Install VC redists
