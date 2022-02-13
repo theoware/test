@@ -31,7 +31,7 @@ jobs:
     - name: Install dependencies
       run: |
         choco feature disable --name showDownloadProgress
-        choco install -y --pre mozillabuild archiver ninja cmake msys2
+        choco install -y --pre mozillabuild archiver ninja cmake msys2-installer
         pip install psutil
 
     - name: Install LLVM
