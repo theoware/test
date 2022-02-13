@@ -31,7 +31,7 @@ jobs:
     - name: Install dependencies
       run: |
         choco feature disable --name showDownloadProgress
-        choco install -y --pre mozillabuild archiver ninja cmake msys2-installer
+        choco install -y --pre mozillabuild archiver ninja cmake msys2-installer nasm
         pip install psutil
         Get-ChildItem -Recurse "C:\Program Files\LLVM\"
         Copy-Item "C:\Program Files\LLVM\bin\llvm-ar.exe" "C:\Program Files\LLVM\bin\llvm-dlltool.exe"
