@@ -35,7 +35,7 @@ jobs:
         pip install psutil
 
     - name: Install LLVM
-      run: pacman -S mingw-w64-x86_64-llvm
+      run: bash -l -c "pacman -S mingw-w64-x86_64-llvm"
 
     - name: Download source code
       run: |
