@@ -31,8 +31,23 @@ jobs:
     - name: Install dependencies
       run: |
         choco feature disable --name showDownloadProgress
-        choco install -y --pre mozillabuild archiver ninja cmake msys2-installer llvm
+        choco install -y --pre mozillabuild archiver ninja cmake msys2-installer
         pip install psutil
+
+    - name: Download LLVM
+      uses: actions/checkout@main
+      with:
+        path: llvm-project/
+        repository: llvm/llvm-project
+
+    - name: Compile LLVM
+      run: |
+        mkdir llvm-out/
+        cd llvm-out/
+        cmake ${{ GITHUB.WORKSPACE }}/llvm-project
+        cd ${{ GITHUB.WORKSPACE }}/llvm-project
+        cmake --build .
+        cmake --build . --target install
 
     - name: Download source code
       run: |
