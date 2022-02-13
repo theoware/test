@@ -34,11 +34,9 @@ jobs:
         choco install -y --pre mozillabuild archiver ninja cmake msys2-installer
         pip install psutil
 
-    - name: Install LLVM
+    - name: Find pacman
       run: |
-        bash -l -c "ls /usr/bin/"
         bash -l -c "find / -name *pacman*"
-        bash -l -c "pacman -S mingw-w64-x86_64-llvm"
 
     - name: Download source code
       run: |
