@@ -21,7 +21,14 @@ jobs:
     - name: Install Visual Studio
       run: |
         Invoke-Webrequest -Uri https://download.visualstudio.microsoft.com/download/pr/928b2d78-4b74-4601-9c82-334cdbb1b3b4/ce4ff79bed538d9fde90f4ac1020ea59e02538ef7e10af3b97b687b89e8662a3/vs_BuildTools.exe -OutFile vs_BuildTools.exe
-        Start-Process -NoNewWindow -FilePath "vs_BuildTools.exe" -ArgumentList '--wait --norestart --nocache --installPath C:\BuildTools --add Microsoft.VisualStudio.Workload.NativeDesktop --includeRecommended --add Microsoft.VisualStudio.Component.Windows11SDK.22000 --add Microsoft.VisualStudio.Component.VC.Tools.x86.x64 --add Microsoft.VisualStudio.Component.VC.ATLMFC --add Microsoft.VisualStudio.Component.VC.CMake.Project --add Microsoft.VisualStudio.Component.VC.Llvm.ClangToolset' -Wait
+        Start-Process -NoNewWindow -FilePath "vs_BuildTools.exe" -ArgumentList '--wait --norestart --nocache --installPath C:\BuildTools --add Microsoft.VisualStudio.Workload.NativeDesktop --includeRecommended' -Wait
+        Start-Process -NoNewWindow -FilePath "vs_BuildTools.exe" -ArgumentList '--wait --norestart --nocache --installPath C:\BuildTools --includeRecommended --add Microsoft.VisualStudio.Component.Windows11SDK.22000' -Wait
+        Start-Process -NoNewWindow -FilePath "vs_BuildTools.exe" -ArgumentList '--wait --norestart --nocache --installPath C:\BuildTools --includeRecommended --add Microsoft.VisualStudio.Component.VC.Tools.x86.x64' -Wait
+        Start-Process -NoNewWindow -FilePath "vs_BuildTools.exe" -ArgumentList '--wait --norestart --nocache --installPath C:\BuildTools --includeRecommended --add Microsoft.VisualStudio.Component.VC.ATLMFC ' -Wait
+        Start-Process -NoNewWindow -FilePath "vs_BuildTools.exe" -ArgumentList '--wait --norestart --nocache --installPath C:\BuildTools --includeRecommended --add Microsoft.VisualStudio.Component.VC.Tools.x86.x64' -Wait
+        Start-Process -NoNewWindow -FilePath "vs_BuildTools.exe" -ArgumentList '--wait --norestart --nocache --installPath C:\BuildTools --includeRecommended --add Microsoft.VisualStudio.Component.VC.ATLMFC' -Wait
+        Start-Process -NoNewWindow -FilePath "vs_BuildTools.exe" -ArgumentList '--wait --norestart --nocache --installPath C:\BuildTools --includeRecommended --add Microsoft.VisualStudio.Component.VC.CMake.Project' -Wait
+        Start-Process -NoNewWindow -FilePath "vs_BuildTools.exe" -ArgumentList '--wait --norestart --nocache --installPath C:\BuildTools --includeRecommended --add Microsoft.VisualStudio.Component.VC.Llvm.ClangToolset' -Wait
 
     - name: Register DIA dll
       run: |
