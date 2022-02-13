@@ -32,6 +32,7 @@ jobs:
       run: |
         choco feature disable --name showDownloadProgress
         choco install -y --pre mozillabuild archiver ninja cmake msys2
+        pacman -S mingw-w64-x86_64-llvm
         pip install psutil
 
     - name: Download source code
