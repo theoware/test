@@ -53,8 +53,8 @@ jobs:
         echo "ac_add_options --disable-debug-symbols" >> .mozconfig
         echo "ac_add_options --disable-crashreporter" >> .mozconfig
         echo "ac_add_options --target=x86_64-pc-mingw32" >> .mozconfig
+        echo "ac_add_options --with-wasi-sysroot=C:/wasi-sysroot" >> .mozconfig
         echo "unset MOZ_TELEMETRY_REPORTING" >> .mozconfig
-        echo "ac_add_options --with-wasi-sysroot=C:\wasi-sysroot" >> .mozconfig
 
     - name: Compile
       working-directory: firefox-97\firefox-97.0
