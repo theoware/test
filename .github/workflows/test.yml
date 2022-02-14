@@ -57,7 +57,7 @@ jobs:
       run: |
         $env:Path += ";C:\Program Files\NASM\"
         nasm --version
-        cmd -c "C:/mozilla-build/start-shell.bat -here"
+        cmd /c "C:/mozilla-build/start-shell.bat -here"
         ./mach.ps1 configure
         ./mach.ps1 build
         ./mach.ps1 package
