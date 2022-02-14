@@ -35,6 +35,8 @@ jobs:
         pip install psutil
         Get-ChildItem -Recurse "C:\Program Files\NASM\"
         Copy-Item "C:\Program Files\LLVM\bin\llvm-ar.exe" "C:\Program Files\LLVM\bin\llvm-dlltool.exe"
+        Invoke-Webrequest -Uri https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-14/wasi-sysroot-14.0.tar.gz -OutFile wasi-sysroot-14.0.tar.gz
+        arc unarchive wasi-sysroot-14.0.tar.gz
 
     - name: Download source code
       run: |
@@ -51,14 +53,14 @@ jobs:
         echo "ac_add_options --disable-crashreporter" >> .mozconfig
         echo "ac_add_options --target=x86_64-pc-mingw32" >> .mozconfig
         echo "unset MOZ_TELEMETRY_REPORTING" >> .mozconfig
+        echo "ac_add_options --with-wasi-sysroot=${{ GITHUB.WORKSPACE }}/wasi-sysroot" >> .mozconfig
 
     - name: Compile
       working-directory: firefox-97\firefox-97.0
       run: |
         $env:Path += ";C:\Program Files\NASM\"
-        nasm --version
         cmd /c "C:/mozilla-build/start-shell.bat -here"
-        ./mach.ps1 configure
+        ./mach.ps1 configure 
         ./mach.ps1 build
         ./mach.ps1 package
 
