@@ -8,6 +8,9 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        NDK: [r21e, r22b]
 
     steps:
 
@@ -29,7 +32,7 @@ jobs:
       uses: nttld/setup-ndk@main
       id: setup-ndk
       with:
-        ndk-version: r23b
+        ndk-version: ${{ matrix.NDK }}
         add-to-path: true
 
     - name: Remove a file
