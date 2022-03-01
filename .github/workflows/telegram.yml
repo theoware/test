@@ -90,8 +90,6 @@ jobs:
 
     - name: Build Telegram-FOSS
       env:
-        ANDROID_SDK_ROOT: $ANDROID_HOME
-        ANDROID_HOME: $ANDROID_HOME
         NINJA_PATH: /usr/bin/ninja
       run: |
         ./gradlew assembleAfatRelease --no-daemon
