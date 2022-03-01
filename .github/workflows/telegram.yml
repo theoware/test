@@ -14,6 +14,7 @@ jobs:
       ANDROID_HOME: ${{ github.workspace }}/ndk/ndk/21.4.7075529
       ANDROID_HOME1: ${{ github.workspace }}/ndk
       NDK: ${{ github.workspace }}/ndk/ndk/21.4.7075529
+      ANDROID_SDK_ROOT: ${{ github.workspace }}/ndk/ndk/21.4.7075529
 
     steps:
 
