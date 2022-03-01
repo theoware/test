@@ -45,6 +45,10 @@ jobs:
         ndk-version: r21e
         add-to-path: true
 
+    - name: Accept licenses
+      run: |
+        yes | sdkmanager --licenses
+
     - name: Remove a file
       run: rm -f TMessagesProj/jni/ffmpeg/tests/ref/fate/sub-microdvd-remux
 
