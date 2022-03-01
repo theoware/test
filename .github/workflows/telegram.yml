@@ -11,6 +11,7 @@ jobs:
     env:
       NDK_CCACHE: ${{ github.workspace }}/ccache
       CCACHE_DIR: ${{ github.workspace }}/.ccache
+      ANDROID_HOME: ${{ github.workspace }}/ndk/ndk/21.4.7075529
 
     steps:
 
@@ -42,8 +43,8 @@ jobs:
       run: |
         wget https://dl.google.com/android/repository/commandlinetools-linux-8092744_latest.zip -O clt.zip
         unzip clt.zip -d clt/
-        yes | clt/cmdline-tools/bin/sdkmanager "ndk;21.4.7075529" "patcher;v4" --sdk_root="ndk/"
-        yes | clt/cmdline-tools/bin/sdkmanager --licenses --sdk_root="ndk/"
+        yes | clt/cmdline-tools/bin/sdkmanager "ndk;21.4.7075529" "patcher;v4" --sdk_root="$ANDROID_HOME"
+        yes | clt/cmdline-tools/bin/sdkmanager --licenses --sdk_root="$ANDROID_HOME"
 
     - name: Remove a file
       run: rm -f TMessagesProj/jni/ffmpeg/tests/ref/fate/sub-microdvd-remux
@@ -56,7 +57,7 @@ jobs:
     - name: Build libvpx with clang
       working-directory: TMessagesProj/jni
       env:
-        NDK: ndk
+        NDK: $ANDROID_HOME
         NINJA_PATH: /usr/bin/ninja
       run: |
         ./build_libvpx_clang.sh
@@ -64,39 +65,39 @@ jobs:
     - name: Build FFmpeg with clang
       working-directory: TMessagesProj/jni
       env:
-        NDK: ndk
+        NDK: $ANDROID_HOME
         NINJA_PATH: /usr/bin/ninja
       run: ./build_ffmpeg_clang.sh
 
     - name: Patch FFmpeg
       working-directory: TMessagesProj/jni
       env:
-        NDK: ndk
+        NDK: $ANDROID_HOME
         NINJA_PATH: /usr/bin/ninja
       run: ./patch_ffmpeg.sh
 
     - name: Patch BoringSSL
       working-directory: TMessagesProj/jni
       env:
-        NDK: ndk
+        NDK: $ANDROID_HOME
         NINJA_PATH: /usr/bin/ninja
       run: ./patch_boringssl.sh
 
     - name: Build BoringSSL
       working-directory: TMessagesProj/jni
       env:
-        NDK: ndk
+        NDK: $ANDROID_HOME
         NINJA_PATH: /usr/bin/ninja
       run: ./build_boringssl.sh
 
     - name: Build Telegram-FOSS
       env:
-        NDK: ndk
-        ANDROID_SDK_ROOT: ndk
-        ANDROID_HOME: ndk
+        NDK: $ANDROID_HOME
+        ANDROID_SDK_ROOT: $ANDROID_HOME
+        ANDROID_HOME: $ANDROID_HOME
         NINJA_PATH: /usr/bin/ninja
       run: |
-        ./gradlew x64 --no-daemon
+        ./gradlew assembleAfatRelease --no-daemon
 
     - name: Sign the APKs
       run: |
