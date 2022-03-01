@@ -43,16 +43,44 @@ jobs:
       working-directory: TMessagesProj/jni
       run: find . -type f -executable
 
-    - name: Build
-      working-directory: TMessagesProj
+    - name: Build libvpx with clang
+      working-directory: TMessagesProj/jni
       env:
         NDK: ${{ steps.setup-ndk.outputs.ndk-path }}
         NINJA_PATH: /usr/bin/ninja
       run: |
-        pushd jni
         ./build_libvpx_clang.sh
-        ./build_ffmpeg_clang.sh
-        ./patch_ffmpeg.sh
-        ./patch_boringssl.sh
-        ./build_boringssl.sh
-        popd
+
+    - name: Build FFmpeg with clang
+      working-directory: TMessagesProj/jni
+      env:
+        NDK: ${{ steps.setup-ndk.outputs.ndk-path }}
+        NINJA_PATH: /usr/bin/ninja
+      run: ./build_ffmpeg_clang.sh
+
+    - name: Patch FFmpeg
+      working-directory: TMessagesProj/jni
+      env:
+        NDK: ${{ steps.setup-ndk.outputs.ndk-path }}
+        NINJA_PATH: /usr/bin/ninja
+      run: ./patch_ffmpeg.sh
+
+    - name: Patch BoringSSL
+      working-directory: TMessagesProj/jni
+      env:
+        NDK: ${{ steps.setup-ndk.outputs.ndk-path }}
+        NINJA_PATH: /usr/bin/ninja
+      run: ./patch_boringssl.sh
+
+    - name: Build BoringSSL
+      working-directory: TMessagesProj/jni
+      env:
+        NDK: ${{ steps.setup-ndk.outputs.ndk-path }}
+        NINJA_PATH: /usr/bin/ninja
+      run: ./build_boringssl.sh
+
+    - name: Build Telegram-FOSS
+      env:
+        NDK: ${{ steps.setup-ndk.outputs.ndk-path }}
+        NINJA_PATH: /usr/bin/ninja
+      run: ./gradlew assembleAfatRelease
