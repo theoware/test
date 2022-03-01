@@ -108,6 +108,7 @@ jobs:
       run: rm -f keystore.jks
 
     - run: ls -R .
+      if: always()
 
     - name: Upload unsigned APKs
       uses: actions/upload-artifact@main
