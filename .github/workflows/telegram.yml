@@ -12,6 +12,7 @@ jobs:
       NDK_CCACHE: ${{ github.workspace }}/ccache
       CCACHE_DIR: ${{ github.workspace }}/.ccache
       ANDROID_HOME: ${{ github.workspace }}/ndk/ndk/21.4.7075529
+      NDK: ${{ github.workspace }}/ndk/ndk/21.4.7075529
 
     steps:
 
@@ -57,7 +58,6 @@ jobs:
     - name: Build libvpx with clang
       working-directory: TMessagesProj/jni
       env:
-        NDK: $ANDROID_HOME
         NINJA_PATH: /usr/bin/ninja
       run: |
         ./build_libvpx_clang.sh
@@ -65,34 +65,29 @@ jobs:
     - name: Build FFmpeg with clang
       working-directory: TMessagesProj/jni
       env:
-        NDK: $ANDROID_HOME
         NINJA_PATH: /usr/bin/ninja
       run: ./build_ffmpeg_clang.sh
 
     - name: Patch FFmpeg
       working-directory: TMessagesProj/jni
       env:
-        NDK: $ANDROID_HOME
         NINJA_PATH: /usr/bin/ninja
       run: ./patch_ffmpeg.sh
 
     - name: Patch BoringSSL
       working-directory: TMessagesProj/jni
       env:
-        NDK: $ANDROID_HOME
         NINJA_PATH: /usr/bin/ninja
       run: ./patch_boringssl.sh
 
     - name: Build BoringSSL
       working-directory: TMessagesProj/jni
       env:
-        NDK: $ANDROID_HOME
         NINJA_PATH: /usr/bin/ninja
       run: ./build_boringssl.sh
 
     - name: Build Telegram-FOSS
       env:
-        NDK: $ANDROID_HOME
         ANDROID_SDK_ROOT: $ANDROID_HOME
         ANDROID_HOME: $ANDROID_HOME
         NINJA_PATH: /usr/bin/ninja
