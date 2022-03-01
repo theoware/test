@@ -8,9 +8,9 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        NDK: [r21e, r22b]
+    env:
+      NDK_CCACHE: ${{ github.workspace }}/ccache
+      CCACHE_DIR: ${{ github.workspace }}/.ccache
 
     steps:
 
@@ -25,14 +25,23 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt-get update || sudo apt-get update
-        sudo apt-get install -y openjdk-11-jdk-headless ninja-build golang-go yasm
+        sudo apt-get install -y openjdk-11-jdk-headless ninja-build golang-go yasm ccache
         sudo update-alternatives --auto java
+        ln -s $(which ccache) ./ccache
+
+    - name: Cache ccache
+      id: ccache-cache
+      uses: actions/cache@main
+      with:
+        path: ${{ github.workspace }}/.ccache
+        key: ccache-${{ github.sha }}
+        restore-keys: ccache-
 
     - name: Install the android NDK
       uses: nttld/setup-ndk@main
       id: setup-ndk
       with:
-        ndk-version: ${{ matrix.NDK }}
+        ndk-version: r21e
         add-to-path: true
 
     - name: Remove a file
@@ -84,5 +93,18 @@ jobs:
     - name: Build Telegram-FOSS
       env:
         NDK: ${{ steps.setup-ndk.outputs.ndk-path }}
+        ANDROID_SDK_ROOT: ${{ steps.setup-ndk.outputs.ndk-path }}
         NINJA_PATH: /usr/bin/ninja
-      run: ./gradlew assembleAfatRelease
+      run: |
+        ccache -zp
+        ./gradlew x64 --no-daemon
+
+    - run: ls -R .
+
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@main
+      with:
+        # Artifact name
+        name: outputs
+        # A file, directory or wildcard pattern that describes what to upload
+        path: build/outputs/
