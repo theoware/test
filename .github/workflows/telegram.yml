@@ -28,6 +28,7 @@ jobs:
         sudo apt-get install -y openjdk-11-jdk-headless ninja-build golang-go yasm ccache
         sudo update-alternatives --auto java
         ln -s $(which ccache) ./ccache
+        wget https://github.com/patrickfav/uber-apk-signer/releases/download/v1.2.1/uber-apk-signer-1.2.1.jar -O uber-apk-signer.jar
 
     - name: Cache ccache
       id: ccache-cache
@@ -99,12 +100,31 @@ jobs:
         ccache -zp
         ./gradlew x64 --no-daemon
 
+    - name: Sign the APKs
+      run: |
+        echo "${{ secrets.TELEGRAM_KEYSTORE }}" | base64 -d > keystore.jks
+        java -jar uber-apk-signer.jar --apks build/outputs/* --ks keystore.jks --ksAlias ${{ secrets.TELEGRAM_KEYSTORE_ALIAS }} --ksKeyPass ${{ secrets.TELEGRAM_KEYSTORE_PASSWORD }} --ksPass ${{ secrets.TELEGRAM_KEYSTORE_PASSWORD }} -o signed/
+
+    - name: Remove Keystore
+      if: always()
+      run: rm -f keystore.jks
+
     - run: ls -R .
 
-    - name: Upload a Build Artifact
+    - name: Upload unsigned APKs
       uses: actions/upload-artifact@main
       with:
         # Artifact name
         name: outputs
         # A file, directory or wildcard pattern that describes what to upload
-        path: build/outputs/
+        path: |
+          build/outputs/
+
+    - name: Upload signed APKs
+      uses: actions/upload-artifact@main
+      with:
+        # Artifact name
+        name: signed
+        # A file, directory or wildcard pattern that describes what to upload
+        path: |
+          signed/
