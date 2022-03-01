@@ -42,7 +42,7 @@ jobs:
       run: |
         wget https://dl.google.com/android/repository/commandlinetools-linux-8092744_latest.zip -O clt.zip
         unzip clt.zip -d clt/
-        clt/cmdline-tools/bin/sdkmanager "ndk;21.4.7075529" "patcher;v4" --sdk_root="ndk/"
+        yes | clt/cmdline-tools/bin/sdkmanager "ndk;21.4.7075529" "patcher;v4" --sdk_root="ndk/"
         yes | sdkmanager --licenses --sdk_root="ndk/"
 
     - name: Remove a file
