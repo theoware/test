@@ -51,9 +51,7 @@ jobs:
     - name: Add API keys
       run: echo -e 'APP_ID = 12834\nAPP_HASH = c84d9229db1d6be95c067b02b126352c' > API_KEYS
 
-    - name: Delete binaries
-      working-directory: TMessagesProj/jni
-      run: find . -type f -executable
+    - run: ccache -zp
 
     - name: Build libvpx with clang
       working-directory: TMessagesProj/jni
@@ -95,9 +93,9 @@ jobs:
       env:
         NDK: ${{ steps.setup-ndk.outputs.ndk-path }}
         ANDROID_SDK_ROOT: ${{ steps.setup-ndk.outputs.ndk-path }}
+        ANDROID_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
         NINJA_PATH: /usr/bin/ninja
       run: |
-        ccache -zp
         ./gradlew x64 --no-daemon
 
     - name: Sign the APKs
