@@ -39,15 +39,11 @@ jobs:
         restore-keys: ccache-
 
     - name: Install the android NDK
-      uses: nttld/setup-ndk@main
-      id: setup-ndk
-      with:
-        ndk-version: r21e
-        add-to-path: true
-
-    - name: Accept licenses
       run: |
-        yes | sdkmanager --licenses
+        wget https://dl.google.com/android/repository/commandlinetools-linux-8092744_latest.zip -O clt.zip
+        unzip clt.zip -d clt/
+        clt/cmdline-tools/bin/sdkmanager "ndk;21.4.7075529" "patcher;v4" --sdk_root="ndk/"
+        yes | sdkmanager --licenses --sdk_root="ndk/"
 
     - name: Remove a file
       run: rm -f TMessagesProj/jni/ffmpeg/tests/ref/fate/sub-microdvd-remux
@@ -60,7 +56,7 @@ jobs:
     - name: Build libvpx with clang
       working-directory: TMessagesProj/jni
       env:
-        NDK: ${{ steps.setup-ndk.outputs.ndk-path }}
+        NDK: ndk
         NINJA_PATH: /usr/bin/ninja
       run: |
         ./build_libvpx_clang.sh
@@ -68,36 +64,36 @@ jobs:
     - name: Build FFmpeg with clang
       working-directory: TMessagesProj/jni
       env:
-        NDK: ${{ steps.setup-ndk.outputs.ndk-path }}
+        NDK: ndk
         NINJA_PATH: /usr/bin/ninja
       run: ./build_ffmpeg_clang.sh
 
     - name: Patch FFmpeg
       working-directory: TMessagesProj/jni
       env:
-        NDK: ${{ steps.setup-ndk.outputs.ndk-path }}
+        NDK: ndk
         NINJA_PATH: /usr/bin/ninja
       run: ./patch_ffmpeg.sh
 
     - name: Patch BoringSSL
       working-directory: TMessagesProj/jni
       env:
-        NDK: ${{ steps.setup-ndk.outputs.ndk-path }}
+        NDK: ndk
         NINJA_PATH: /usr/bin/ninja
       run: ./patch_boringssl.sh
 
     - name: Build BoringSSL
       working-directory: TMessagesProj/jni
       env:
-        NDK: ${{ steps.setup-ndk.outputs.ndk-path }}
+        NDK: ndk
         NINJA_PATH: /usr/bin/ninja
       run: ./build_boringssl.sh
 
     - name: Build Telegram-FOSS
       env:
-        NDK: ${{ steps.setup-ndk.outputs.ndk-path }}
-        ANDROID_SDK_ROOT: ${{ steps.setup-ndk.outputs.ndk-path }}
-        ANDROID_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
+        NDK: ndk
+        ANDROID_SDK_ROOT: ndk
+        ANDROID_HOME: ndk
         NINJA_PATH: /usr/bin/ninja
       run: |
         ./gradlew x64 --no-daemon
