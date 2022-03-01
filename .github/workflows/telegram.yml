@@ -1,0 +1,64 @@
+name: Telegram
+
+on:
+  push:
+    paths: .github/workflows/telegram.yml
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - name: Download Telegram-FOSS's source code
+      uses: actions/checkout@main
+      with:
+        # Repository name with owner. For example, actions/checkout
+        repository: Telegram-FOSS-Team/Telegram-FOSS
+        # Whether to checkout submodules: `true` to checkout submodules or `recursive` to recursively checkout submodules.
+        submodules: recursive
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update || sudo apt-get update
+        sudo apt-get install -y openjdk-11-jdk-headless ninja-build golang-go yasm
+        sudo update-alternatives --auto java
+
+    - uses: nttld/setup-ndk@main
+      id: setup-ndk
+      with:
+        ndk-version: r23b
+        add-to-path: false
+
+    - name: Remove a file
+      run: rm -f TMessagesProj/jni/ffmpeg/tests/ref/fate/sub-microdvd-remux
+
+    - name: Add API keys
+      run: echo -e 'APP_ID = 12834\nAPP_HASH = c84d9229db1d6be95c067b02b126352c' > API_KEYS
+
+    - name: Build
+      working-directory: TMessagesProj
+      env:
+        NDK: ${{ steps.setup-ndk.outputs.ndk-path }}
+        NINJA_PATH: /usr/bin/ninja
+      run: |
+        pushd jni
+        ./build_libvpx_clang.sh
+        ./build_ffmpeg_clang.sh
+        ./patch_ffmpeg.sh
+        ./patch_boringssl.sh
+        ./build_boringssl.sh
+        popd
+
+
+
+
+
+
+
+
+
+
+
+
