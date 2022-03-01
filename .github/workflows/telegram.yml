@@ -14,7 +14,7 @@ jobs:
       ANDROID_HOME: ${{ github.workspace }}/ndk/ndk/21.4.7075529
       ANDROID_HOME1: ${{ github.workspace }}/ndk
       NDK: ${{ github.workspace }}/ndk/ndk/21.4.7075529
-      ANDROID_SDK_ROOT: ${{ github.workspace }}/ndk/ndk/21.4.7075529
+      ANDROID_SDK_ROOT: ${{ github.workspace }}/ndk
 
     steps:
 
@@ -97,7 +97,7 @@ jobs:
     - name: Sign the APKs
       run: |
         echo "${{ secrets.TELEGRAM_KEYSTORE }}" | base64 -d > keystore.jks
-        java -jar uber-apk-signer.jar --apks build/outputs/* --ks keystore.jks --ksAlias ${{ secrets.TELEGRAM_KEYSTORE_ALIAS }} --ksKeyPass ${{ secrets.TELEGRAM_KEYSTORE_PASSWORD }} --ksPass ${{ secrets.TELEGRAM_KEYSTORE_PASSWORD }} -o signed/
+        java -jar uber-apk-signer.jar --apks TMessagesProj/build/outputs/apk/*/* --ks keystore.jks --ksAlias ${{ secrets.TELEGRAM_KEYSTORE_ALIAS }} --ksKeyPass ${{ secrets.TELEGRAM_KEYSTORE_PASSWORD }} --ksPass ${{ secrets.TELEGRAM_KEYSTORE_PASSWORD }} -o signed/
 
     - name: Remove Keystore
       if: always()
@@ -113,7 +113,7 @@ jobs:
         name: outputs
         # A file, directory or wildcard pattern that describes what to upload
         path: |
-          build/outputs/
+          TMessagesProj/build/outputs/
 
     - name: Upload signed APKs
       uses: actions/upload-artifact@main
