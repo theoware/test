@@ -40,6 +40,7 @@ jobs:
       run: echo -e 'APP_ID = 12834\nAPP_HASH = c84d9229db1d6be95c067b02b126352c' > API_KEYS
 
     - name: Delete binaries
+      working-directory: TMessagesProj/jni
       run: find . -type f -executable
 
     - name: Build
