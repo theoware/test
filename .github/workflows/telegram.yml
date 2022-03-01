@@ -12,6 +12,7 @@ jobs:
       NDK_CCACHE: ${{ github.workspace }}/ccache
       CCACHE_DIR: ${{ github.workspace }}/.ccache
       ANDROID_HOME: ${{ github.workspace }}/ndk/ndk/21.4.7075529
+      ANDROID_HOME1: ${{ github.workspace }}/ndk
       NDK: ${{ github.workspace }}/ndk/ndk/21.4.7075529
 
     steps:
@@ -44,8 +45,8 @@ jobs:
       run: |
         wget https://dl.google.com/android/repository/commandlinetools-linux-8092744_latest.zip -O clt.zip
         unzip clt.zip -d clt/
-        yes | clt/cmdline-tools/bin/sdkmanager "ndk;21.4.7075529" "patcher;v4" --sdk_root="$ANDROID_HOME"
-        yes | clt/cmdline-tools/bin/sdkmanager --licenses --sdk_root="$ANDROID_HOME"
+        yes | clt/cmdline-tools/bin/sdkmanager "ndk;21.4.7075529" "patcher;v4" --sdk_root="$ANDROID_HOME1"
+        yes | clt/cmdline-tools/bin/sdkmanager --licenses --sdk_root="$ANDROID_HOME1"
 
     - name: Remove a file
       run: rm -f TMessagesProj/jni/ffmpeg/tests/ref/fate/sub-microdvd-remux
