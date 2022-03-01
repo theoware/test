@@ -26,17 +26,21 @@ jobs:
         sudo apt-get install -y openjdk-11-jdk-headless ninja-build golang-go yasm
         sudo update-alternatives --auto java
 
-    - uses: nttld/setup-ndk@main
+    - name: Install the android NDK
+      uses: nttld/setup-ndk@main
       id: setup-ndk
       with:
-        ndk-version: r23b
-        add-to-path: false
+        ndk-version: r21e
+        add-to-path: true
 
     - name: Remove a file
       run: rm -f TMessagesProj/jni/ffmpeg/tests/ref/fate/sub-microdvd-remux
 
     - name: Add API keys
       run: echo -e 'APP_ID = 12834\nAPP_HASH = c84d9229db1d6be95c067b02b126352c' > API_KEYS
+
+    - name: Delete binaries
+      run: find . -type f -executable
 
     - name: Build
       working-directory: TMessagesProj
@@ -51,15 +55,3 @@ jobs:
         ./patch_boringssl.sh
         ./build_boringssl.sh
         popd
-
-
-
-
-
-
-
-
-
-
-
-
