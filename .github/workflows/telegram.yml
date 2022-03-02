@@ -20,9 +20,7 @@ jobs:
     - name: Download Telegram-FOSS's source code
       uses: actions/checkout@main
       with:
-        # Repository name with owner. For example, actions/checkout
         repository: Telegram-FOSS-Team/Telegram-FOSS
-        # Whether to checkout submodules: `true` to checkout submodules or `recursive` to recursively checkout submodules.
         submodules: recursive
 
     - name: Install dependencies
@@ -54,14 +52,16 @@ jobs:
     - name: Add API keys
       run: echo -e 'APP_ID = 12834\nAPP_HASH = c84d9229db1d6be95c067b02b126352c' > API_KEYS
 
-    - run: ccache -zp
+    - run: |
+        sudo /usr/sbin/update-ccache-symlinks
+        echo 'export PATH="/usr/lib/ccache:$PATH"' | tee -a ~/.bashrc
+        source ~/.bashrc
 
     - name: Build libvpx with clang
       working-directory: TMessagesProj/jni
       env:
         NINJA_PATH: /usr/bin/ninja
-      run: |
-        ./build_libvpx_clang.sh
+      run: ./build_libvpx_clang.sh
 
     - name: Build FFmpeg with clang
       working-directory: TMessagesProj/jni
@@ -91,7 +91,7 @@ jobs:
       env:
         NINJA_PATH: /usr/bin/ninja
       run: |
-        ./gradlew assembleAfatRelease --no-daemon
+        ./gradlew x64 --no-daemon
 
     - name: Sign the APKs
       run: |
@@ -108,17 +108,13 @@ jobs:
     - name: Upload unsigned APKs
       uses: actions/upload-artifact@main
       with:
-        # Artifact name
         name: outputs
-        # A file, directory or wildcard pattern that describes what to upload
         path: |
           TMessagesProj/build/outputs/
 
     - name: Upload signed APKs
       uses: actions/upload-artifact@main
       with:
-        # Artifact name
         name: signed
-        # A file, directory or wildcard pattern that describes what to upload
         path: |
           signed/
