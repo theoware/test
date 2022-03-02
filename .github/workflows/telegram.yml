@@ -99,34 +99,44 @@ jobs:
         key: libvpx-${{ steps.hash.outputs.libvpx }}
 
     - name: Build libvpx with clang
+      if: steps.libvpx.outputs.cache-hit != 'true'
       working-directory: TMessagesProj/jni
-      env:
-        NINJA_PATH: /usr/bin/ninja
       run: ./build_libvpx_clang.sh
 
     - name: Build FFmpeg with clang
+      if: steps.ffmpeg.outputs.cache-hit != 'true'
       working-directory: TMessagesProj/jni
-      env:
-        NINJA_PATH: /usr/bin/ninja
       run: ./build_ffmpeg_clang.sh
 
+    - name: Install cached FFmpeg
+      if: steps.ffmpeg.outputs.cache-hit == 'true'
+      working-directory: TMessagesProj/jni/ffmpeg
+      run: make install
+
     - name: Patch FFmpeg
+      if: steps.ffmpeg.outputs.cache-hit != 'true'
       working-directory: TMessagesProj/jni
-      env:
-        NINJA_PATH: /usr/bin/ninja
       run: ./patch_ffmpeg.sh
 
     - name: Patch BoringSSL
       working-directory: TMessagesProj/jni
-      env:
-        NINJA_PATH: /usr/bin/ninja
       run: ./patch_boringssl.sh
 
     - name: Build BoringSSL
+      if: steps.boringssl.outputs.cache-hit != 'true'
       working-directory: TMessagesProj/jni
       env:
         NINJA_PATH: /usr/bin/ninja
       run: ./build_boringssl.sh
+
+    - name: Build Telegram-FOSS
+      run: |
+        ./gradlew --no-daemon
+
+    - name: Sign the APKs
+      run: |
+        echo "${{ secrets.TELEGRAM_KEYSTORE }}" | base64 -d > keystore.jks
+        java -jar uber-apk-signer.jar --apks TMessagesProj/build/outputs/apk/*/* --ks keystore.jks --ksAlias ${{ secrets.TELEGRAM_KEYSTORE_ALIAS }} --ksKeyPass ${{ secrets.TELEGRAM_KEYSTORE_PASSWORD }} --ksPass ${{ secrets.TELEGRAM_KEYSTORE_PASSWORD }} -o signed/
 
     - name: Remove Keystore
       if: always()
