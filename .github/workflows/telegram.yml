@@ -14,6 +14,9 @@ jobs:
       ANDROID_HOME: ${{ github.workspace }}/ndk
       NDK: ${{ github.workspace }}/ndk/ndk/21.4.7075529
       ANDROID_SDK_ROOT: ${{ github.workspace }}/ndk
+    strategy:
+      matrix:
+        gradlew: [bundle, assemble, build]
 
     steps:
 
@@ -126,7 +129,7 @@ jobs:
 
     - name: Build Telegram-FOSS
       run: |
-        ./gradlew --no-daemon
+        ./gradlew --no-daemon ${{ matrix.gradlew }}
 
     - name: Sign the APKs
       run: |
