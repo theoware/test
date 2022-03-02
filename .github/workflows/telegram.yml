@@ -15,6 +15,7 @@ jobs:
       NDK: ${{ github.workspace }}/ndk/ndk/21.4.7075529
       ANDROID_SDK_ROOT: ${{ github.workspace }}/ndk
     strategy:
+      fail-fast: false
       matrix:
         gradlew: [bundle, assemble, build]
 
@@ -139,19 +140,21 @@ jobs:
       if: always()
       run: rm -f keystore.jks
 
+    - run: ccache -s
+
     - run: ls -R .
       if: always()
 
     - name: Upload unsigned APKs
       uses: actions/upload-artifact@main
       with:
-        name: outputs
+        name: outputs-${{ matrix.gradlew }}
         path: |
           TMessagesProj/build/outputs/
 
     - name: Upload signed APKs
       uses: actions/upload-artifact@main
       with:
-        name: signed
+        name: signed-${{ matrix.gradlew }}
         path: |
           signed/
