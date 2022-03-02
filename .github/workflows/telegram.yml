@@ -52,10 +52,37 @@ jobs:
     - name: Add API keys
       run: echo -e 'APP_ID = 12834\nAPP_HASH = c84d9229db1d6be95c067b02b126352c' > API_KEYS
 
-    - run: |
+    - name: Setup ccache
+      run: |
         sudo /usr/sbin/update-ccache-symlinks
         echo 'export PATH="/usr/lib/ccache:$PATH"' | tee -a ~/.bashrc
         source ~/.bashrc
+
+    - name: Cache boringSSL
+      id: boringssl-cache
+      uses: actions/cache@main
+      with:
+        path: |
+          TMessagesProj/jni/libvpx/build/
+          !TMessagesProj/jni/libvpx/build/make
+        key: boringssl-${{ steps.hash.outputs.boringssl }}
+
+    - name: Cache FFmpeg
+      id: ffmpeg-cache
+      uses: actions/cache@main
+      with:
+        path: |
+          TMessagesProj/jni/ffmpeg/build/
+        key: boringssl-${{ steps.hash.outputs.ffmpeg }}
+
+    - name: Cache libvpx
+      id: libvpx-cache
+      uses: actions/cache@main
+      with:
+        path: |
+          TMessagesProj/jni/libvpx/build/
+          !TMessagesProj/jni/libvpx/build/make
+        key: libvpx-${{ steps.hash.outputs.libvpx }}
 
     - name: Build libvpx with clang
       working-directory: TMessagesProj/jni
@@ -86,17 +113,6 @@ jobs:
       env:
         NINJA_PATH: /usr/bin/ninja
       run: ./build_boringssl.sh
-
-    - name: Build Telegram-FOSS
-      env:
-        NINJA_PATH: /usr/bin/ninja
-      run: |
-        ./gradlew x64 --no-daemon
-
-    - name: Sign the APKs
-      run: |
-        echo "${{ secrets.TELEGRAM_KEYSTORE }}" | base64 -d > keystore.jks
-        java -jar uber-apk-signer.jar --apks TMessagesProj/build/outputs/apk/*/* --ks keystore.jks --ksAlias ${{ secrets.TELEGRAM_KEYSTORE_ALIAS }} --ksKeyPass ${{ secrets.TELEGRAM_KEYSTORE_PASSWORD }} --ksPass ${{ secrets.TELEGRAM_KEYSTORE_PASSWORD }} -o signed/
 
     - name: Remove Keystore
       if: always()
