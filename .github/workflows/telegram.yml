@@ -31,6 +31,15 @@ jobs:
         ln -s $(which ccache) ./ccache
         wget https://github.com/patrickfav/uber-apk-signer/releases/download/v1.2.1/uber-apk-signer-1.2.1.jar -O uber-apk-signer.jar
 
+    - name: Get hashes
+      working-directory: TMessagesProj/jni
+      id: hash
+      run: |
+        echo "::set-output name=boringssl::$(pushd boringssl && git rev-parse HEAD && popd)"
+        echo "::set-output name=ffmpeg::$(pushd ffmpeg && git rev-parse HEAD && popd)"
+        echo "::set-output name=libvpx::$(pushd libvpx && git rev-parse HEAD && popd)"
+        echo "::set-output name=libwebp::$(pushd libwebp && git rev-parse HEAD && popd)"
+
     - name: Cache ccache
       id: ccache-cache
       uses: actions/cache@main
