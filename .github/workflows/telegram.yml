@@ -80,8 +80,7 @@ jobs:
       uses: actions/cache@main
       with:
         path: |
-          TMessagesProj/jni/libvpx/build/
-          !TMessagesProj/jni/libvpx/build/make
+          TMessagesProj/jni/boringssl/build/
         key: boringssl-${{ steps.hash.outputs.boringssl }}
 
     - name: Cache FFmpeg
