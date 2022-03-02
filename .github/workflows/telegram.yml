@@ -17,7 +17,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        gradlew: [bundle, assemble, build]
+        gradlew: [assembleRelease, assembleAfat, assembleAfatRelease]
 
     steps:
 
@@ -150,7 +150,7 @@ jobs:
       with:
         name: outputs-${{ matrix.gradlew }}
         path: |
-          TMessagesProj/build/outputs/
+          TMessagesProj/build/outputs/apk
 
     - name: Upload signed APKs
       uses: actions/upload-artifact@main
