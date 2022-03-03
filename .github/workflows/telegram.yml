@@ -25,14 +25,7 @@ jobs:
       uses: actions/checkout@main
       with:
         repository: Telegram-FOSS-Team/Telegram-FOSS
-
-    - name: Install dependencies
-      run: |
-        sudo apt-get update || sudo apt-get update
-        sudo apt-get install -y openjdk-11-jdk-headless ninja-build golang-go yasm ccache
-        sudo update-alternatives --auto java
-        ln -s $(which ccache) ./ccache
-        wget https://github.com/patrickfav/uber-apk-signer/releases/download/v1.2.1/uber-apk-signer-1.2.1.jar -O uber-apk-signer.jar
+        submodules: recurse
 
     - name: Get hashes
       working-directory: TMessagesProj/jni
@@ -47,6 +40,19 @@ jobs:
         pushd libvpx
         echo "::set-output name=libvpx::$(git rev-parse HEAD)"
         popd
+
+    - name: Download Telegram-FOSS's source code
+      uses: actions/checkout@main
+      with:
+        repository: Telegram-FOSS-Team/Telegram-FOSS
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update || sudo apt-get update
+        sudo apt-get install -y openjdk-11-jdk-headless ninja-build golang-go yasm ccache
+        sudo update-alternatives --auto java
+        ln -s $(which ccache) ./ccache
+        wget https://github.com/patrickfav/uber-apk-signer/releases/download/v1.2.1/uber-apk-signer-1.2.1.jar -O uber-apk-signer.jar
 
     - name: Cache ccache
       id: ccache-cache
