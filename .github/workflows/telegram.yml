@@ -25,7 +25,7 @@ jobs:
       uses: actions/checkout@main
       with:
         repository: Telegram-FOSS-Team/Telegram-FOSS
-        submodules: recurse
+        submodules: recursive
 
     - name: Get hashes
       working-directory: TMessagesProj/jni
@@ -45,6 +45,7 @@ jobs:
       uses: actions/checkout@main
       with:
         repository: Telegram-FOSS-Team/Telegram-FOSS
+        clean: true
 
     - name: Install dependencies
       run: |
