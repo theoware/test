@@ -75,9 +75,6 @@ jobs:
         rm -f clt.zip
         yes | clt/cmdline-tools/bin/sdkmanager --licenses --sdk_root="$ANDROID_HOME"
 
-    - name: Remove a file
-      run: rm -f TMessagesProj/jni/ffmpeg/tests/ref/fate/sub-microdvd-remux
-
     - name: Add API keys
       run: echo -e 'APP_ID = 12834\nAPP_HASH = c84d9229db1d6be95c067b02b126352c' > API_KEYS
 
