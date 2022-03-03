@@ -1,8 +1,8 @@
-name: Telegram
+name: Telegram-FOSS
 
 on:
   push:
-    paths: .github/workflows/telegram.yml
+    paths: .github/workflows/telegram-foss.yml
 
 jobs:
   build:
@@ -59,7 +59,7 @@ jobs:
         key: ccache-${{ github.sha }}
         restore-keys: ccache-
 
-    - name: Cache licenses
+    - name: Cache NDK licenses
       id: licenses-cache
       uses: actions/cache@main
       with:
@@ -115,11 +115,6 @@ jobs:
       if: steps.libvpx-cache.outputs.cache-hit != 'true' && steps.ffmpeg-cache.outputs.cache-hit != 'true' && steps.boringssl-cache.outputs.cache-hit != 'true'
       run: git submodule update --init --recursive --rebase --force
 
-    - name: Build libvpx with clang
-      if: steps.libvpx-cache.outputs.cache-hit != 'true'
-      working-directory: TMessagesProj/jni
-      run: ./build_libvpx_clang.sh
-
     - name: Build FFmpeg with clang
       if: steps.ffmpeg-cache.outputs.cache-hit != 'true'
       working-directory: TMessagesProj/jni
@@ -131,6 +126,7 @@ jobs:
       run: ./patch_ffmpeg.sh
 
     - name: Patch BoringSSL
+      if: steps.ffmpeg-cache.outputs.cache-hit != 'true'
       working-directory: TMessagesProj/jni
       run: ./patch_boringssl.sh
 
@@ -140,6 +136,11 @@ jobs:
       env:
         NINJA_PATH: /usr/bin/ninja
       run: ./build_boringssl.sh
+
+    - name: Build libvpx with clang
+      if: steps.libvpx-cache.outputs.cache-hit != 'true'
+      working-directory: TMessagesProj/jni
+      run: ./build_libvpx_clang.sh
 
     - name: Delete no longer needed folders
       if: steps.libvpx-cache.outputs.cache-hit != 'true' && steps.ffmpeg-cache.outputs.cache-hit != 'true' && steps.boringssl-cache.outputs.cache-hit != 'true'
@@ -171,11 +172,10 @@ jobs:
       if: always()
       run: rm -f keystore.jks
 
-    - run: ccache -s
-      if: always()
-
-    - run: ls -R .
-      if: always()
+    - name: Create a release
+      env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: gh release create -d -t "$GITHUB_WORKFLOW on $(date "+%A, %d of %B of %Y")" $(date "+%y.%m.%d.%H.%M.%S") $(find signed -name *.apk -type f) $(find TMessagesProj/build/outputs/apk -name *.apk -type f)
 
     - name: Upload unsigned APKs
       uses: actions/upload-artifact@main
