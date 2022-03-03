@@ -74,6 +74,8 @@ jobs:
       run: |
         sudo /usr/sbin/update-ccache-symlinks
         echo 'export PATH="/usr/lib/ccache:$PATH"' | tee -a ~/.bashrc
+        echo 'export CCACHE_EXEC=/usr/bin/ccache' | tee -a ~/.bashrc
+        echo 'export USE_CCACHE=1' | tee -a ~/.bashrc
         source ~/.bashrc
 
     - name: Cache boringSSL
@@ -127,6 +129,13 @@ jobs:
         NINJA_PATH: /usr/bin/ninja
       run: ./build_boringssl.sh
 
+    - name: Delete no longer needed folders
+      working-directory: TMessagesProj/jni/
+      run: |
+        rm -rvf boringssl/ !(boringssl/build/)
+        rm -rvf ffmpeg/ !(ffmpeg/build/)
+        rm -rvf libvpx/ !(libvpx/build/)
+
     - name: Build Telegram-FOSS
       run: |
         ./gradlew --no-daemon ${{ matrix.gradlew }}
@@ -141,6 +150,7 @@ jobs:
       run: rm -f keystore.jks
 
     - run: ccache -s
+      if: always()
 
     - run: ls -R .
       if: always()
