@@ -132,15 +132,15 @@ jobs:
     - name: Delete no longer needed folders
       working-directory: TMessagesProj/jni/
       run: |
-        mv -v boringssl/build build/
-        rm -rvf boringssl/
-        mv -v build/ boringssl/build/
-        mv -v ffmpeg/build build/
-        rm -rvf ffmpeg/ !ffmpeg/build/
-        mv -v build/ ffmpeg/build/
-        mv -v libvpx/build build/
-        rm -rvf libvpx/ !libvpx/build/
-        mv -v build/ libvpx/build/
+        mv boringssl/build build/
+        rm -rf boringssl/
+        mv build/ boringssl/build/
+        mv ffmpeg/build build/
+        rm -rf ffmpeg/
+        mv build/ ffmpeg/build/
+        mv libvpx/build build/
+        rm -rf libvpx/
+        mv build/ libvpx/build/
 
     - name: Build Telegram-FOSS
       run: |
