@@ -14,10 +14,6 @@ jobs:
       ANDROID_HOME: ${{ github.workspace }}/ndk
       NDK: ${{ github.workspace }}/ndk/ndk/21.4.7075529
       ANDROID_SDK_ROOT: ${{ github.workspace }}/ndk
-    strategy:
-      fail-fast: false
-      matrix:
-        gradlew: [assembleRelease, assembleAfat, assembleAfatRelease]
 
     steps:
 
@@ -63,11 +59,20 @@ jobs:
         key: ccache-${{ github.sha }}
         restore-keys: ccache-
 
+    - name: Cache licenses
+      id: licenses-cache
+      uses: actions/cache@main
+      with:
+        path: ${{ github.workspace }}/ndk/licenses
+        key: licenses-${{ github.sha }}
+        restore-keys: ccache-
+
     - name: Install the android NDK
+      if: steps.licenses-cache.outputs.cache-hit != 'true'
       run: |
         wget https://dl.google.com/android/repository/commandlinetools-linux-8092744_latest.zip -O clt.zip
         unzip clt.zip -d clt/
-        yes | clt/cmdline-tools/bin/sdkmanager "ndk;21.4.7075529" "patcher;v4" --sdk_root="$ANDROID_HOME"
+        yes | clt/cmdline-tools/bin/sdkmanager "ndk;21.4.7075529" "patcher;v4" "cmake;3.10.2.4988404" "emulator;31.2.8" "build-tools;31.0.0" "platforms;android-31" --sdk_root="$ANDROID_HOME"
         yes | clt/cmdline-tools/bin/sdkmanager --licenses --sdk_root="$ANDROID_HOME"
 
     - name: Remove a file
@@ -158,7 +163,7 @@ jobs:
 
     - name: Build Telegram-FOSS
       run: |
-        ./gradlew --no-daemon ${{ matrix.gradlew }}
+        ./gradlew --no-daemon assembleAfatRelease
 
     - name: Sign the APKs
       run: |
@@ -178,13 +183,13 @@ jobs:
     - name: Upload unsigned APKs
       uses: actions/upload-artifact@main
       with:
-        name: outputs-${{ matrix.gradlew }}
+        name: outputs
         path: |
           TMessagesProj/build/outputs/apk
 
     - name: Upload signed APKs
       uses: actions/upload-artifact@main
       with:
-        name: signed-${{ matrix.gradlew }}
+        name: signed
         path: |
           signed/
