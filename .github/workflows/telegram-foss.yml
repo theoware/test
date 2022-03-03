@@ -20,7 +20,7 @@ jobs:
     - name: Download Telegram-FOSS's source code
       uses: actions/checkout@main
       with:
-        repository: Telegram-FOSS-Team/Telegram-FOSS
+        repository: theoware/Telegram-FOSS
         submodules: recursive
 
     - name: Get hashes
@@ -40,7 +40,7 @@ jobs:
     - name: Download Telegram-FOSS's source code
       uses: actions/checkout@main
       with:
-        repository: Telegram-FOSS-Team/Telegram-FOSS
+        repository: theoware/Telegram-FOSS
         clean: true
 
     - name: Install dependencies
