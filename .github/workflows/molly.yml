@@ -24,8 +24,8 @@ jobs:
 
     - name: Extract source code
       run: |
-        tar -xzf $(find . -type f -name *.tar.gz) .
-        rm -f $(find . -type f -name *.tar.gz)
+        tar -xzf "$(find . -type f -name *.tar.gz)" .
+        rm -f "$(find . -type f -name *.tar.gz)"
 
     - name: Install dependencies
       run: |
