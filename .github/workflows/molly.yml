@@ -14,19 +14,18 @@ jobs:
 
     steps:
 
-
-    - name: Download latest tarBall
-      uses: robinraju/release-downloader@v1.3
-      with: 
-        repository: "mollyim/mollyim-android"
-        latest: true
-        tarBall: true
+    - name: Download Latest Release Zip
+      uses: creesch/github-latest-release-zip@v0.1.1
+      with:
+        owner: mollyim
+        repo: mollyim-android
+        downloadPath: .
 
     - name: Extract source code
       run: |
-        tar -xzf "$(find . -type f -name *.tar.gz)"
+        unzip "$(find . -type f -name *.zip)"
         mv -f "$(find . -maxdepth 1 -type d -name "*molly*")/*" .
-        rm -f "$(find . -type f -name *.tar.gz)"
+        rm -f "$(find . -type f -name *.zip)"
 
     - name: Install dependencies
       run: |
@@ -66,6 +65,8 @@ jobs:
 
     - run: ls -R .
       if: always()
+
+    - run: ccache -s
 
     - name: Upload unsigned APKs
       uses: actions/upload-artifact@main
