@@ -25,8 +25,9 @@ jobs:
     - name: Extract source code
       working-directory: ../
       run: |
-        unzip -q "${{ steps.dl.outputs.filename }}" -d ${{ GITHUB.WORKSPACE }}
+        unzip -q "${{ steps.dl.outputs.filename }}"
         rm -f "${{ steps.dl.outputs.filename }}"
+        mv "$( echo "${{ steps.dl.outputs.filename }}" | rev | cut -c5- | rev)/" ${{ GITHUB.WORKSPACE }}
 
     - name: Install dependencies
       run: |
