@@ -171,10 +171,17 @@ jobs:
       if: always()
       run: rm -f keystore.jks
 
+
+    - name: Download release repo
+      uses: actions/checkout@main
+      with:
+        path: rel
+
     - name: Create a release
       env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: gh release create -d -t "$GITHUB_WORKFLOW on $(date "+%A, %d of %B of %Y")" $(date "+%y.%m.%d.%H.%M.%S") $(find signed -name *.apk -type f) $(find TMessagesProj/build/outputs/apk -name *.apk -type f)
+      working-directory: rel
+      run: gh release create -d -t "$GITHUB_WORKFLOW on $(date "+%A, %d of %B of %Y")" $(date "+%y.%m.%d.%H.%M.%S") $(find ../signed -name *.apk -type f) $(find ../TMessagesProj/build/outputs/apk -name *.apk -type f)
 
     - name: Upload unsigned APKs
       uses: actions/upload-artifact@main
