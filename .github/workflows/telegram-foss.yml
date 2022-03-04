@@ -77,7 +77,7 @@ jobs:
         rm ${{ GITHUB.WORKSPACE }}/sdk.zip
         echo 'export PATH="${PATH}:${ANDROID_HOME}/cmdline-tools/latest/bin"' | tee -a ~/.bashrc
         source ~/.bashrc
-        yes | sdkmanager --licenses --sdk_root="$ANDROID_HOME"
+        yes | ${ANDROID_HOME}/cmdline-tools/latest/bin --licenses --sdk_root="${ANDROID_HOME}"
 
     - name: Add API keys
       run: echo -e 'APP_ID = 12834\nAPP_HASH = c84d9229db1d6be95c067b02b126352c' > API_KEYS
