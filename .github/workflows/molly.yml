@@ -1,0 +1,85 @@
+name: Molly
+
+on:
+  push:
+    paths: .github/workflows/molly.yml
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    env:
+      CCACHE_DIR: ${{ github.workspace }}/.ccache
+      ANDROID_HOME: /opt/ndk
+      NDK: /opt/ndk/ndk/21.4.7075529
+
+    steps:
+
+    - name: Download Molly's source code
+      uses: actions/checkout@main
+      with:
+        repository: mollyim/mollyim-android
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update || sudo apt-get update
+        sudo apt-get install -y openjdk-11-jdk-headless ninja-build golang-go yasm ccache
+        sudo update-alternatives --auto java
+        ln -s $(which ccache) ./ccache
+        wget https://github.com/patrickfav/uber-apk-signer/releases/download/v1.2.1/uber-apk-signer-1.2.1.jar -O uber-apk-signer.jar
+
+    - name: Cache ccache
+      id: ccache-cache
+      uses: actions/cache@main
+      with:
+        path: ${{ github.workspace }}/.ccache
+        key: ccache-${{ github.sha }}
+        restore-keys: ccache-
+
+    - name: Cache NDK licenses
+      id: licenses-cache
+      uses: actions/cache@main
+      with:
+        path: ${{ github.workspace }}/ndk/licenses
+        key: licenses-${{ github.sha }}
+        restore-keys: ccache-
+
+    - name: Install the android NDK
+      if: steps.licenses-cache.outputs.cache-hit != 'true'
+      run: |
+        mkdir -p "${ANDROID_HOME}"
+        curl https://dl.google.com/android/repository/commandlinetools-linux-8092744_latest.zip -o ${{ GITHUB.WORKSPACE }}/sdk.zip
+        unzip sdk.zip -d -q "${ANDROID_HOME}/cmdline-tools/"
+        mv "${ANDROID_HOME}/cmdline-tools/cmdline-tools" "${ANDROID_HOME}/cmdline-tools/latest"
+        rm ${{ GITHUB.WORKSPACE }}/sdk.zip
+        echo 'export PATH="${PATH}:${ANDROID_HOME}/cmdline-tools/latest/bin" | tee -a ~/.bashrc
+        yes | sdkmanager --licenses --sdk_root="$ANDROID_HOME"
+
+    - name: Setup ccache
+      run: |
+        sudo /usr/sbin/update-ccache-symlinks
+        echo 'export PATH="/usr/lib/ccache:$PATH"' | tee -a ~/.bashrc
+        echo 'export CCACHE_EXEC=/usr/bin/ccache' | tee -a ~/.bashrc
+        echo 'export USE_CCACHE=1' | tee -a ~/.bashrc
+        source ~/.bashrc
+
+    - name: Build Molly
+      run: ./gradlew -Pci --no-daemon :app:assembleProdNonFreeRelease
+
+    - name: Download release repo
+      uses: actions/checkout@main
+      with:
+        path: rel
+
+    - name: Create a release
+      env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      working-directory: rel
+      run: gh release create -d -t "$GITHUB_WORKFLOW on $(date "+%A, %d of %B of %Y")" $(date "+%y.%m.%d.%H.%M.%S") $(find ../molly/build/outputs/apk -name *.apk -type f)
+
+    - name: Upload unsigned APKs
+      uses: actions/upload-artifact@main
+      with:
+        name: outputs
+        path: |
+          molly/build/outputs/apk
