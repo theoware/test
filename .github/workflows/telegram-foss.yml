@@ -76,6 +76,7 @@ jobs:
         mv "${ANDROID_HOME}/cmdline-tools/cmdline-tools" "${ANDROID_HOME}/cmdline-tools/latest"
         rm ${{ GITHUB.WORKSPACE }}/sdk.zip
         echo 'export PATH="${PATH}:${ANDROID_HOME}/cmdline-tools/latest/bin"' | tee -a ~/.bashrc
+        source ~/.bashrc
         yes | sdkmanager --licenses --sdk_root="$ANDROID_HOME"
 
     - name: Add API keys
