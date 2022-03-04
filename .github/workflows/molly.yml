@@ -26,7 +26,7 @@ jobs:
       run: |
         unzip "${{ steps.dl.outputs.filename }}"
         rm -f "${{ steps.dl.outputs.filename }}"
-        mv -f "${{ steps.dl.outputs.filename :: -3 }}/" .
+        mv -f "$( echo "${{ steps.dl.outputs.filename }}" | rev | cut -c4- | rev")/ .
 
     - name: Install dependencies
       run: |
