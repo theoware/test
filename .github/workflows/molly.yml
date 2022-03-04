@@ -20,7 +20,7 @@ jobs:
       with:
         owner: mollyim
         repo: mollyim-android
-        downloadPath: .
+        downloadPath: ../
 
     - name: Extract source code
       working-directory: ../
