@@ -51,14 +51,23 @@ jobs:
         source ~/.bashrc
 
     - name: Build Molly
-      run: ./gradlew -Pci --no-daemon :app:assembleProdNonFreeRelease
+      run: ./gradlew -Pci --no-daemon :app:assembleProdNonFreeRelease :app:assembleProdFreeRelease
+
+    - name: Check the apk
+      env:
+        VERSION: ${{ steps.dl.outputs.tag }}
+      run: |
+        wget -q https://github.com/mollyim/mollyim-android/releases/download/$VERSION/Molly-$VERSION-FOSS.apk
+        wget -q https://github.com/mollyim/mollyim-android/releases/download/$VERSION/Molly-$VERSION.apk
+        python apkdiff/apkdiff.py Molly-$VERSION-FOSS.apk app/build/outputs/apks/prodFree/release/Molly-prod-unsigned-$VERSION-FOSS.apk        
+        python apkdiff/apkdiff.py Molly-$VERSION.apk app/build/outputs/apks/prodNonFree/release/Molly-prod-unsigned-$VERSION.apk
 
     - name: Download release repo
       uses: actions/checkout@main
       with:
         path: rel
 
-    - name: Create a release
+    - name: Create a release draft
       env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       working-directory: rel
