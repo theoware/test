@@ -17,6 +17,9 @@ jobs:
       uses: actions/checkout@main
       with:
         repository: mollyim/mollyim-android
+        ref: v5.31.6-1
+
+    - run: git describe --tags --exact-match
 
     - name: Install dependencies
       run: |
