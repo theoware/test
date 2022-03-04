@@ -23,10 +23,8 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt-get update || sudo apt-get update
-        sudo apt-get install -y openjdk-11-jdk-headless ninja-build golang-go yasm ccache
+        sudo apt-get install -y openjdk-11-jdk-headless ccache
         sudo update-alternatives --auto java
-        ln -s $(which ccache) ./ccache
-        wget https://github.com/patrickfav/uber-apk-signer/releases/download/v1.2.1/uber-apk-signer-1.2.1.jar -O uber-apk-signer.jar
 
     - name: Cache ccache
       id: ccache-cache
@@ -47,7 +45,7 @@ jobs:
     - name: Install the android NDK
       if: steps.licenses-cache.outputs.cache-hit != 'true'
       run: |
-        mkdir -p "${ANDROID_HOME}"
+        mkdir -p "${ANDROID_HOME}/cmdline-tools"
         curl https://dl.google.com/android/repository/commandlinetools-linux-8092744_latest.zip -o ${{ GITHUB.WORKSPACE }}/sdk.zip
         unzip sdk.zip -d -q "${ANDROID_HOME}/cmdline-tools/"
         mv "${ANDROID_HOME}/cmdline-tools/cmdline-tools" "${ANDROID_HOME}/cmdline-tools/latest"
@@ -76,6 +74,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       working-directory: rel
       run: gh release create -d -t "$GITHUB_WORKFLOW on $(date "+%A, %d of %B of %Y")" $(date "+%y.%m.%d.%H.%M.%S") $(find ../molly/build/outputs/apk -name *.apk -type f)
+
+    - run: ls -R .
+      if: always()
 
     - name: Upload unsigned APKs
       uses: actions/upload-artifact@main
