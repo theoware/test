@@ -70,7 +70,7 @@ jobs:
     - name: Install the android NDK
       if: steps.licenses-cache.outputs.cache-hit != 'true'
       run: |
-        mkdir -p "${ANDROID_HOME}"
+        mkdir -p "${ANDROID_HOME}/cmdline-tools"
         curl https://dl.google.com/android/repository/commandlinetools-linux-8092744_latest.zip -o ${{ GITHUB.WORKSPACE }}/sdk.zip
         unzip sdk.zip -d -q "${ANDROID_HOME}/cmdline-tools/"
         mv "${ANDROID_HOME}/cmdline-tools/cmdline-tools" "${ANDROID_HOME}/cmdline-tools/latest"
