@@ -15,6 +15,7 @@ jobs:
     steps:
 
     - name: Download Latest Release Zip
+      id: dl
       uses: creesch/github-latest-release-zip@v0.1.1
       with:
         owner: mollyim
@@ -23,9 +24,9 @@ jobs:
 
     - name: Extract source code
       run: |
-        unzip "$(find . -type f -name *.zip)"
-        mv -f "$(find . -maxdepth 1 -type d -name "*molly*")/*" .
-        rm -f "$(find . -type f -name *.zip)"
+        unzip "${{ steps.dl.outputs.filename }}"
+        rm -f "${{ steps.dl.outputs.filename }}"
+        mv -f "${{ steps.dl.outputs.filename :: -3 }}/" .
 
     - name: Install dependencies
       run: |
