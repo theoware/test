@@ -25,7 +25,7 @@ jobs:
     - name: Extract source code
       run: |
         tar -xzf "$(find . -type f -name *.tar.gz)"
-        mv -f "$(find * -maxdepth 1 -type d -name "*molly*")/*" .
+        mv -f "$(find . -maxdepth 1 -type d -name "*molly*")/*" .
         rm -f "$(find . -type f -name *.tar.gz)"
 
     - name: Install dependencies
