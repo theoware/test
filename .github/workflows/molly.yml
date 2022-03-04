@@ -20,14 +20,15 @@ jobs:
       with:
         owner: mollyim
         repo: mollyim-android
-        downloadPath: ../
 
-    - name: Extract source code
-      working-directory: ../
-      run: |
-        unzip -q "${{ steps.dl.outputs.filename }}"
-        rm -f "${{ steps.dl.outputs.filename }}"
-        mv "$( echo "${{ steps.dl.outputs.filename }}" | rev | cut -c5- | rev)/" ${{ GITHUB.WORKSPACE }}
+    - name: Remove the zip
+      run: rm -f "${{ steps.dl.outputs.filename }}"
+
+    - name: Download Molly's source code
+      uses: actions/checkout@main
+      with:
+        repository: mollyim/mollyim-android
+        ref: ${{ steps.dl.outputs.tag }}
 
     - name: Install dependencies
       run: |
