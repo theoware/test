@@ -11,6 +11,7 @@ jobs:
     env:
       CCACHE_DIR: ${{ github.workspace }}/.ccache
       ANDROID_HOME: /opt/ndk
+      ANDROID_SDK_ROOT: /opt/ndk
 
     steps:
 
