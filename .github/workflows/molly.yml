@@ -52,7 +52,7 @@ jobs:
         rm ${{ GITHUB.WORKSPACE }}/sdk.zip
         echo 'export PATH="${PATH}:${ANDROID_HOME}/cmdline-tools/latest/bin"' | tee -a ~/.bashrc
         source ~/.bashrc
-        yes | ${ANDROID_HOME}/cmdline-tools/latest/bin --licenses --sdk_root="${ANDROID_HOME}"
+        yes | ${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager --licenses --sdk_root="${ANDROID_HOME}"
 
     - name: Setup ccache
       run: |
