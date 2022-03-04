@@ -52,7 +52,7 @@ jobs:
       env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       working-directory: rel
-      run: gh release create -d -t "$GITHUB_WORKFLOW on $(date "+%A, %d of %B of %Y")" $(date "+%y.%m.%d.%H.%M.%S") $(find ../molly/build/outputs/apk -name *.apk -type f)
+      run: gh release create -d -t "$GITHUB_WORKFLOW on $(date "+%A, %d of %B of %Y")" $(date "+%y.%m.%d.%H.%M.%S") $(find ../app/build/outputs/apk -name *.apk -type f)
 
     - run: ls -R .
       if: always()
@@ -62,4 +62,4 @@ jobs:
       with:
         name: outputs
         path: |
-          molly/build/outputs/apk
+          app/build/outputs/apk
