@@ -23,8 +23,9 @@ jobs:
         downloadPath: .
 
     - name: Extract source code
+      working-directory: ../
       run: |
-        unzip -q "${{ steps.dl.outputs.filename }}" -d $(pwd)
+        unzip -q "${{ steps.dl.outputs.filename }}" -d ${{ GITHUB.WORKSPACE }}
         rm -f "${{ steps.dl.outputs.filename }}"
 
     - name: Install dependencies
