@@ -10,8 +10,6 @@ jobs:
     runs-on: ubuntu-latest
     env:
       CCACHE_DIR: ${{ github.workspace }}/.ccache
-      ANDROID_HOME: /opt/ndk
-      ANDROID_SDK_ROOT: /opt/ndk
 
     steps:
 
@@ -33,26 +31,6 @@ jobs:
         path: ${{ github.workspace }}/.ccache
         key: ccache-${{ github.sha }}
         restore-keys: ccache-
-
-    - name: Cache NDK licenses
-      id: licenses-cache
-      uses: actions/cache@main
-      with:
-        path: ${{ github.workspace }}/ndk/licenses
-        key: licenses-${{ github.sha }}
-        restore-keys: ccache-
-
-    - name: Install the android NDK
-      if: steps.licenses-cache.outputs.cache-hit != 'true'
-      run: |
-        mkdir -p "${ANDROID_HOME}"
-        curl https://dl.google.com/android/repository/commandlinetools-linux-8092744_latest.zip -o ${{ GITHUB.WORKSPACE }}/sdk.zip
-        unzip -d "${ANDROID_HOME}/cmdline-tools/" sdk.zip
-        mv "${ANDROID_HOME}/cmdline-tools/cmdline-tools" "${ANDROID_HOME}/cmdline-tools/latest"
-        rm ${{ GITHUB.WORKSPACE }}/sdk.zip
-        echo 'export PATH="${PATH}:${ANDROID_HOME}/cmdline-tools/latest/bin"' | tee -a ~/.bashrc
-        source ~/.bashrc
-        yes | ${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager --licenses --sdk_root="${ANDROID_HOME}"
 
     - name: Setup ccache
       run: |
