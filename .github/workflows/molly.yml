@@ -24,7 +24,7 @@ jobs:
 
     - name: Extract source code
       run: |
-        unzip -q "${{ steps.dl.outputs.filename }}" -d .
+        unzip -q "${{ steps.dl.outputs.filename }}" -d $(pwd)
         rm -f "${{ steps.dl.outputs.filename }}"
 
     - name: Install dependencies
