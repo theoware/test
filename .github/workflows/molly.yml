@@ -3,6 +3,7 @@ name: Molly
 on:
   push:
     paths: .github/workflows/molly.yml
+  workflow_dispatch:
 
 jobs:
   build:
@@ -13,13 +14,18 @@ jobs:
 
     steps:
 
-    - name: Download Molly's source code
-      uses: actions/checkout@main
-      with:
-        repository: mollyim/mollyim-android
-        ref: v5.31.6-1
 
-    - run: git describe --tags --exact-match
+    - name: Download latest tarBall
+      uses: robinraju/release-downloader@v1.3
+      with: 
+        repository: "mollyim/mollyim-android"
+        latest: true
+        tarBall: true
+
+    - name: Extract source code
+      run: |
+        tar -xzf $(find . -type f -name *.tar.gz) .
+        rm -f $(find . -type f -name *.tar.gz)
 
     - name: Install dependencies
       run: |
