@@ -206,6 +206,8 @@ jobs:
         repository: tdlib/telegram-bot-api
         submodules: recursive
 
+    - run: ccache -s
+
     - name: Compile the Telegram bot API
       run: |
         mkdir -p build
@@ -219,6 +221,8 @@ jobs:
       with:
         name: signed
         path: signed/
+
+    - run: ccache -s
 
     - name: Upload the signed APKs to Telegram
       run: |
