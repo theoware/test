@@ -14,7 +14,6 @@ jobs:
       ANDROID_HOME: /opt/ndk
       NDK: /opt/ndk/ndk/21.4.7075529
       ANDROID_SDK_ROOT: /opt/ndk
-
     steps:
 
     - name: Download Telegram-FOSS's source code
@@ -46,10 +45,10 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt-get update || sudo apt-get update
-        sudo apt-get install -y openjdk-11-jdk-headless ninja-build golang-go yasm ccache
+        sudo apt-get install -y openjdk-11-jdk-headless ninja-build golang-go yasm ccache gperf cmake
         sudo update-alternatives --auto java
-        ln -s $(which ccache) ./ccache
         wget https://github.com/patrickfav/uber-apk-signer/releases/download/v1.2.1/uber-apk-signer-1.2.1.jar -O uber-apk-signer.jar
+        echo "47ae984df200afbae292d6f950e517afb445d3c902a1edc7717a82c513c5e772 uber-apk-signer.jar" | sha256sum -c
 
     - name: Cache ccache
       id: ccache-cache
@@ -175,28 +174,66 @@ jobs:
       if: always()
       run: rm -f keystore.jks
 
-
-    - name: Download release repo
-      uses: actions/checkout@main
-      with:
-        path: rel
-
-    - name: Create a release
-      env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      working-directory: rel
-      run: gh release create -d -t "$GITHUB_WORKFLOW on $(date "+%A, %d of %B of %Y")" $(date "+%y.%m.%d.%H.%M.%S") $(find ../signed -name *.apk -type f) $(find ../TMessagesProj/build/outputs/apk -name *.apk -type f)
-
-    - name: Upload unsigned APKs
-      uses: actions/upload-artifact@main
-      with:
-        name: outputs
-        path: |
-          TMessagesProj/build/outputs/apk
-
     - name: Upload signed APKs
       uses: actions/upload-artifact@main
       with:
         name: signed
         path: |
           signed/
+
+  upload:
+    name: Upload
+    runs-on: ubuntu-latest
+    needs: build
+    env:
+      CCACHE_DIR: ${{ github.workspace }}/.ccache
+    steps:
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update || sudo apt-get update
+        sudo apt-get install -y ccache gperf cmake
+
+    - name: Cache ccache
+      id: ccache-cache
+      uses: actions/cache@main
+      with:
+        path: ${{ github.workspace }}/.ccache
+        key: ccache-${{ github.sha }}
+        restore-keys: ccache-
+
+    - name: Setup ccache
+      run: |
+        sudo /usr/sbin/update-ccache-symlinks
+        echo 'export PATH="/usr/lib/ccache:$PATH"' | tee -a ~/.bashrc
+        echo 'export CCACHE_EXEC=/usr/bin/ccache' | tee -a ~/.bashrc
+        echo 'export USE_CCACHE=1' | tee -a ~/.bashrc
+        source ~/.bashrc
+
+    - name: Checkout Telegram bot API
+      uses: actions/checkout@main
+      with:
+        repository: tdlib/telegram-bot-api
+        submodules: recursive
+
+    - name: Compile the Telegram bot API
+      run: |
+        mkdir -p build
+        pushd build
+        cmake -DCMAKE_BUILD_TYPE=Release ..
+        cmake --build . --target install
+        popd
+
+    - name: Download a Build Artifact
+      uses: actions/download-artifact@main
+      with:
+        name: signed
+        path: signed/
+
+    - name: Upload the signed APKs to Telegram
+      run: |
+        telegram-bot-api --api-id=${{ secrets.TELEGRAM_API_ID }} --api-hash=${{ secrets.TELEGRAM_API_HASH }} &
+        curl -F document=@"signed/TMessagesProj-afat-release-aligned-signed.apk" http://localhost:8081/bot${{ secrets.TELEGRAM_TOKEN }}/sendDocument?chat_id=${{ secrets.TELEGRAM_CHAT_ID }}
+
+    - run: ls -R .
+      if: always()
