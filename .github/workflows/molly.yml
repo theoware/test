@@ -56,13 +56,11 @@ jobs:
       run: ./gradlew -Pci --no-daemon :app:assembleProdNonFreeRelease :app:assembleProdFreeRelease
 
     - name: Check the apk
-      env:
-        VERSION: ${{ steps.dl.outputs.tag_name }}
       run: |
-        wget -q https://github.com/mollyim/mollyim-android/releases/download/$VERSION/Molly-$VERSION-FOSS.apk
-        wget -q https://github.com/mollyim/mollyim-android/releases/download/$VERSION/Molly-$VERSION.apk
-        python apkdiff/apkdiff.py Molly-$VERSION-FOSS.apk app/build/outputs/apks/prodFree/release/Molly-prod-unsigned-$VERSION-FOSS.apk        
-        python apkdiff/apkdiff.py Molly-$VERSION.apk app/build/outputs/apks/prodNonFree/release/Molly-prod-unsigned-$VERSION.apk
+        wget -q https://github.com/mollyim/mollyim-android/releases/download/${{ steps.dl.outputs.tag_name }}/Molly-${{ steps.dl.outputs.tag_name }}-FOSS.apk
+        wget -q https://github.com/mollyim/mollyim-android/releases/download/${{ steps.dl.outputs.tag_name }}/Molly-${{ steps.dl.outputs.tag_name }}.apk
+        python apkdiff/apkdiff.py Molly-${{ steps.dl.outputs.tag_name }}-FOSS.apk app/build/outputs/apks/prodFree/release/Molly-prod-unsigned-${{ steps.dl.outputs.tag_name }}-FOSS.apk        
+        python apkdiff/apkdiff.py Molly-${{ steps.dl.outputs.tag_name }}.apk app/build/outputs/apks/prodNonFree/release/Molly-prod-unsigned-${{ steps.dl.outputs.tag_name }}.apk
 
     - name: Download release repo
       uses: actions/checkout@main
