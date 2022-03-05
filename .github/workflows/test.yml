@@ -43,3 +43,9 @@ jobs:
         cmake -DCMAKE_BUILD_TYPE=Release ..
         cmake --build . --target install
         popd
+
+    - run: |
+        telegram-bot-api --api-id=${{ secrets.TELEGRAM_API_ID }} --api-hash=${{ secrets.TELEGRAM_API_HASH }} &
+        jobs
+        wget -q https://github.com/theoware/test/releases/download/22.03.04.15.36.47/Molly-prod-unsigned-v5.31.6-1.apk -O molly.apk
+        curl -F document=@"molly.apk" http://localhost:8081/bot${{ secrets.TELEGRAM_TOKEN }}/sendDocument?chat_id={{ secrets.TELEGRAM_CHAT_ID
