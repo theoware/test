@@ -10,7 +10,6 @@ jobs:
     runs-on: ubuntu-latest
     env:
       NDK_CCACHE: ${{ github.workspace }}/ccache
-      CCACHE_DIR: ${{ github.workspace }}/.ccache
       ANDROID_HOME: /opt/ndk
       NDK: /opt/ndk/ndk/21.4.7075529
       ANDROID_SDK_ROOT: /opt/ndk
@@ -45,7 +44,7 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt-get update || sudo apt-get update
-        sudo apt-get install -y ninja-build golang-go yasm ccache gperf cmake
+        sudo apt-get install -y ninja-build golang-go yasm gperf cmake
         wget https://github.com/patrickfav/uber-apk-signer/releases/download/v1.2.1/uber-apk-signer-1.2.1.jar -O uber-apk-signer.jar
         echo "47ae984df200afbae292d6f950e517afb445d3c902a1edc7717a82c513c5e772 uber-apk-signer.jar" | sha256sum -c
 
@@ -56,14 +55,6 @@ jobs:
         distribution: temurin
         check-latest: true
         cache: gradle
-
-    - name: Cache ccache
-      id: ccache-cache
-      uses: actions/cache@main
-      with:
-        path: ${{ github.workspace }}/.ccache
-        key: ccache-${{ github.sha }}
-        restore-keys: ccache-
 
     - name: Cache NDK licenses
       id: licenses-cache
@@ -87,14 +78,6 @@ jobs:
 
     - name: Add API keys
       run: echo -e 'APP_ID = 12834\nAPP_HASH = c84d9229db1d6be95c067b02b126352c' > API_KEYS
-
-    - name: Setup ccache
-      run: |
-        sudo /usr/sbin/update-ccache-symlinks
-        echo 'export PATH="/usr/lib/ccache:$PATH"' | tee -a ~/.bashrc
-        echo 'export CCACHE_EXEC=/usr/bin/ccache' | tee -a ~/.bashrc
-        echo 'export USE_CCACHE=1' | tee -a ~/.bashrc
-        source ~/.bashrc
 
     - name: Cache boringSSL
       id: boringssl-cache
@@ -241,6 +224,3 @@ jobs:
       run: |
         telegram-bot-api --api-id=${{ secrets.TELEGRAM_API_ID }} --api-hash=${{ secrets.TELEGRAM_API_HASH }} &
         curl -F document=@"signed/TMessagesProj-afat-release-aligned-signed.apk" http://localhost:8081/bot${{ secrets.TELEGRAM_TOKEN }}/sendDocument?chat_id=${{ secrets.TELEGRAM_CHAT_ID }}
-
-    - run: ls -R .
-      if: always()
