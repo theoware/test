@@ -11,4 +11,6 @@ jobs:
 
     steps:
 
-      - run: gh release list --repo mollyim/mollyim-android
+    - run: gh release list --repo mollyim/mollyim-android
+      env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
