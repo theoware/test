@@ -11,11 +11,4 @@ jobs:
 
     steps:
 
-      - uses: actions/checkout@main
-        with:
-          repository: patrickfav/uber-apk-signer
-
-      - run: ./mvnw clean install
-
-
-
+      - run: gh release list --repo mollyim/mollyim-android
