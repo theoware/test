@@ -71,7 +71,7 @@ jobs:
       with:
         path: ${{ github.workspace }}/ndk/licenses
         key: licenses-${{ github.sha }}
-        restore-keys: ccache-
+        restore-keys: licenses-
 
     - name: Install the android NDK
       if: steps.licenses-cache.outputs.cache-hit != 'true'
