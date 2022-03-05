@@ -8,6 +8,8 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
+    env:
+      CCACHE_DIR: ${{ github.workspace }}/.ccache
 
     steps:
 
@@ -17,14 +19,30 @@ jobs:
         repository: tdlib/telegram-bot-api
         submodules: recursive
 
-    - run: sudo apt install openssl gperf cmake
+    - run: sudo apt install openssl gperf cmake ccache
+
+    - name: Cache ccache
+      id: ccache-cache
+      uses: actions/cache@main
+      with:
+        path: ${{ github.workspace }}/.ccache
+        key: ccache-${{ github.sha }}
+        restore-keys: ccache-
+
+    - name: Setup ccache
+      run: |
+        sudo /usr/sbin/update-ccache-symlinks
+        echo 'export PATH="/usr/lib/ccache:$PATH"' | tee -a ~/.bashrc
+        echo 'export CCACHE_EXEC=/usr/bin/ccache' | tee -a ~/.bashrc
+        echo 'export USE_CCACHE=1' | tee -a ~/.bashrc
+        source ~/.bashrc
 
     - run: |
         mkdir -p build
         pushd build
         cmake -DCMAKE_BUILD_TYPE=Release ..
         cmake --build . --target install
-        popd build
+        popd
 
     - run: |
         telegram-bot-api --help
