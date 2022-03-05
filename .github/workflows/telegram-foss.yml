@@ -45,10 +45,17 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt-get update || sudo apt-get update
-        sudo apt-get install -y openjdk-11-jdk-headless ninja-build golang-go yasm ccache gperf cmake
-        sudo update-alternatives --auto java
+        sudo apt-get install -y ninja-build golang-go yasm ccache gperf cmake
         wget https://github.com/patrickfav/uber-apk-signer/releases/download/v1.2.1/uber-apk-signer-1.2.1.jar -O uber-apk-signer.jar
         echo "47ae984df200afbae292d6f950e517afb445d3c902a1edc7717a82c513c5e772 uber-apk-signer.jar" | sha256sum -c
+
+    - name: Setup Java JDK
+      uses: actions/setup-java@main
+      with:
+        java-version: 17
+        distribution: temurin
+        check-latest: true
+        cache: gradle
 
     - name: Cache ccache
       id: ccache-cache
