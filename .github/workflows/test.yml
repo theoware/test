@@ -11,6 +11,17 @@ jobs:
 
     steps:
 
-    - run: gh release list --repo mollyim/mollyim-android --limit 1 | tr -s ' ' | cut -d't' -f5,3 | rev | cut -c21- | rev | xargs
-      env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Checkout
+      uses: actions/checkout@main
+      with:
+        repository: tdlib/telegram-bot-api
+        submodules: recursive
+
+    - run: sudo apt install openssl gperf cmake
+
+    - run: |
+        mkdir -p build
+        pushd build
+        cmake -DCMAKE_BUILD_TYPE=Release ..
+        cmake --build . --target install
+        popd build
