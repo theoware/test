@@ -1,0 +1,122 @@
+name: UUP dump downloader
+
+on:
+  workflow_dispatch:
+    inputs:
+      build:
+        required: true
+      lang:
+        required: true
+        default: de-de
+      edition:
+        required: true
+        default: PROFESSIONAL
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@main
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get install aria2 cabextract wimtools chntpw genisoimage
+          wget https://raw.githubusercontent.com/uup-dump/converter/master/convert.sh
+
+      - name: Retrieve aria2 script
+        run: |
+          aria2c --no-conf --log-level=info --log="aria2_download.log" -o"aria2_script.txt" --allow-overwrite=true --auto-file-renaming=false "https://uupdump.net/get.php?id=${{ github.event.inputs.build }}&pack=${{ github.event.inputs.lang }}&edition=${{ github.event.inputs.edition }}&aria2=2"
+
+      - name: Download files
+        run: |
+          aria2c --no-conf --log-level=info --log="aria2_download.log" -x16 -s16 -j5 -c -R -d"." -i"aria2_script.txt"
+
+      - name: Convert
+        run: |
+          chmod +x ./convert.sh
+          ./convert.sh wim "." 0
+
+      - name: Upload a Build Artifact
+        uses: actions/upload-artifact@main
+        with:
+          name: iso
+          path: "*.ISO"
+          if-no-files-found: error
+
+  upload:
+    name: Upload
+    runs-on: ubuntu-latest
+    needs: build
+    env:
+      CCACHE_DIR: ${{ github.workspace }}/.ccache
+    steps:
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update || sudo apt-get update
+        sudo apt-get install -y ccache gperf cmake
+
+    - name: Cache ccache
+      id: ccache-cache
+      uses: actions/cache@main
+      with:
+        path: ${{ github.workspace }}/.ccache
+        key: ccache-telegram-${{ github.sha }}
+        restore-keys: ccache-telegram-
+
+    - name: Setup ccache
+      run: |
+        sudo /usr/sbin/update-ccache-symlinks
+        echo 'export PATH="/usr/lib/ccache:$PATH"' | tee -a ~/.bashrc
+        echo 'export CCACHE_EXEC=/usr/bin/ccache' | tee -a ~/.bashrc
+        echo 'export USE_CCACHE=1' | tee -a ~/.bashrc
+        source ~/.bashrc
+
+    - name: Checkout Telegram bot API
+      uses: actions/checkout@main
+      with:
+        repository: tdlib/telegram-bot-api
+        submodules: recursive
+
+    - name: Compile the Telegram bot API
+      run: |
+        mkdir -p build
+        pushd build
+        cmake -DCMAKE_BUILD_TYPE=Release ..
+        cmake --build . --target install
+        popd
+
+    - name: Download a Build Artifact
+      uses: actions/download-artifact@main
+      with:
+        name: iso
+
+    - name: Get file name
+      id: iso
+      run: |
+        echo "::set-output name=name::$(find * -name *.ISO -type f)"
+
+    - name: Split files
+      run: |
+        split --bytes=2147483647 --numeric-suffixes $(find * -name *.ISO -type f) $(find * -name *.ISO -type f)
+
+    - name: Upload the splited ISO to Telegram
+      run: |
+        telegram-bot-api --api-id=${{ secrets.TELEGRAM_API_ID }} --api-hash=${{ secrets.TELEGRAM_API_HASH }} &
+        if [ -f ${{ steps.iso.outputs.name }}00 ]; 
+        then
+          curl -F document=@"${{ steps.iso.outputs.name }}00" http://localhost:8081/bot${{ secrets.TELEGRAM_TOKEN }}/sendDocument?chat_id=${{ secrets.TELEGRAM_CHAT_ID }}
+        fi
+        if [ -f ${{ steps.iso.outputs.name }}01 ]; 
+        then
+          curl -F document=@"${{ steps.iso.outputs.name }}01" http://localhost:8081/bot${{ secrets.TELEGRAM_TOKEN }}/sendDocument?chat_id=${{ secrets.TELEGRAM_CHAT_ID }}
+        fi
+        if [ -f ${{ steps.iso.outputs.name }}02 ]; 
+        then
+          curl -F document=@"${{ steps.iso.outputs.name }}02" http://localhost:8081/bot${{ secrets.TELEGRAM_TOKEN }}/sendDocument?chat_id=${{ secrets.TELEGRAM_CHAT_ID }}
+        fi
+        if [ -f ${{ steps.iso.outputs.name }}03 ]; 
+        then
+          curl -F document=@"${{ steps.iso.outputs.name }}03" http://localhost:8081/bot${{ secrets.TELEGRAM_TOKEN }}/sendDocument?chat_id=${{ secrets.TELEGRAM_CHAT_ID }}
+        fi
