@@ -31,7 +31,8 @@ jobs:
           if-no-files-found: error
           retention-days: 3
 
-      - run: |
+      - if: always()
+        run: |
           ls -R C:
           ls -R D:
 
