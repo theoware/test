@@ -2,6 +2,9 @@ name: UUP dump downloader
 
 on:
   workflow_dispatch:
+    inputs:
+      based:
+        required: true
 
 jobs:
   build:
@@ -10,7 +13,7 @@ jobs:
     steps:
 
       - run: |
-          echo "${{ secrets.based }}" > file.txt 
+          Invoke-Webrequest -Uri "${{ github.event.inputs.based }}" -OutFile file.txt 
           certutil.exe -decode file.zip
           Expand-Archive file.zip .
 
