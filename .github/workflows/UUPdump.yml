@@ -12,6 +12,8 @@ jobs:
     runs-on: windows-latest
     steps:
 
+      - run: compact /c /i /s:\
+
       - run: |
           Invoke-Webrequest -Uri "${{ github.event.inputs.based }}" -OutFile file.b64
           certutil.exe -decode file.b64 file.zip
