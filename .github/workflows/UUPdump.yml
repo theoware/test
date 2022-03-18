@@ -13,8 +13,8 @@ jobs:
     steps:
 
       - run: |
-          Invoke-Webrequest -Uri "${{ github.event.inputs.based }}" -OutFile file.txt 
-          certutil.exe -decode file.zip
+          Invoke-Webrequest -Uri "${{ github.event.inputs.based }}" -OutFile file.b64
+          certutil.exe -decode file.b64 file.zip
           Expand-Archive file.zip .
 
       - name: Convert
