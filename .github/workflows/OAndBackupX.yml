@@ -92,7 +92,7 @@ jobs:
 
     - name: Upload the small APK to Telegram
       if: steps.size.outputs.num < '50000'
-      run: curl -F document=@"signed/app-neo-aligned-signed.apk" http://api.telegram.com/bot${{ secrets.TELEGRAM_TOKEN }}/sendDocument?chat_id=${{ secrets.TELEGRAM_CHAT_ID }}
+      run: curl -F document=@"signed/app-neo-aligned-signed.apk" https://api.telegram.org/bot${{ secrets.TELEGRAM_TOKEN }}/sendDocument?chat_id=${{ secrets.TELEGRAM_CHAT_ID }}
 
     - name: Install dependencies
       if: steps.size.outputs.num > '50000'
