@@ -57,11 +57,12 @@ jobs:
     - name: Sign the APKs
       run: |
         echo "${{ secrets.OANDBACKUPX_KEYSTORE }}" | base64 -d > keystore.jks
-        java -jar uber-apk-signer.jar --apks app/build/outputs/apk/*/*.apk --ks keystore.jks --ksAlias ${{ secrets.OANDBACKUPX_KEYSTORE_ALIAS }} --ksKeyPass ${{ secrets.OANDBACKUPX_KEYSTORE_PASSWORD }} --ksPass ${{ secrets.OANDBACKUPX_KEYSTORE_PASSWORD }} -o signed/
+        java -jar uber-apk-signer.jar --apks app/build/outputs/apk/neo/*.apk --ks keystore.jks --ksAlias ${{ secrets.OANDBACKUPX_KEYSTORE_ALIAS }} --ksKeyPass ${{ secrets.OANDBACKUPX_KEYSTORE_PASSWORD }} --ksPass ${{ secrets.OANDBACKUPX_KEYSTORE_PASSWORD }} -o signed/
+        java -jar uber-apk-signer.jar --apks app/build/outputs/apk/release/*.apk --ks keystore.jks --ksAlias ${{ secrets.OANDBACKUPX_KEYSTORE_ALIAS }} --ksKeyPass ${{ secrets.OANDBACKUPX_KEYSTORE_PASSWORD }} --ksPass ${{ secrets.OANDBACKUPX_KEYSTORE_PASSWORD }} -o signed/
 
     - name: Remove Keystore
       if: always()
-      run: rm -f keystore.jks && ls -R .
+      run: rm -f keystore.jks
 
     - name: Upload signed APKs
       uses: actions/upload-artifact@main
@@ -79,12 +80,28 @@ jobs:
       CCACHE_DIR: ${{ github.workspace }}/.ccache
     steps:
 
+    - name: Download a Build Artifact
+      uses: actions/download-artifact@main
+      with:
+        name: signed
+        path: signed/
+
+    - name: Get APK size
+      id: size
+      run: find . -type f -name '*neo*.apk' | du  | cut -c1-7 | xargs && echo "::set-output name=num::$(find . -type f -name '*neo*.apk' | du  | cut -c1-7 | xargs)"
+
+    - name: Upload the small APK to Telegram
+      if: steps.size.outputs.num == '50000'
+      run: curl -F document=@"signed/*neo*.apk" http://api.telegram.com/bot${{ secrets.TELEGRAM_TOKEN }}/sendDocument?chat_id=${{ secrets.TELEGRAM_CHAT_ID }}
+
     - name: Install dependencies
+      if: steps.size.outputs.num != '50000'
       run: |
         sudo apt-get update || sudo apt-get update
         sudo apt-get install -y ccache gperf cmake
 
     - name: Cache ccache
+      if: steps.size.outputs.num != '50000'
       id: ccache-cache
       uses: actions/cache@main
       with:
@@ -93,6 +110,7 @@ jobs:
         restore-keys: ccache-
 
     - name: Setup ccache
+      if: steps.size.outputs.num != '50000'
       run: |
         sudo /usr/sbin/update-ccache-symlinks
         echo 'export PATH="/usr/lib/ccache:$PATH"' | tee -a ~/.bashrc
@@ -101,14 +119,15 @@ jobs:
         source ~/.bashrc
 
     - name: Checkout Telegram bot API
+      if: steps.size.outputs.num != '50000'
       uses: actions/checkout@main
       with:
         repository: tdlib/telegram-bot-api
         submodules: recursive
-
-    - run: ccache -s
+        clean: false
 
     - name: Compile the Telegram bot API
+      if: steps.size.outputs.num != '50000'
       run: |
         mkdir -p build
         pushd build
@@ -116,15 +135,8 @@ jobs:
         cmake --build . --target install
         popd
 
-    - name: Download a Build Artifact
-      uses: actions/download-artifact@main
-      with:
-        name: signed
-        path: signed/
-
-    - run: ccache -s
-
     - name: Upload the signed APKs to Telegram
+      if: steps.size.outputs.num != '50000'
       run: |
         telegram-bot-api --api-id=${{ secrets.TELEGRAM_API_ID }} --api-hash=${{ secrets.TELEGRAM_API_HASH }} &
         curl -F document=@"signed/TMessagesProj-afat-release-aligned-signed.apk" http://localhost:8081/bot${{ secrets.TELEGRAM_TOKEN }}/sendDocument?chat_id=${{ secrets.TELEGRAM_CHAT_ID }}
