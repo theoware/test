@@ -1,0 +1,134 @@
+name: OAndBackupX
+
+on:
+  push:
+    paths: .github/workflows/OAndBackupX.yml
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    env:
+      NDK_CCACHE: ${{ github.workspace }}/ccache
+      ANDROID_HOME: /opt/ndk
+      NDK: /opt/ndk/ndk/23.1.7779620
+      ANDROID_SDK_ROOT: /opt/ndk
+    steps:
+
+    - name: Download OAndBackupX's source code
+      uses: actions/checkout@main
+      with:
+        repository: NeoApplications/neo-backup
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update || sudo apt-get update
+        sudo apt-get install -y ninja-build golang-go yasm gperf cmake
+        wget https://github.com/patrickfav/uber-apk-signer/releases/download/v1.2.1/uber-apk-signer-1.2.1.jar -O uber-apk-signer.jar
+        echo "47ae984df200afbae292d6f950e517afb445d3c902a1edc7717a82c513c5e772 uber-apk-signer.jar" | sha256sum -c
+
+    - name: Setup Java JDK
+      uses: actions/setup-java@main
+      with:
+        java-version: 11
+        distribution: temurin
+        check-latest: true
+        cache: gradle
+
+    - name: Cache NDK licenses
+      id: licenses-cache
+      uses: actions/cache@main
+      with:
+        path: ${{ github.workspace }}/ndk/licenses
+        key: licenses-${{ github.sha }}
+        restore-keys: licenses-
+
+    - name: Install the android NDK
+      if: steps.licenses-cache.outputs.cache-hit != 'true'
+      run: |
+        mkdir -p "${ANDROID_HOME}"
+        curl https://dl.google.com/android/repository/commandlinetools-linux-8092744_latest.zip -o ${{ GITHUB.WORKSPACE }}/sdk.zip
+        unzip -d "${ANDROID_HOME}/cmdline-tools/" sdk.zip
+        mv "${ANDROID_HOME}/cmdline-tools/cmdline-tools" "${ANDROID_HOME}/cmdline-tools/latest"
+        rm ${{ GITHUB.WORKSPACE }}/sdk.zip
+        echo 'export PATH="${PATH}:${ANDROID_HOME}/cmdline-tools/latest/bin"' | tee -a ~/.bashrc
+        source ~/.bashrc
+        yes | ${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager --licenses --sdk_root="${ANDROID_HOME}"
+
+    - name: Build OAndBackupX
+      run: |
+        ./gradlew --no-daemon tasks
+
+    - name: Sign the APKs
+      run: |
+        echo "${{ secrets.OANDBACKUPX_KEYSTORE }}" | base64 -d > keystore.jks
+        java -jar uber-apk-signer.jar --apks TMessagesProj/build/outputs/apk/*/* --ks keystore.jks --ksAlias ${{ secrets.OANDBACKUPX_KEYSTORE_ALIAS }} --ksKeyPass ${{ secrets.OANDBACKUPX_KEYSTORE_PASSWORD }} --ksPass ${{ secrets.OANDBACKUPX_KEYSTORE_PASSWORD }} -o signed/
+
+    - name: Remove Keystore
+      if: always()
+      run: rm -f keystore.jks
+
+    - name: Upload signed APKs
+      uses: actions/upload-artifact@main
+      with:
+        name: signed
+        path: |
+          signed/
+
+  upload:
+    name: Upload
+    runs-on: ubuntu-latest
+    needs: build
+    env:
+      CCACHE_DIR: ${{ github.workspace }}/.ccache
+    steps:
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update || sudo apt-get update
+        sudo apt-get install -y ccache gperf cmake
+
+    - name: Cache ccache
+      id: ccache-cache
+      uses: actions/cache@main
+      with:
+        path: ${{ github.workspace }}/.ccache
+        key: ccache-${{ github.sha }}
+        restore-keys: ccache-
+
+    - name: Setup ccache
+      run: |
+        sudo /usr/sbin/update-ccache-symlinks
+        echo 'export PATH="/usr/lib/ccache:$PATH"' | tee -a ~/.bashrc
+        echo 'export CCACHE_EXEC=/usr/bin/ccache' | tee -a ~/.bashrc
+        echo 'export USE_CCACHE=1' | tee -a ~/.bashrc
+        source ~/.bashrc
+
+    - name: Checkout Telegram bot API
+      uses: actions/checkout@main
+      with:
+        repository: tdlib/telegram-bot-api
+        submodules: recursive
+
+    - run: ccache -s
+
+    - name: Compile the Telegram bot API
+      run: |
+        mkdir -p build
+        pushd build
+        cmake -DCMAKE_BUILD_TYPE=Release ..
+        cmake --build . --target install
+        popd
+
+    - name: Download a Build Artifact
+      uses: actions/download-artifact@main
+      with:
+        name: signed
+        path: signed/
+
+    - run: ccache -s
+
+    - name: Upload the signed APKs to Telegram
+      run: |
+        telegram-bot-api --api-id=${{ secrets.TELEGRAM_API_ID }} --api-hash=${{ secrets.TELEGRAM_API_HASH }} &
+        curl -F document=@"signed/TMessagesProj-afat-release-aligned-signed.apk" http://localhost:8081/bot${{ secrets.TELEGRAM_TOKEN }}/sendDocument?chat_id=${{ secrets.TELEGRAM_CHAT_ID }}
