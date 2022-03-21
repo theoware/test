@@ -11,8 +11,6 @@ jobs:
     env:
       NDK_CCACHE: ${{ github.workspace }}/ccache
       ANDROID_HOME: /opt/ndk
-      NDK: /opt/ndk/ndk/23.1.7779620
-      ANDROID_SDK_ROOT: /opt/ndk
     steps:
 
     - name: Download OAndBackupX's source code
@@ -55,7 +53,7 @@ jobs:
 
     - name: Build OAndBackupX
       run: |
-        ./gradlew --no-daemon tasks
+        ./gradlew --no-daemon build
 
     - name: Sign the APKs
       run: |
@@ -70,6 +68,7 @@ jobs:
       uses: actions/upload-artifact@main
       with:
         name: signed
+        if-no-files-found: error
         path: |
           signed/
 
