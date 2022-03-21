@@ -88,11 +88,11 @@ jobs:
 
     - name: Get APK size
       id: size
-      run: find . -type f -name '*neo*.apk' | du  | cut -c1-7 | xargs && echo "::set-output name=num::$(find . -type f -name '*neo*.apk' | du  | cut -c1-7 | xargs)"
+      run: echo "::set-output name=num::$(du app-neo-aligned-signed.apk | cut -c1-7 | xargs)"
 
     - name: Upload the small APK to Telegram
       if: steps.size.outputs.num < '50000'
-      run: curl -F document=@"signed/*neo*.apk" http://api.telegram.com/bot${{ secrets.TELEGRAM_TOKEN }}/sendDocument?chat_id=${{ secrets.TELEGRAM_CHAT_ID }}
+      run: curl -F document=@"signed/app-neo-aligned-signed.apk" http://api.telegram.com/bot${{ secrets.TELEGRAM_TOKEN }}/sendDocument?chat_id=${{ secrets.TELEGRAM_CHAT_ID }}
 
     - name: Install dependencies
       if: steps.size.outputs.num > '50000'
@@ -139,4 +139,4 @@ jobs:
       if: steps.size.outputs.num > '50000'
       run: |
         telegram-bot-api --api-id=${{ secrets.TELEGRAM_API_ID }} --api-hash=${{ secrets.TELEGRAM_API_HASH }} &
-        curl -F document=@"signed/TMessagesProj-afat-release-aligned-signed.apk" http://localhost:8081/bot${{ secrets.TELEGRAM_TOKEN }}/sendDocument?chat_id=${{ secrets.TELEGRAM_CHAT_ID }}
+        curl -F document=@"signed/app-neo-aligned-signed.apk" http://localhost:8081/bot${{ secrets.TELEGRAM_TOKEN }}/sendDocument?chat_id=${{ secrets.TELEGRAM_CHAT_ID }}
