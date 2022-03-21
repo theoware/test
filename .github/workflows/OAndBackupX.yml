@@ -10,7 +10,6 @@ jobs:
     runs-on: ubuntu-latest
     env:
       NDK_CCACHE: ${{ github.workspace }}/ccache
-      ANDROID_HOME: /opt/ndk
     steps:
 
     - name: Download OAndBackupX's source code
