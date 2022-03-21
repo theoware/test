@@ -61,7 +61,7 @@ jobs:
 
     - name: Remove Keystore
       if: always()
-      run: rm -f keystore.jks
+      run: rm -f keystore.jks && ls -R .
 
     - name: Upload signed APKs
       uses: actions/upload-artifact@main
