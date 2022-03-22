@@ -52,7 +52,7 @@ jobs:
 
     - name: Build OAndBackupX
       run: |
-        ./gradlew --no-daemon build
+        ./gradlew --no-daemon buildneo
 
     - name: Sign the APKs
       run: |
