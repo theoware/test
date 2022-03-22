@@ -52,7 +52,7 @@ jobs:
 
     - name: Build OAndBackupX
       run: |
-        ./gradlew --no-daemon compileNeoSources
+        ./gradlew --no-daemon build -x lint -x lintdebug
 
     - name: Sign the APKs
       run: |
