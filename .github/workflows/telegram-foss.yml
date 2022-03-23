@@ -35,11 +35,15 @@ jobs:
         echo "::set-output name=libvpx::$(git rev-parse HEAD)"
         popd
 
+    - name: Cleanup
+      run: rm -rf *
+
     - name: Download Telegram-FOSS's source code
       uses: actions/checkout@main
       with:
         repository: Telegram-FOSS-Team/Telegram-FOSS
         clean: true
+        submodules: false
 
     - name: Install dependencies
       run: |
