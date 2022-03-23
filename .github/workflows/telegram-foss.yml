@@ -49,7 +49,7 @@ jobs:
       run: |
         sudo apt-get update || sudo apt-get update
         sudo apt-get install -y ninja-build golang-go yasm gperf cmake
-        wget https://github.com/patrickfav/uber-apk-signer/releases/download/v1.2.1/uber-apk-signer-1.2.1.jar -O uber-apk-signer.jar
+        wget -q https://github.com/patrickfav/uber-apk-signer/releases/download/v1.2.1/uber-apk-signer-1.2.1.jar -O uber-apk-signer.jar
         echo "47ae984df200afbae292d6f950e517afb445d3c902a1edc7717a82c513c5e772 uber-apk-signer.jar" | sha256sum -c
 
     - name: Setup Java JDK
@@ -113,17 +113,8 @@ jobs:
       run: git submodule update --init --recursive --rebase --force
 
     - name: Build Telegram-FOSS fake
-      continue-on-error: true
       run: |
         ./gradlew --no-daemon tasks
-
-    - name: Build Telegram-FOSS fake
-      continue-on-error: true
-      run: |
-        ./gradlew --no-daemon assembleAfatRelease
-
-    - run: sudo ls -R $ANDROID_SDK_ROOT
-      if: always()
 
     - name: Build FFmpeg with clang
       if: steps.ffmpeg-cache.outputs.cache-hit != 'true'
