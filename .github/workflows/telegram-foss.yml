@@ -112,6 +112,9 @@ jobs:
       if: steps.libvpx-cache.outputs.cache-hit != 'true' && steps.ffmpeg-cache.outputs.cache-hit != 'true' && steps.boringssl-cache.outputs.cache-hit != 'true'
       run: git submodule update --init --recursive --rebase --force
 
+    - run: ls -R .
+      if: always()
+
     - name: Build Telegram-FOSS fake
       run: |
         ./gradlew --no-daemon tasks
