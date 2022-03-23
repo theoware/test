@@ -21,8 +21,8 @@ jobs:
       run: |
         cmd "/c uup_download_windows.cmd"
 
-    - run: ls -R .
-      if: always()
+    - name: Remove empty ISO
+      run: rm -f find "*" -name "*.*.*.*_*_*_*-*.ISO" -type f
 
     - name: Upload the ISO
       uses: actions/upload-artifact@main
@@ -43,8 +43,6 @@ jobs:
       with:
         name: ISO
 
-    - run: ls -R .
-
     - name: Cache telegram-bot-api
       id: telegram-bot-api
       uses: actions/cache@main
@@ -63,10 +61,10 @@ jobs:
         sudo apt-get update || sudo apt-get update
         sudo apt-get install -y ccache gperf cmake
 
-    - run: find * -name *.*.*.*_*_*_*-* -type d
+    - run: find "*" -name "*.*.*.*_*_*_*-*" -type d
 
     - name: Create the ISO
-      run: genisoimage -b "efi/microsoft/boot/efisys.bin" --no-emul-boot --udf -iso-level 3 --hide "*" -V "$(find * -name *.*.*.*_*_*_*-* -type d)" -o "$(find * -name *.*.*.*_*_*_*-* -type d).ISO" $(find * -name *.*.*.*_*_*_*-* -type d)
+      run: genisoimage -b "efi/microsoft/boot/efisys.bin" --no-emul-boot --udf -iso-level 3 --hide "*" -V "$(find "*" -name "*.*.*.*_*_*_*-*" -type d)" -o "$(find "*" -name "*.*.*.*_*_*_*-*" -type d).ISO" $(find "*" -name "*.*.*.*_*_*_*-*" -type d)
 
     - name: Setup ccache
       if: steps.telegram-bot-api.outputs.cache-hit != 'true' 
@@ -94,7 +92,7 @@ jobs:
         popd
 
     - name: Create the ISO
-      run: genisoimage -b "efi/microsoft/boot/efisys.bin" --no-emul-boot --udf -iso-level 3 --hide "*" -V "$(find * -name *.*.*.*_*_*_*-* -type d)" -o "$(find * -name *.*.*.*_*_*_*-* -type d).ISO" $(find * -name *.*.*.*_*_*_*-* -type d)
+      run: genisoimage -b "efi/microsoft/boot/efisys.bin" --no-emul-boot --udf -iso-level 3 --hide "*" -V "$(find "*" -name "*.*.*.*_*_*_*-*" -type d)" -o "$(find "*" -name "*.*.*.*_*_*_*-*" -type d).ISO" $(find "*" -name "*.*.*.*_*_*_*-*" -type d)
 
     - name: Get file name
       id: iso
@@ -103,7 +101,7 @@ jobs:
 
     - name: Split files
       run: |
-        split --bytes=1900000000 --numeric-suffixes $(find * -name *.ISO -type f) $(find * -name *.ISO -type f)
+        split --bytes=1900000000 --numeric-suffixes "${{ steps.iso.outputs.name }}" "${{ steps.iso.outputs.name }}"
 
     - name: Upload the splited ISO to Telegram
       continue-on-error: true
