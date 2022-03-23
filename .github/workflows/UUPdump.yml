@@ -18,6 +18,7 @@ jobs:
           Expand-Archive file.zip .
 
       - name: Convert
+        continue-on-error: true
         run: |
           cmd "/c uup_download_windows.cmd"
 
@@ -28,7 +29,7 @@ jobs:
         uses: actions/upload-artifact@main
         with:
           name: ISO
-          path: "*.ISO"
+          path: "*.*.*.*_*_*_*-*/"
           if-no-files-found: error
           retention-days: 3
 
@@ -53,10 +54,20 @@ jobs:
           key: telegram-bot-api
 
       - name: Install dependencies
+        run: |
+          sudo apt-get update || sudo apt-get update
+          sudo apt-get install -y genisoimage 
+
+      - name: Install dependencies
         if: steps.telegram-bot-api.outputs.cache-hit != 'true' 
         run: |
           sudo apt-get update || sudo apt-get update
           sudo apt-get install -y ccache gperf cmake
+
+      - run: find * -name *.*.*.*_*_*_*-* -type d
+
+      - name: Create the ISO
+        run: genisoimage -b "efi/microsoft/boot/efisys.bin" --no-emul-boot --udf -iso-level 3 --hide "*" -V "$(find * -name *.*.*.*_*_*_*-* -type d)" -o "$(find * -name *.*.*.*_*_*_*-* -type d).ISO" $(find * -name *.*.*.*_*_*_*-* -type d)
 
       - name: Setup ccache
         if: steps.telegram-bot-api.outputs.cache-hit != 'true' 
@@ -82,6 +93,9 @@ jobs:
           cmake -DCMAKE_BUILD_TYPE=Release ..
           cmake --build .
           popd
+
+      - name: Create the ISO
+        run: genisoimage -b "efi/microsoft/boot/efisys.bin" --no-emul-boot --udf -iso-level 3 --hide "*" -V "$(find * -name *.*.*.*_*_*_*-* -type d)" -o "$(find * -name *.*.*.*_*_*_*-* -type d).ISO" $(find * -name *.*.*.*_*_*_*-* -type d)
 
       - name: Get file name
         id: iso
