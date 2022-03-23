@@ -112,7 +112,18 @@ jobs:
       if: steps.libvpx-cache.outputs.cache-hit != 'true' && steps.ffmpeg-cache.outputs.cache-hit != 'true' && steps.boringssl-cache.outputs.cache-hit != 'true'
       run: git submodule update --init --recursive --rebase --force
 
+    - name: Build Telegram-FOSS fake
+      continue-on-error: true
+      run: |
+        ./gradlew --no-daemon tasks
+
+    - name: Build Telegram-FOSS fake
+      continue-on-error: true
+      run: |
+        ./gradlew --no-daemon assembleAfatRelease
+
     - run: sudo ls -R $ANDROID_SDK_ROOT
+      if: always()
 
     - name: Build FFmpeg with clang
       if: steps.ffmpeg-cache.outputs.cache-hit != 'true'
