@@ -5,8 +5,8 @@ on:
     paths: .github/workflows/UUPdump.yml
 
 jobs:
-  build:
-    name: Build
+  convert:
+    name: Convert
     runs-on: windows-latest
     steps:
 
@@ -35,7 +35,7 @@ jobs:
   upload:
     name: Upload
     runs-on: ubuntu-latest
-    needs: build
+    needs: convert
     steps:
 
     - name: Download a Build Artifact
