@@ -24,7 +24,7 @@ jobs:
       with:
         repository: Telegram-FOSS-Team/Telegram-FOSS
         submodules: recursive
-        branch: ${{ matrix.ref }}
+        ref: ${{ matrix.ref }}
 
     - name: Get hashes
       working-directory: TMessagesProj/jni
