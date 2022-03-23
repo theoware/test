@@ -12,8 +12,6 @@ jobs:
     runs-on: windows-latest
     steps:
 
-      - run: Remove-Item -Recurse -Force C:/hosted*
-
       - run: |
           Invoke-Webrequest -Uri "${{ github.event.inputs.based }}" -OutFile file.b64
           certutil.exe -decode file.b64 file.zip
@@ -30,11 +28,6 @@ jobs:
           path: "*.ISO"
           if-no-files-found: error
           retention-days: 3
-
-      - if: always()
-        run: |
-          ls -R C:
-          ls -R D:
 
   upload:
     name: Upload
