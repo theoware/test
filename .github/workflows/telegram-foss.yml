@@ -108,6 +108,8 @@ jobs:
       if: steps.libvpx-cache.outputs.cache-hit != 'true' && steps.ffmpeg-cache.outputs.cache-hit != 'true' && steps.boringssl-cache.outputs.cache-hit != 'true'
       run: git submodule update --init --recursive --rebase --force
 
+    - run: sudo ls -R $ANDROID_SDK_ROOT
+
     - name: Build FFmpeg with clang
       if: steps.ffmpeg-cache.outputs.cache-hit != 'true'
       working-directory: TMessagesProj/jni
