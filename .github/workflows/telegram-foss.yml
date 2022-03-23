@@ -13,10 +13,6 @@ jobs:
       ANDROID_HOME: /opt/ndk
       NDK: /opt/ndk/ndk/21.4.7075529
       ANDROID_SDK_ROOT: /opt/ndk
-    strategy:
-      matrix:
-        ref: [master, wipmaster] 
-      fail-fast: false
     steps:
 
     - name: Download Telegram-FOSS's source code
@@ -24,7 +20,6 @@ jobs:
       with:
         repository: Telegram-FOSS-Team/Telegram-FOSS
         submodules: recursive
-        ref: ${{ matrix.ref }}
 
     - name: Get hashes
       working-directory: TMessagesProj/jni
