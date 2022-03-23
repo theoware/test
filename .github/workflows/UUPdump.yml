@@ -21,6 +21,9 @@ jobs:
         run: |
           cmd "/c uup_download_windows.cmd"
 
+      - run: ls -R .
+        if: always()
+
       - name: Upload the ISO
         uses: actions/upload-artifact@main
         with:
