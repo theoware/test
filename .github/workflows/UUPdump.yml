@@ -22,7 +22,7 @@ jobs:
         cmd "/c uup_download_windows.cmd"
 
     - name: Remove empty ISO
-      run: rm -f find "*" -name "*.*.*.*_*_*_*-*.ISO" -type f
+      run: Remove-Item -Force "*.*.*.*_*_*_*-*.ISO"
 
     - name: Upload the ISO
       uses: actions/upload-artifact@main
