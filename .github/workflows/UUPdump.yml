@@ -63,8 +63,13 @@ jobs:
 
     - run: find * -name "*.*.*.*_*_*_*-*" -type d
 
+    - name: Get file name
+      id: iso
+      run: |
+        echo "::set-output name=name::$(find * -name "*.*.*.*_*_*_*-*" -type d)"
+
     - name: Create the ISO
-      run: genisoimage -b "efi/microsoft/boot/efisys.bin" --no-emul-boot --udf -iso-level 3 --hide "*" -V "$(find * -name "*.*.*.*_*_*_*-*" -type d)" -o "$(find * -name "*.*.*.*_*_*_*-*" -type d).ISO" $(find * -name "*.*.*.*_*_*_*-*" -type d)
+      run: genisoimage -b "efi/microsoft/boot/efisys.bin" --no-emul-boot --udf -iso-level 3 --hide "*" -V "${{ steps.iso.outputs.name }}" -o "${{ steps.iso.outputs.name }}.ISO" "${{ steps.iso.outputs.name }}"
 
     - name: Setup ccache
       if: steps.telegram-bot-api.outputs.cache-hit != 'true' 
@@ -93,11 +98,6 @@ jobs:
 
     - name: Create the ISO
       run: genisoimage -b "efi/microsoft/boot/efisys.bin" --no-emul-boot --udf -iso-level 3 --hide "*" -V "$(find * -name "*.*.*.*_*_*_*-*" -type d)" -o "$(find * -name "*.*.*.*_*_*_*-*" -type d).ISO" $(find * -name "*.*.*.*_*_*_*-*" -type d)
-
-    - name: Get file name
-      id: iso
-      run: |
-        echo "::set-output name=name::$(find * -name *.ISO -type f)"
 
     - name: Split files
       run: |
