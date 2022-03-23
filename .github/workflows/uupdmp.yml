@@ -1,0 +1,128 @@
+name: UUP dump converter
+
+on:
+  workflow_dispatch:
+    inputs:
+      based:
+        required: true
+
+jobs:
+  build:
+    name: Build
+    runs-on: windows-latest
+    steps:
+
+      - run: |
+          Invoke-Webrequest -Uri "${{ github.event.inputs.based }}" -OutFile file.b64
+          certutil.exe -decode file.b64 file.zip
+          Expand-Archive file.zip .
+
+      - name: Convert
+        continue-on-error: true
+        run: |
+          cmd "/c uup_download_windows.cmd"
+
+      - run: ls -R .
+        if: always()
+
+      - name: Upload the ISO
+        uses: actions/upload-artifact@main
+        with:
+          name: ISO
+          path: "*.*.*.*_*_*_*-*/"
+          if-no-files-found: error
+          retention-days: 3
+
+  upload:
+    name: Upload
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+
+      - name: Download a Build Artifact
+        uses: actions/download-artifact@main
+        with:
+          name: ISO
+
+      - run: ls -R .
+
+      - name: Cache telegram-bot-api
+        id: telegram-bot-api
+        uses: actions/cache@main
+        with:
+          path: build/telegram-bot-api
+          key: telegram-bot-api
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update || sudo apt-get update
+          sudo apt-get install -y genisoimage 
+
+      - name: Install dependencies
+        if: steps.telegram-bot-api.outputs.cache-hit != 'true' 
+        run: |
+          sudo apt-get update || sudo apt-get update
+          sudo apt-get install -y ccache gperf cmake
+
+      - run: find * -name *.*.*.*_*_*_*-* -type d
+
+      - name: Create the ISO
+        run: genisoimage -b "efi/microsoft/boot/efisys.bin" --no-emul-boot --udf -iso-level 3 --hide "*" -V "$(find * -name *.*.*.*_*_*_*-* -type d)" -o "$(find * -name *.*.*.*_*_*_*-* -type d).ISO" $(find * -name *.*.*.*_*_*_*-* -type d)
+
+      - name: Setup ccache
+        if: steps.telegram-bot-api.outputs.cache-hit != 'true' 
+        run: |
+          sudo /usr/sbin/update-ccache-symlinks
+          echo 'export PATH="/usr/lib/ccache:$PATH"' | tee -a ~/.bashrc
+          echo 'export CCACHE_EXEC=/usr/bin/ccache' | tee -a ~/.bashrc
+          echo 'export USE_CCACHE=1' | tee -a ~/.bashrc
+          source ~/.bashrc
+
+      - name: Checkout Telegram bot API
+        if: steps.telegram-bot-api.outputs.cache-hit != 'true' 
+        uses: actions/checkout@main
+        with:
+          repository: tdlib/telegram-bot-api
+          submodules: recursive
+
+      - name: Compile the Telegram bot API
+        if: steps.telegram-bot-api.outputs.cache-hit != 'true' 
+        run: |
+          mkdir -p build
+          pushd build
+          cmake -DCMAKE_BUILD_TYPE=Release ..
+          cmake --build .
+          popd
+
+      - name: Create the ISO
+        run: genisoimage -b "efi/microsoft/boot/efisys.bin" --no-emul-boot --udf -iso-level 3 --hide "*" -V "$(find * -name *.*.*.*_*_*_*-* -type d)" -o "$(find * -name *.*.*.*_*_*_*-* -type d).ISO" $(find * -name *.*.*.*_*_*_*-* -type d)
+
+      - name: Get file name
+        id: iso
+        run: |
+          echo "::set-output name=name::$(find * -name *.ISO -type f)"
+
+      - name: Split files
+        run: |
+          split --bytes=1900000000 --numeric-suffixes $(find * -name *.ISO -type f) $(find * -name *.ISO -type f)
+
+      - name: Upload the splited ISO to Telegram
+        run: |
+          ./build/telegram-bot-api --api-id=${{ secrets.TELEGRAM_API_ID }} --api-hash=${{ secrets.TELEGRAM_API_HASH }} &
+          if [ -f ${{ steps.iso.outputs.name }}00 ]; 
+          then
+            curl -F document=@"./${{ steps.iso.outputs.name }}00" http://localhost:8081/bot${{ secrets.TELEGRAM_TOKEN }}/sendDocument?chat_id=${{ secrets.TELEGRAM_CHAT_ID }}
+          fi
+          if [ -f ${{ steps.iso.outputs.name }}01 ]; 
+          then
+            curl -F document=@"./${{ steps.iso.outputs.name }}01" http://localhost:8081/bot${{ secrets.TELEGRAM_TOKEN }}/sendDocument?chat_id=${{ secrets.TELEGRAM_CHAT_ID }}
+          fi
+          if [ -f ${{ steps.iso.outputs.name }}02 ]; 
+          then
+            curl -F document=@"./${{ steps.iso.outputs.name }}02" http://localhost:8081/bot${{ secrets.TELEGRAM_TOKEN }}/sendDocument?chat_id=${{ secrets.TELEGRAM_CHAT_ID }}
+          fi
+          if [ -f ${{ steps.iso.outputs.name }}03 ]; 
+          then
+            curl -F document=@"./${{ steps.iso.outputs.name }}03" http://localhost:8081/bot${{ secrets.TELEGRAM_TOKEN }}/sendDocument?chat_id=${{ secrets.TELEGRAM_CHAT_ID }}
+          fi
+
