@@ -1,10 +1,8 @@
 name: UUP dump converter
 
 on:
-  workflow_dispatch:
-    inputs:
-      based:
-        required: true
+  push:
+    paths: .github/workflows/uupdump.yml
 
 jobs:
   build:
@@ -12,8 +10,9 @@ jobs:
     runs-on: windows-latest
     steps:
 
-    - run: |
-        Invoke-Webrequest -Uri "${{ github.event.inputs.based }}" -OutFile file.b64
+    - name: Download the UUPdump file
+      run: |
+        Invoke-Webrequest -Uri "https://gist.githubusercontent.com/theoware/78b5e4bbd7568dc8c91b9883b2c1b9d1/raw/6e01def05bd0ac9bb0c1dfc0ad501a3b71926d06/22000.588_amd64_de-de_multi_a84eaaea_convert_update_cleanup.txt" -OutFile file.b64
         certutil.exe -decode file.b64 file.zip
         Expand-Archive file.zip .
 
