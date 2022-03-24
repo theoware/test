@@ -69,7 +69,7 @@ jobs:
         echo "::set-output name=name::$(find * -name "*.*.*.*_*_*_*-*" -type d)"
 
     - name: Create the ISO
-      run: genisoimage -b "efi/microsoft/boot/efisys.bin" --no-emul-boot --udf -iso-level 3 --hide "*" -V "Windows" "${{ steps.iso.outputs.name }}" -o "${{ steps.iso.outputs.name }}.ISO" "${{ steps.iso.outputs.name }}"
+      run: genisoimage -b "efi/microsoft/boot/efisys.bin" --no-emul-boot --udf -iso-level 3 --hide "*" -V "Windows" "${{ steps.iso.outputs.name }}" -o "${{ steps.iso.outputs.name }}.ISO" "${{ steps.iso.outputs.name }}/"
 
     - name: Setup ccache
       if: steps.telegram-bot-api.outputs.cache-hit != 'true' 
