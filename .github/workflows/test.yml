@@ -13,6 +13,7 @@ jobs:
     defaults:
       run:
         shell: cmd
+        working-directory: ${{ github.workspace }}
 
     steps:
       - name: Prepare directories
