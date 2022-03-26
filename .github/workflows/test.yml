@@ -20,8 +20,8 @@ jobs:
       run: | 
         sudo apt update || sudo apt update
         sudo apt install fontmake python
-        pip install gftools
-        pip install fonttools
+        pip3 install gftools
+        pip3 install fonttools
 
     - name: Create variable directory in fonts
       run: mkdir -p fonts fonts/statics
