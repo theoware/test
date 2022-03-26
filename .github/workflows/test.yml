@@ -22,7 +22,9 @@ jobs:
 
       - name: Get repository name
         shell: bash
-        run: echo "REPO_NAME=${kotatogram/kotatogram-desktop##*/}" >> $GITHUB_ENV
+        run: |
+          REPO=kotatogram/kotatogram-desktop
+          echo "REPO_NAME=${REPO##*/}" >> $GITHUB_ENV
 
       - name: Native Tools Command Prompt
         uses: ilammy/msvc-dev-cmd@9f8ae839b01883414208f29e3e24524387f48e1f
@@ -101,7 +103,7 @@ jobs:
           cd %TBUILD%\%REPO_NAME%\Telegram
 
           call configure.bat ^
-          ${{ matrix.arch }} ^
+          x64 ^
           -D TDESKTOP_API_TEST=ON ^
           -D DESKTOP_APP_USE_PACKAGED=OFF ^
           -D DESKTOP_APP_DISABLE_CRASH_REPORTS=OFF ^
@@ -109,12 +111,8 @@ jobs:
           %TDESKTOP_BUILD_DEFINE% ^
           -DCMAKE_SYSTEM_VERSION=%SDK%
 
-          if "${{ matrix.arch }}" == "x64" (
-            cd ..\out64
-          ) else (
-            cd ..\out
-          )
-          msbuild -m Telegram.sln /p:Configuration=Debug,Platform=${{ matrix.arch }},DebugSymbols=false,DebugType=none
+          cd ..\out64
+          msbuild -m Telegram.sln /p:Configuration=Debug,Platform=x64,DebugSymbols=false,DebugType=none
 
       - name: Move artifact
         run: |
