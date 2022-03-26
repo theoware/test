@@ -35,6 +35,7 @@ jobs:
         with:
           submodules: recursive
           path: ${{ env.TBUILD }}\${{ env.REPO_NAME }}
+          repository: kotatogram/kotatogram-desktop
 
       - name: Choco dependencies
         run: |
@@ -74,7 +75,8 @@ jobs:
           GYP_MSVS_OVERRIDE_PATH: 'C:\Program Files\Microsoft Visual Studio\2022\Enterprise\'
           GYP_MSVS_VERSION: 2022
         run: |
-          python %GITHUB_WORKSPACE%\%TBUILD%\prepare.py skip-release
+          cd %TBUILD%
+          %REPO_NAME%/Telegram/build/prepare/win.bat skip-release
 
       - name: Read defines
         shell: bash
