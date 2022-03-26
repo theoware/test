@@ -93,7 +93,6 @@ jobs:
 
       - name: Free up some disk space
         run: |
-          C:
           cd %TBUILD%
           del /S Libraries\*.pdb
           del /S Libraries\*.pch
@@ -101,7 +100,6 @@ jobs:
 
       - name: Kotatogram Desktop build
         run: |
-          C:
           cd %TBUILD%\%REPO_NAME%\Telegram
 
           call configure.bat ^
