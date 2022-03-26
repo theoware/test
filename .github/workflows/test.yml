@@ -72,9 +72,12 @@ jobs:
         env:
           GYP_MSVS_OVERRIDE_PATH: 'C:\Program Files\Microsoft Visual Studio\2022\Enterprise\'
           GYP_MSVS_VERSION: 2022
-        working-directory: $TBUILD
         run: |
-          %REPO_NAME%/Telegram/build/prepare/win.bat skip-release silent
+          cd %TBUILD%
+
+          set "FullScriptPath=%~dp0"
+
+          python %FullScriptPath%prepare.py skip-release
 
       - name: Read defines
         shell: bash
