@@ -13,13 +13,12 @@ jobs:
     defaults:
       run:
         shell: cmd
-        working-directory: ${{ github.workspace }}
 
     steps:
       - name: Prepare directories
         run: |
-          mkdir %userprofile%\TBuild\Libraries
-          echo TBUILD=%userprofile%\TBuild>>%GITHUB_ENV%
+          mkdir TBuild\Libraries
+          echo TBUILD=TBuild>>%GITHUB_ENV%
 
       - name: Get repository name
         shell: bash
