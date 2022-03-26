@@ -16,13 +16,6 @@ jobs:
       with:
         repository: "andrew-paglinawan/QuicksandFamily"
 
-    - name: Install dependencies
-      run: | 
-        sudo apt update || sudo apt update
-        sudo apt install python
-        python3 -m pip install fonttools
-        python3 -m pip install gftools
-
     - name: Create variable directory in fonts
       run: mkdir -p fonts fonts/statics
 
