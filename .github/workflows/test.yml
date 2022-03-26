@@ -18,6 +18,7 @@ jobs:
 
     - name: Install dependencies
       run: | 
+        sudo apt update || sudo apt update
         sudo apt install fontmake python
         pip install gftools
         pip install fonttools
