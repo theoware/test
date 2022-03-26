@@ -8,44 +8,39 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
-    env:
-      CCACHE_DIR: ${{ github.workspace }}/.ccache
 
     steps:
 
     - name: Checkout
-      uses: actions/checkout@main
+      uses: actions/checkout@d50f8ea76748df49594d9b109b614f3b4db63c71
       with:
-        repository: tdlib/telegram-bot-api
-        submodules: recursive
+        repository: "andrew-paglinawan/QuicksandFamily"
 
-    - run: sudo apt install openssl gperf cmake ccache
+    - run: sudo apt install fontmake python gftools ttx
 
-    - name: Cache ccache
-      id: ccache-cache
-      uses: actions/cache@main
-      with:
-        path: ${{ github.workspace }}/.ccache
-        key: ccache-${{ github.sha }}
-        restore-keys: ccache-
+    - name: Create variable directory in fonts
+      run: mkdir -p fonts fonts/statics
 
-    - name: Setup ccache
+    - name: Make Quicksand-VF.ttf
+      env:
+        VF_PATH: fonts/Quicksand[wght].ttf
       run: |
-        sudo /usr/sbin/update-ccache-symlinks
-        echo 'export PATH="/usr/lib/ccache:$PATH"' | tee -a ~/.bashrc
-        echo 'export CCACHE_EXEC=/usr/bin/ccache' | tee -a ~/.bashrc
-        echo 'export USE_CCACHE=1' | tee -a ~/.bashrc
-        source ~/.bashrc
+        fontmake -o variable -g Quicksand.glyphs --output-path $VF_PATH
+        rm -rf master_ufo/ instance_ufo/
 
-    - run: |
-        mkdir -p build
-        pushd build
-        cmake -DCMAKE_BUILD_TYPE=Release ..
-        cmake --build . --target install
-        popd
+    - name: Post processing
+      env:
+        VF_PATH: fonts/Quicksand[wght].ttf
+      run: |
+        python -c "from fontTools.ttLib import TTFont;f=TTFont('$VF_PATH');f['OS/2'].usWeightClass=300;f.save('$VF_PATH')"
+        gftools fix-nonhinting $VF_PATH $VF_PATH
+        gftools fix-dsig --autofix $VF_PATH
+        # drop MVAR table.
+        ttx -x 'MVAR' $VF_PATH
+        ttx -f 'fonts/Quicksand[wght].ttx'
+        rm fonts/*.ttx fonts/*gasp.ttf
 
-    - run: |
-        telegram-bot-api --api-id=${{ secrets.TELEGRAM_API_ID }} --api-hash=${{ secrets.TELEGRAM_API_HASH }} &
-        jobs
-        wget -q https://github.com/theoware/test/releases/download/22.03.04.15.36.47/Molly-prod-unsigned-v5.31.6-1.apk -O molly.apk
-        curl -F document=@"molly.apk" http://localhost:8081/bot${{ secrets.TELEGRAM_TOKEN }}/sendDocument?chat_id=${{ secrets.TELEGRAM_CHAT_ID }}
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@6673cd052c4cd6fcf4b4e6e60ea986c889389535
+      with:
+        path: "*"
