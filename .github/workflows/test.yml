@@ -19,7 +19,7 @@ jobs:
     - name: Install dependencies
       run: | 
         sudo apt update || sudo apt update
-        sudo apt install fontmake python
+        sudo apt install python
         python3 -m pip install fonttools
         python3 -m pip install gftools
 
