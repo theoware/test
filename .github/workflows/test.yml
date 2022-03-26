@@ -124,3 +124,6 @@ jobs:
         with:
           name: ${{ env.ARTIFACT_NAME }}
           path: artifact\
+
+      - run: dir
+        if: always()
