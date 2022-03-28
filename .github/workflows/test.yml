@@ -95,9 +95,12 @@ jobs:
       - name: Free up some disk space
         run: |
           cd %TBUILD%
-          del /S Libraries*\*.pdb
-          del /S Libraries*\*.pch
-          del /S Libraries*\*.obj
+          del /S Libraries\*.pdb
+          del /S Libraries\*.pch
+          del /S Libraries\*.obj
+          del /S Libraries64\*.pdb
+          del /S Libraries64\*.pch
+          del /S Libraries64\*.obj
 
       - run: dir /s
         if: always()
