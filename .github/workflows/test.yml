@@ -29,7 +29,7 @@ jobs:
           echo "REPO_NAME=${REPO##*/}" >> $GITHUB_ENV
 
       - name: Native Tools Command Prompt
-        uses: ilammy/msvc-dev-cmd@9f8ae839b01883414208f29e3e24524387f48e1f
+        uses: ilammy/msvc-dev-cmd@d8610e2b41c6d0f0c3b4c46dad8df0fd826c68e1
 
       - name: Clone
         uses: actions/checkout@d50f8ea76748df49594d9b109b614f3b4db63c71
