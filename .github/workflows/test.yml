@@ -245,18 +245,19 @@ jobs:
         run: |
           git init breakpad
           cd breakpad
-          git remote add origin https://chromium.googlesource.com/breakpad/breakpad
+          git remote add origin https://chromium.googlesource.com/breakpad/breakpad 
           git config --local gc.auto 0
           git -c protocol.version=2 fetch --no-tags --prune --progress --no-recurse-submodules --depth=1 origin dfcb7b6799b7c1e2c8d65e857d8afede185471d8
           git checkout --progress --force dfcb7b6799b7c1e2c8d65e857d8afede185471d8
           git apply ../patches/breakpad.diff
 
-          git init src/testing
-          cd src/testing
-          git remote add origin https://github.com/google/googletest
-          git config --local gc.auto 0
-          git -c protocol.version=2 fetch --no-tags --prune --progress --no-recurse-submodules --depth=1 origin release-1.11.0
-          git checkout --progress --force release-1.11.0
+      - name: Checkout googletest
+        uses: actions/checkout@v3.0.0
+        with:
+          repository: telegramdesktop/openal-soft
+          path: ${{ env.LIBS_DIR }}/breakpad/src/testing
+          clean: false
+          ref: release-1.11.0
 
       - name: Build breakpad
         working-directory: ${{ env.LIBS_DIR }}/breakpad
@@ -297,7 +298,7 @@ jobs:
           git checkout --progress --force v5.15.2
           git submodule update qtbase qtimageformats qtsvg
 
-      - name: Build tg_angle
+      - name: Build qt_5_15_2
         working-directory: ${{ env.LIBS_DIR }}/tg_angle
         run: |
           cd qtbase
