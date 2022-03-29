@@ -118,7 +118,7 @@ jobs:
       - name: Free up some disk space
         run: |
           cd %TBUILD%
-          del /S Libraries64\*
+          del /q /S Libraries64\*
 
       - name: Download a Build Artifact
         uses: actions/download-artifact@v3.0.0
