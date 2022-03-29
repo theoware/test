@@ -89,15 +89,12 @@ jobs:
           clean: false
 
       - name: Checkout gyp
-        working-directory: ${{ env.LIBS_DIR }}
-        run: |
-          git init gyp
-          cd gyp
-          git remote add origin https://chromium.googlesource.com/external/gyp
-          git config --local gc.auto 0
-          git -c protocol.version=2 fetch --no-tags --prune --progress --no-recurse-submodules --depth=1 origin d6c5dd51dc3a60bf4ff32a5256713690a1a10376
-          git checkout --progress --force d6c5dd51dc3a60bf4ff32a5256713690a1a10376
-          git apply ../patches/gyp.diff
+        uses: actions/checkout@v3.0.0
+        with:
+          repository: chromium/gyp
+          path: ${{ env.LIBS_DIR }}/gyp
+          clean: false
+          ref: d6c5dd51dc3a60bf4ff32a5256713690a1a10376
 
       - name: Checkout lzma
         uses: actions/checkout@v3.0.0
@@ -241,15 +238,16 @@ jobs:
           msbuild OpenAL.vcxproj /property:Configuration=Debug /property:Platform="%WIN32X64%"
 
       - name: Checkout breakpad
-        working-directory: ${{ env.LIBS_DIR }}
-        run: |
-          git init breakpad
-          cd breakpad
-          git remote add origin https://chromium.googlesource.com/breakpad/breakpad 
-          git config --local gc.auto 0
-          git -c protocol.version=2 fetch --no-tags --prune --progress --no-recurse-submodules --depth=1 origin dfcb7b6799b7c1e2c8d65e857d8afede185471d8
-          git checkout --progress --force dfcb7b6799b7c1e2c8d65e857d8afede185471d8
-          git apply ../patches/breakpad.diff
+        uses: actions/checkout@v3.0.0
+        with:
+          repository: google/breakpad
+          path: ${{ env.LIBS_DIR }}/breakpad/
+          clean: false
+          ref: dfcb7b6799b7c1e2c8d65e857d8afede185471d8
+
+      - name: Checkout breakpad
+        working-directory: ${{ env.LIBS_DIR }}/breakpad
+        run: git apply ../patches/breakpad.diff
 
       - name: Checkout googletest
         uses: actions/checkout@v3.0.0
@@ -287,15 +285,16 @@ jobs:
           ninja
 
       - name: Checkout qt_5_15_2
-        working-directory: ${{ env.LIBS_DIR }}
+        uses: actions/checkout@v3.0.0
+        with:
+          repository: qt/qt5
+          path: ${{ env.LIBS_DIR }}/qt_5_15_2
+          clean: false
+          ref: v5.15.2
+
+      - name: Checkout qt_5_15_2
+        working-directory: ${{ env.LIBS_DIR }}/qt_5_15_2
         run: |
-          git init qt_5_15_2
-          cd qt_5_15_2
-          git remote add origin https://code.qt.io/cgit/qt/qt5.git
-          git config --local gc.auto 0
-          git -c protocol.version=2 fetch --no-tags --prune --progress --no-recurse-submodules --depth=1 origin v5.15.2
-          perl init-repository --module-subset=qtbase,qtimageformats,qtsvg
-          git checkout --progress --force v5.15.2
           git submodule update qtbase qtimageformats qtsvg
 
       - name: Build qt_5_15_2
