@@ -106,24 +106,10 @@ jobs:
           del /S Libraries64\*.pch
           del /S Libraries64\*.obj
 
-      - name: Upload a Build Artifact
-        uses: actions/upload-artifact@v3.0.0
-        with:
-          name: Libaries64
-          path: |
-            ${{ env.TBUILD }}/Libraries*/**/output*/*
-            ${{ env.TBUILD }}/Libraries*/**/build*/*
-          if-no-files-found: error
-
       - name: Free up some disk space
         run: |
           cd %TBUILD%
-          del /q /S Libraries64\*
-
-      - name: Download a Build Artifact
-        uses: actions/download-artifact@v3.0.0
-        with:
-          name: Libaries64
+          del /q /S /a:- **\*output*\* /a:- **\*build*\* /a:- **\*out*\* Libraries64\*
 
       - run: dir /s
         if: always()
