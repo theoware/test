@@ -92,8 +92,8 @@ jobs:
           cd gyp
           git remote add origin https://chromium.googlesource.com/external/gyp
           git config --local gc.auto 0
-          git -c protocol.version=2 fetch --no-tags --prune --progress --no-recurse-submodules --depth=1 origin d6c5dd51dc
-          git checkout --progress --force d6c5dd51dc
+          git -c protocol.version=2 fetch --no-tags --prune --progress --no-recurse-submodules --depth=1 origin d6c5dd51dc3a60bf4ff32a5256713690a1a10376
+          git checkout --progress --force d6c5dd51dc3a60bf4ff32a5256713690a1a10376
           git apply ../patches/gyp.diff
 
       - name: Checkout lzma
@@ -160,7 +160,7 @@ jobs:
           repository: xiph/opus
           path: ${{ env.LIBS_DIR }}/opus
           clean: false
-          ref: 927de8453c
+          ref: 927de8453c502586c03e25c169ec08f2a93ebc02
 
       - name: Build opus
         working-directory: ${{ env.LIBS_DIR }}/opus
@@ -211,7 +211,7 @@ jobs:
           repository: FFmpeg/FFmpeg
           path: ${{ env.LIBS_DIR }}/ffmpeg
           clean: false
-          ref: cc33e73618
+          ref: cc33e73618a981de7fd96385ecb34719de031f16
 
       - name: Build ffmpeg
         working-directory: ${{ env.LIBS_DIR }}/ffmpeg
@@ -244,8 +244,8 @@ jobs:
           cd breakpad
           git remote add origin https://chromium.googlesource.com/breakpad/breakpad
           git config --local gc.auto 0
-          git -c protocol.version=2 fetch --no-tags --prune --progress --no-recurse-submodules --depth=1 origin dfcb7b6799
-          git checkout --progress --force dfcb7b6799
+          git -c protocol.version=2 fetch --no-tags --prune --progress --no-recurse-submodules --depth=1 origin dfcb7b6799b7c1e2c8d65e857d8afede185471d8
+          git checkout --progress --force dfcb7b6799b7c1e2c8d65e857d8afede185471d8
           git apply ../patches/breakpad.diff
 
           git init src/testing
@@ -270,7 +270,7 @@ jobs:
           repository: desktop-app/tg_angle
           path: ${{ env.LIBS_DIR }}/tg_angle
           clean: false
-          ref: 0bb011f9e4
+          ref: 0bb011f9e4037c64a987a6be54f50f24c677765b
 
       - name: Build tg_angle
         working-directory: ${{ env.LIBS_DIR }}/tg_angle
@@ -287,9 +287,9 @@ jobs:
         run: |
           git init qt_5_15_2
           cd qt_5_15_2
-          git remote add origin https://code.qt.io/qt/qt5.git
+          git remote add origin https://code.qt.io/cgit/qt/qt5.git
           git config --local gc.auto 0
-          git -c protocol.version=2 fetch --no-tags --prune --progress --no-recurse-submodules --depth=1 origin dfcb7b6799
+          git -c protocol.version=2 fetch --no-tags --prune --progress --no-recurse-submodules --depth=1 origin v5.15.2
           perl init-repository --module-subset=qtbase,qtimageformats,qtsvg
           git checkout --progress --force v5.15.2
           git submodule update qtbase qtimageformats qtsvg
@@ -317,7 +317,7 @@ jobs:
           repository: desktop-app/tg_owt
           path: ${{ env.LIBS_DIR }}/tg_owt
           clean: false
-          ref: 8d9c724c07
+          ref: 8d9c724c073134527837985d659a7baefce5e859
 
       - name: Checkout tg_owt
         working-directory: ${{ env.LIBS_DIR }}/tg_owt
