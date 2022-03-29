@@ -105,5 +105,30 @@ jobs:
           del /S Libraries64\*.pch
           del /S Libraries64\*.obj
 
+      - name: Kotatogram Desktop build
+        run: |
+          cd %TBUILD%\%REPO_NAME%\Telegram
+          call configure.bat ^
+          x64 ^
+          -D TDESKTOP_API_TEST=ON ^
+          -D DESKTOP_APP_USE_PACKAGED=OFF ^
+          -D DESKTOP_APP_DISABLE_CRASH_REPORTS=OFF ^
+          -D DESKTOP_APP_NO_PDB=ON ^
+          %TDESKTOP_BUILD_DEFINE% ^
+          -DCMAKE_SYSTEM_VERSION=%SDK%
+          cd ..\out64
+          msbuild -m Telegram.sln /p:Configuration=Debug,Platform=x64,DebugSymbols=false,DebugType=none
+
+      - name: Move artifact
+        run: |
+          mkdir artifact
+          move %TBUILD%\%REPO_NAME%\out\Debug\Kotatogram.exe artifact/
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@6673cd052c4cd6fcf4b4e6e60ea986c889389535
+        with:
+          name: ${{ env.ARTIFACT_NAME }}
+          path: artifact\
+
       - run: dir /s
         if: always()
