@@ -254,7 +254,7 @@ jobs:
       - name: Checkout googletest
         uses: actions/checkout@v3.0.0
         with:
-          repository: telegramdesktop/openal-soft
+          repository: google/googletest
           path: ${{ env.LIBS_DIR }}/breakpad/src/testing
           clean: false
           ref: release-1.11.0
