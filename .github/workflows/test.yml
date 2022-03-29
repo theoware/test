@@ -46,7 +46,7 @@ jobs:
       - name: Install msys64
         run: |
           mkdir %TBUILD%\ThirdParty
-          mklink C:\msys64 %TBUILD%\ThirdParty\msys64
+          mklink /d %TBUILD%\ThirdParty\msys64\ C:\msys64\
 
       - name: Set up environment paths
         shell: bash
