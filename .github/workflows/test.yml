@@ -70,8 +70,7 @@ jobs:
         with:
           path: |
             ${{ env.TBUILD }}/Libraries*/**/out*/*
-          key: Windows-libs-766c2f63e256240462a2adfeed2576bc0d5d2527
-          restore-keys: ${{ runner.OS }}-libs-
+          key: ${{ runner.OS }}-libs
 
       - name: Libraries
         env:
