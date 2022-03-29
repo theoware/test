@@ -46,7 +46,7 @@ jobs:
       - name: Install msys64
         run: |
           mkdir %TBUILD%\ThirdParty
-          xcopy /E /I C:\msys64 %TBUILD%\ThirdParty\msys64
+          mklink C:\msys64 %TBUILD%\ThirdParty\msys64
 
       - name: Set up environment paths
         shell: bash
@@ -71,7 +71,7 @@ jobs:
           path: |
             ${{ env.TBUILD }}/Libraries*/**/output*/*
             ${{ env.TBUILD }}/Libraries*/**/build*/*
-          key: ${{ runner.OS }}-libs-${{ GITHUB.SHA }}
+          key: ${{ runner.OS }}-libs
           restore-keys: ${{ runner.OS }}-libs-
 
       - name: Libraries
