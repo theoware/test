@@ -20,6 +20,7 @@ jobs:
       GYP_MSVS_VERSION: 2022
       X8664: x64
       SPECIAL_TARGET: win64
+      WIN32X64: x64
 
     steps:
       - name: Prepare directories
