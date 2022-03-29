@@ -72,6 +72,7 @@ jobs:
             ${{ env.TBUILD }}/Libraries*/**/output*/*
             ${{ env.TBUILD }}/Libraries*/**/build*/*
           key: ${{ runner.OS }}-libs-${{ GITHUB.SHA }}
+          restore-keys: ${{ runner.OS }}-libs-
 
       - name: Libraries
         env:
