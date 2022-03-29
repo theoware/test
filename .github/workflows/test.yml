@@ -69,8 +69,7 @@ jobs:
         uses: actions/cache@2d8d0d1c9b41812b6fd3d4ae064360e7d8762c7b
         with:
           path: |
-            ${{ env.TBUILD }}/Libraries*/**/output*/*
-            ${{ env.TBUILD }}/Libraries*/**/build*/*
+            ${{ env.TBUILD }}/Libraries*/**/out*/*
           key: Windows-libs-766c2f63e256240462a2adfeed2576bc0d5d2527
           restore-keys: ${{ runner.OS }}-libs-
 
@@ -106,10 +105,48 @@ jobs:
           del /S Libraries64\*.pch
           del /S Libraries64\*.obj
 
+      - name: Upload a Build Artifact
+        uses: actions/upload-artifact@v3.0.0
+        with:
+          name: Libaries64
+          path: |
+            ${{ env.TBUILD }}/Libraries*/**/out*/*
+          if-no-files-found: error
+
       - name: Free up some disk space
         run: |
           cd %TBUILD%
-          del /q /S /a:- **\*output*\* /a:- **\build\* /a:- **\out\* /a:- **\output64\* Libraries64\*
+          del /q /S Libraries64\*
+
+      - name: Download a Build Artifact
+        uses: actions/download-artifact@v3.0.0
+        with:
+          name: Libaries64
+
+      - name: Kotatogram Desktop build
+        run: |
+          cd %TBUILD%\%REPO_NAME%\Telegram
+          call configure.bat ^
+          x64 ^
+          -D TDESKTOP_API_TEST=ON ^
+          -D DESKTOP_APP_USE_PACKAGED=OFF ^
+          -D DESKTOP_APP_DISABLE_CRASH_REPORTS=OFF ^
+          -D DESKTOP_APP_NO_PDB=ON ^
+          %TDESKTOP_BUILD_DEFINE% ^
+          -DCMAKE_SYSTEM_VERSION=%SDK%
+          cd ..\out64
+          msbuild -m Telegram.sln /p:Configuration=Debug,Platform=x64,DebugSymbols=false,DebugType=none
+
+      - name: Move artifact
+        run: |
+          mkdir artifact
+          move %TBUILD%\%REPO_NAME%\out\Debug\Kotatogram.exe artifact/
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@6673cd052c4cd6fcf4b4e6e60ea986c889389535
+        with:
+          name: ${{ env.ARTIFACT_NAME }}
+          path: artifact\
 
       - run: dir /s
         if: always()
