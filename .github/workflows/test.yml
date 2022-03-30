@@ -48,7 +48,9 @@ jobs:
 
       - name: Choco dependencies
         run: |
-          choco install --no-progress -y nasm strawberryperl yasm jom msys2 ninja wget
+          choco install --no-progress -y nasm strawberryperl yasm jom ninja wget
+          del /S C:\msys64\
+          choco install msys2 --params "/InstallDir:C:\msys64"
           py -m pip install pywin32
 
       - name: Install msys64
