@@ -52,7 +52,7 @@ jobs:
           py -m pip install pywin32
 
       - name: Setup msys2
-        uses: msys2/setup-msys2@e830c939b0db54216fff2a87cdffc9b240d5e28b
+        uses: msys2/setup-msys2@v2
         with:
           update: true
           location: C:\msys64
