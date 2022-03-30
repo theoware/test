@@ -180,10 +180,10 @@ jobs:
       - name: Build opus
         working-directory: ${{ env.LIBS_DIR }}/opus
         run: |
-          cmake -B out . -A %WIN32X64% -DCMAKE_INSTALL_PREFIX=%LIBS_DIR%/local -DCMAKE_C_FLAGS_DEBUG="/MTd /Zi /Ob0 /Od /RTC1" -DCMAKE_C_FLAGS_RELEASE="/MT /O2 /Ob2 /DNDEBUG"
-          cmake --build out --config Debug
-          cmake --build out --config Release
-          cmake --install out --config Release
+          msys2 -c "cmake -B out . -A %WIN32X64% -DCMAKE_INSTALL_PREFIX=%LIBS_DIR%/local -DCMAKE_C_FLAGS_DEBUG="/MTd /Zi /Ob0 /Od /RTC1" -DCMAKE_C_FLAGS_RELEASE="/MT /O2 /Ob2 /DNDEBUG""
+          msys2 -c "cmake --build out --config Debug"
+          msys2 -c "cmake --build out --config Release"
+          msys2 -c "cmake --install out --config Release"
 
       - name: Checkout rnnoise
         uses: actions/checkout@v3.0.0
@@ -197,8 +197,8 @@ jobs:
         run: |
           mkdir out
           cd out
-          cmake -A %WIN32X64% ..
-          cmake --build . --config Debug
+          msys2 -c "cmake -A %WIN32X64% .."
+          msys2 -c "cmake --build . --config Debug"
 
       - name: Checkout libvpx
         uses: actions/checkout@v3.0.0
@@ -250,7 +250,7 @@ jobs:
       - name: Build openal-soft
         working-directory: ${{ env.LIBS_DIR }}/openal-soft/build
         run: |
-          cmake .. -A %WIN32X64% -D LIBTYPE:STRING=STATIC -D FORCE_STATIC_VCRT=ON
+          msys2 -c "cmake .. -A %WIN32X64% -D LIBTYPE:STRING=STATIC -D FORCE_STATIC_VCRT=ON"
           msbuild OpenAL.vcxproj /property:Configuration=Debug /property:Platform="%WIN32X64%"
 
       - name: Checkout breakpad
@@ -278,9 +278,9 @@ jobs:
         run: |
           SET FolderPostfix=_x64
           cd src\client\windows
-          gyp --no-circular-check breakpad_client.gyp --format=ninja
+          msys2 -c "gyp --no-circular-check breakpad_client.gyp --format=ninja"
           cd ..\..
-          ninja -C out/Debug%FolderPostfix% common crash_generation_client exception_handler
+          msys2 -c "ninja -C out/Debug%FolderPostfix% common crash_generation_client exception_handler"
 
       - name: Checkout tg_angle
         uses: actions/checkout@v3.0.0
@@ -297,8 +297,8 @@ jobs:
           cd out
           mkdir Debug
           cd Debug
-          cmake -G Ninja -DCMAKE_BUILD_TYPE=Debug -DTG_ANGLE_SPECIAL_TARGET=%SPECIAL_TARGET% -DTG_ANGLE_ZLIB_INCLUDE_PATH=%LIBS_DIR%/zlib ../..
-          ninja
+          msys2 -c "cmake -G Ninja -DCMAKE_BUILD_TYPE=Debug -DTG_ANGLE_SPECIAL_TARGET=%SPECIAL_TARGET% -DTG_ANGLE_ZLIB_INCLUDE_PATH=%LIBS_DIR%/zlib ../.."
+          msys2 -c "ninja"
 
       - name: Checkout qt_5_15_2
         uses: actions/checkout@v3.0.0
