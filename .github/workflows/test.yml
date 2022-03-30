@@ -66,8 +66,8 @@ jobs:
 
           # link to cache (or download) and extract: openssl,libarchive,libfetch,pacman
           cd /tmp
-          for pkg in openssl-1.0.0-2 libarchive-2.8.3-3 libfetch-2.30-3 pacman-3.3.3-5; do
-              pkgname=${pkg}-${arch}.pkg.tar.gz
+          for pkg in openssl-1.1.1.n-1 	libarchive-3.6.0-2 	pacman-6.0.1-4; do
+              pkgname=${pkg}-${arch}.pkg.tar.zst
               if [[ -e /var/cache/pacman/pkg/${pkgname} ]]; then
                   ln -sf /var/cache/pacman/pkg/${pkgname} .
               else
