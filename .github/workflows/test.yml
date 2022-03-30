@@ -181,9 +181,10 @@ jobs:
         working-directory: ${{ env.LIBS_DIR }}/opus
         run: |
           cmake -B out . -A %WIN32X64% -DCMAKE_INSTALL_PREFIX=%LIBS_DIR%/local -DCMAKE_C_FLAGS_DEBUG="/MTd /Zi /Ob0 /Od /RTC1" -DCMAKE_C_FLAGS_RELEASE="/MT /O2 /Ob2 /DNDEBUG"
-          msys2 -c "cmake --build out --config Debug"
-          msys2 -c "cmake --build out --config Release"
+          cmake --build out --config Debug
+          cmake --build out --config Release
           msys2 -c "cmake --install out --config Release"
+          cmake --install out --config Release
 
       - name: Checkout rnnoise
         uses: actions/checkout@v3.0.0
