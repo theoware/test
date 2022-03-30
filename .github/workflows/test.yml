@@ -56,30 +56,9 @@ jobs:
           mkdir %TBUILD%\ThirdParty
           mklink /d %TBUILD%\ThirdParty\msys64\ C:\msys64\
 
-      - name: Install pacman
+      - name: Update pacman
         shell: bash
         run: |
-          #!/bin/bash
-
-          arch=x86_64
-          mirror=http://mirror.rit.edu/archlinux
-
-          echo "link to cache (or download) and extract: pacman"
-          cd /tmp
-          for pkg in pacman-6.0.1-4; do
-              pkgname=${pkg}-${arch}.pkg.tar.zst
-              if [[ -e /var/cache/pacman/pkg/${pkgname} ]]; then
-                  ln -sf /var/cache/pacman/pkg/${pkgname} .
-              else
-                  wget.exe -q ${mirror}/core/os/${arch}/${pkgname} || exit 1
-              fi
-              tar -xvpf ${pkgname} -C / --exclude .PKGINFO --exclude .INSTALL --exclude **/man*/* || exit 1
-          done
-
-          echo "now reinstall using pacman to update the local pacman db"
-          pacman -Sf openssl libarchive libfetch pacman || exit 1
-
-          echo "now update your system"
           pacman -Syu
 
       - name: Set up environment paths
