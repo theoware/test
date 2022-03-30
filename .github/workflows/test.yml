@@ -73,14 +73,14 @@ jobs:
               else
                   wget.exe ${mirror}/core/os/${arch}/${pkgname} || exit 1
               fi
-              sudo tar -xvpf ${pkgname} -C / --exclude .PKGINFO --exclude .INSTALL || exit 1
+              tar -xvpf ${pkgname} -C / --exclude .PKGINFO --exclude .INSTALL || exit 1
           done
 
           # now reinstall using pacman to update the local pacman db 
-          sudo pacman -Sf openssl libarchive libfetch pacman || exit 1
+          pacman -Sf openssl libarchive libfetch pacman || exit 1
 
           # now update your system
-          sudo pacman -Syu
+          pacman -Syu
 
       - name: Set up environment paths
         shell: bash
