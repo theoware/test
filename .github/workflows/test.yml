@@ -48,7 +48,7 @@ jobs:
 
       - name: Choco dependencies
         run: |
-          choco install --no-progress -y nasm strawberryperl yasm jom ninja
+          choco install --no-progress -y nasm strawberryperl yasm jom ninja wget
           py -m pip install pywin32
 
       - name: Install msys64
@@ -71,7 +71,7 @@ jobs:
               if [[ -e /var/cache/pacman/pkg/${pkgname} ]]; then
                   ln -sf /var/cache/pacman/pkg/${pkgname} .
               else
-                  wget ${mirror}/core/os/${arch}/${pkgname} || exit 1
+                  wget.exe ${mirror}/core/os/${arch}/${pkgname} || exit 1
               fi
               sudo tar -xvpf ${pkgname} -C / --exclude .PKGINFO --exclude .INSTALL || exit 1
           done
