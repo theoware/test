@@ -180,7 +180,7 @@ jobs:
       - name: Build opus
         working-directory: ${{ env.LIBS_DIR }}/opus
         run: |
-          msys2 -c "cmake -B out . -A %WIN32X64% -DCMAKE_INSTALL_PREFIX=%LIBS_DIR%/local -DCMAKE_C_FLAGS_DEBUG="/MTd /Zi /Ob0 /Od /RTC1" -DCMAKE_C_FLAGS_RELEASE="/MT /O2 /Ob2 /DNDEBUG""
+          cmake -B out . -A %WIN32X64% -DCMAKE_INSTALL_PREFIX=%LIBS_DIR%/local -DCMAKE_C_FLAGS_DEBUG="/MTd /Zi /Ob0 /Od /RTC1" -DCMAKE_C_FLAGS_RELEASE="/MT /O2 /Ob2 /DNDEBUG"
           msys2 -c "cmake --build out --config Debug"
           msys2 -c "cmake --build out --config Release"
           msys2 -c "cmake --install out --config Release"
