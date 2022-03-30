@@ -69,7 +69,7 @@ jobs:
           pacman -Syu
 
       - name: Set up environment paths
-        shell: msys2 {0}
+        shell: bash
         run: |
           echo "C:\\Strawberry\\perl\\bin\\" >> $GITHUB_PATH
           echo "C:\\Program Files\\NASM\\" >> $GITHUB_PATH
