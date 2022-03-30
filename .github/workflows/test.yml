@@ -49,9 +49,13 @@ jobs:
       - name: Choco dependencies
         run: |
           choco install --no-progress -y nasm strawberryperl yasm jom ninja wget
-          del /S C:\msys64\
-          choco install msys2 --params "/InstallDir:C:\msys64"
           py -m pip install pywin32
+
+      - name: Setup msys2
+        uses: msys2/setup-msys2@e830c939b0db54216fff2a87cdffc9b240d5e28b
+        with:
+          update: true
+          location: C:\msys64
 
       - name: Install msys64
         run: |
