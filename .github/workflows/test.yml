@@ -64,12 +64,12 @@ jobs:
 
       - name: Update pacman
         continue-on-error: true
-        shell: bash
+        shell: msys2 {0}
         run: |
           pacman -Syu
 
       - name: Set up environment paths
-        shell: bash
+        shell: msys2 {0}
         run: |
           echo "C:\\Strawberry\\perl\\bin\\" >> $GITHUB_PATH
           echo "C:\\Program Files\\NASM\\" >> $GITHUB_PATH
@@ -217,7 +217,7 @@ jobs:
           SET CHERE_INVOKING=enabled_from_arguments
           SET MSYS2_PATH_TYPE=inherit
           SET TARGET=x86_64-win64-vs17
-          bash --login ../patches/build_libvpx_win.sh
+          msys2 -c "../patches/build_libvpx_win.sh"
           SET PATH=%PATH_BACKUP_%
 
       - name: Checkout ffmpeg
@@ -235,7 +235,7 @@ jobs:
           SET PATH=%ROOT_DIR%\ThirdParty\msys64\usr\bin;%PATH%
           SET CHERE_INVOKING=enabled_from_arguments
           SET MSYS2_PATH_TYPE=inherit
-          bash --login ../patches/build_ffmpeg_win.sh
+          msys2 -c "../patches/build_ffmpeg_win.sh"
           SET PATH=%PATH_BACKUP_%
 
       - name: Checkout openal-soft
@@ -359,7 +359,7 @@ jobs:
           ninja          
 
       - name: Read defines
-        shell: bash
+        shell: msys2 {0}
         run: |
           DEFINE=""
           if [ -n "${{ matrix.defines }}" ]; then
