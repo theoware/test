@@ -59,7 +59,7 @@ jobs:
       - name: Update pacman
         shell: bash
         run: |
-          pacman -Syu
+          pacman.exe -Syu
 
       - name: Set up environment paths
         shell: bash
