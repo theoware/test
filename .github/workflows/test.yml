@@ -66,7 +66,7 @@ jobs:
         continue-on-error: true
         shell: msys2 {0}
         run: |
-          pacman -Syu
+          pacman -Syu gyp ninja
 
       - name: Set up environment paths
         shell: bash
