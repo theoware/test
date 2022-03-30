@@ -56,6 +56,32 @@ jobs:
           mkdir %TBUILD%\ThirdParty
           mklink /d %TBUILD%\ThirdParty\msys64\ C:\msys64\
 
+      - name: Install pacman
+        shell: bash
+        run: |
+          #!/bin/bash
+
+          arch=x86_64
+          mirror=http://mirror.rit.edu/archlinux
+
+          # link to cache (or download) and extract: openssl,libarchive,libfetch,pacman
+          cd /tmp
+          for pkg in openssl-1.0.0-2 libarchive-2.8.3-3 libfetch-2.30-3 pacman-3.3.3-5; do
+              pkgname=${pkg}-${arch}.pkg.tar.gz
+              if [[ -e /var/cache/pacman/pkg/${pkgname} ]]; then
+                  ln -sf /var/cache/pacman/pkg/${pkgname} .
+              else
+                  wget ${mirror}/core/os/${arch}/${pkgname} || exit 1
+              fi
+              sudo tar -xvpf ${pkgname} -C / --exclude .PKGINFO --exclude .INSTALL || exit 1
+          done
+
+          # now reinstall using pacman to update the local pacman db 
+          sudo pacman -Sf openssl libarchive libfetch pacman || exit 1
+
+          # now update your system
+          sudo pacman -Syu
+
       - name: Set up environment paths
         shell: bash
         run: |
@@ -77,7 +103,10 @@ jobs:
         uses: actions/cache@2d8d0d1c9b41812b6fd3d4ae064360e7d8762c7b
         with:
           path: |
-            ${{ env.TBUILD }}/Libraries*/**/out*/*
+            ${{ env.TBUILD }}/Libraries*/**/*out*/*
+            ${{ env.TBUILD }}/Libraries*/**/*.lib
+            ${{ env.TBUILD }}/Libraries*/**/*debug*/*
+            ${{ env.TBUILD }}/Libraries*/**/*release*/*
           key: ${{ runner.OS }}-libs
 
       - name: Checkout patches
@@ -371,7 +400,10 @@ jobs:
         with:
           name: Libaries64
           path: |
-            ${{ env.TBUILD }}/Libraries*/**/out*/*
+            ${{ env.TBUILD }}/Libraries*/**/*out*/*
+            ${{ env.TBUILD }}/Libraries*/**/*.lib
+            ${{ env.TBUILD }}/Libraries*/**/*debug*/*
+            ${{ env.TBUILD }}/Libraries*/**/*release*/*
           if-no-files-found: error
 
       - name: Free up some disk space
