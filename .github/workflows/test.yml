@@ -64,16 +64,16 @@ jobs:
           arch=x86_64
           mirror=http://mirror.rit.edu/archlinux
 
-          echo "link to cache (or download) and extract: openssl,libarchive,pacman"
+          echo "link to cache (or download) and extract: pacman"
           cd /tmp
-          for pkg in openssl-1.1.1.n-1 	libarchive-3.6.0-2 	pacman-6.0.1-4; do
+          for pkg in pacman-6.0.1-4; do
               pkgname=${pkg}-${arch}.pkg.tar.zst
               if [[ -e /var/cache/pacman/pkg/${pkgname} ]]; then
                   ln -sf /var/cache/pacman/pkg/${pkgname} .
               else
-                  wget.exe ${mirror}/core/os/${arch}/${pkgname} || exit 1
+                  wget.exe -q ${mirror}/core/os/${arch}/${pkgname} || exit 1
               fi
-              tar -xvpf ${pkgname} -C / --exclude .PKGINFO --exclude .INSTALL || exit 1
+              tar -xvpf ${pkgname} -C / --exclude .PKGINFO --exclude .INSTALL --exclude **/man*/* || exit 1
           done
 
           echo "now reinstall using pacman to update the local pacman db"
