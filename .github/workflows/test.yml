@@ -59,9 +59,10 @@ jobs:
           mklink /d %TBUILD%\ThirdParty\msys64\ C:\msys64\
 
       - name: Update pacman
+        continue-on-error: true
         shell: bash
         run: |
-          pacman.exe -Syu
+          pacman -Syu
 
       - name: Set up environment paths
         shell: bash
