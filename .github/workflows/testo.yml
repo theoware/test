@@ -20,10 +20,12 @@ jobs:
       
     - name: NuGet Restore
       run: |
-        nuget restore WindowAudioLoudnessEqualizer/Wale.sln
+        cd WindowAudioLoudnessEqualizer
+        nuget restore Wale.sln
       
     - name: Build
       run: |
+        cd WindowAudioLoudnessEqualizer
         msbuild "-property:Configuration=Release" -t:Wale
         
     - name: Upload artifacts
