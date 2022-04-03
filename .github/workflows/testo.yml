@@ -1,21 +1,34 @@
-name: testo
+name: WALE Build
 
 on:
   push:
     paths: .github/workflows/testo.yml
-  workflow_dispatch:
 
 jobs:
   build:
-    name: Build
+    name: build-windows
     runs-on: windows-latest
 
     steps:
-
-      - name: Checkout patches
-        uses: actions/checkout@v3.0.0
-        with:
-          repository: desktop-app/patches
-          ref: 47d447b53170c444cbbd04f929fb680c9fbd1970
-          path: patches
-          clean: false
+    - name: Checkout
+      uses: actions/checkout@main
+      with:
+          repository: catright/Wale
+          
+    - name: Set up MSBuild
+      uses: microsoft/setup-msbuild@master
+      
+    - name: NuGet Restore
+      run: |
+        nuget restore WindowAudioLoudnessEqualizer/Wale.sln
+      
+    - name: Build
+      run: |
+        msbuild "-property:Configuration=Release" -t:Wale
+        
+    - name: Upload artifacts
+      uses: actions/upload-artifact@main
+      with:
+        name: wale-artifacts
+        path: |
+          .\WindowAudioLoudnessEqualizer\bin\Release\
