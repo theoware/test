@@ -26,7 +26,7 @@ jobs:
     - name: Build
       run: |
         cd WindowAudioLoudnessEqualizer
-        msbuild "-property:Configuration=Release" -t:Wale
+        msbuild
         
     - name: Upload artifacts
       uses: actions/upload-artifact@main
