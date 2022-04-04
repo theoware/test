@@ -16,9 +16,8 @@ jobs:
     - name: Download Telegram-FOSS's source code
       uses: actions/checkout@main
       with:
-        repository: theoware/Telegram-FOSS
+        repository: Telegram-FOSS-Team/Telegram-FOSS
         submodules: recursive
-        ref: patch-1
 
     - name: Get hashes
       working-directory: TMessagesProj/jni
@@ -34,7 +33,7 @@ jobs:
     - name: Download Telegram-FOSS's source code
       uses: actions/checkout@main
       with:
-        repository: theoware/Telegram-FOSS
+        repository: Telegram-FOSS-Team/Telegram-FOSS
         clean: true
         submodules: false
         ref: patch-1
@@ -110,7 +109,7 @@ jobs:
     - name: Download Telegram-FOSS's source code
       uses: actions/checkout@main
       with:
-        repository: theoware/Telegram-FOSS
+        repository: Telegram-FOSS-Team/Telegram-FOSS
         submodules: recursive
         ref: patch-1
 
@@ -128,7 +127,7 @@ jobs:
     - name: Download Telegram-FOSS's source code
       uses: actions/checkout@main
       with:
-        repository: theoware/Telegram-FOSS
+        repository: Telegram-FOSS-Team/Telegram-FOSS
         clean: true
         submodules: false
         ref: patch-1
@@ -202,7 +201,7 @@ jobs:
     - name: Download Telegram-FOSS's source code
       uses: actions/checkout@main
       with:
-        repository: theoware/Telegram-FOSS
+        repository: Telegram-FOSS-Team/Telegram-FOSS
         submodules: recursive
         ref: patch-1
 
@@ -220,7 +219,7 @@ jobs:
     - name: Download Telegram-FOSS's source code
       uses: actions/checkout@main
       with:
-        repository: theoware/Telegram-FOSS
+        repository: Telegram-FOSS-Team/Telegram-FOSS
         clean: true
         submodules: false
         ref: patch-1
@@ -290,7 +289,7 @@ jobs:
     - name: Download Telegram-FOSS's source code
       uses: actions/checkout@main
       with:
-        repository: theoware/Telegram-FOSS
+        repository: Telegram-FOSS-Team/Telegram-FOSS
         submodules: recursive
         ref: patch-1
 
