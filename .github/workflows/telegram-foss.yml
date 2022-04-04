@@ -36,7 +36,6 @@ jobs:
         repository: Telegram-FOSS-Team/Telegram-FOSS
         clean: true
         submodules: false
-        ref: patch-1
 
     - name: Cache boringSSL
       id: boringssl-cache
@@ -80,7 +79,6 @@ jobs:
         ./gradlew --no-daemon tasks
 
     - name: Patch BoringSSL
-      if: steps.boringssl-cache.outputs.cache-hit != 'true'
       working-directory: TMessagesProj/jni
       run: ./patch_boringssl.sh
 
@@ -111,7 +109,6 @@ jobs:
       with:
         repository: Telegram-FOSS-Team/Telegram-FOSS
         submodules: recursive
-        ref: patch-1
 
     - name: Get hashes
       working-directory: TMessagesProj/jni
@@ -130,7 +127,6 @@ jobs:
         repository: Telegram-FOSS-Team/Telegram-FOSS
         clean: true
         submodules: false
-        ref: patch-1
 
     - name: Cache FFmpeg
       id: ffmpeg-cache
@@ -203,7 +199,6 @@ jobs:
       with:
         repository: Telegram-FOSS-Team/Telegram-FOSS
         submodules: recursive
-        ref: patch-1
 
     - name: Get hashes
       working-directory: TMessagesProj/jni
@@ -222,7 +217,6 @@ jobs:
         repository: Telegram-FOSS-Team/Telegram-FOSS
         clean: true
         submodules: false
-        ref: patch-1
 
     - name: Cache libvpx
       id: libvpx-cache
@@ -291,7 +285,6 @@ jobs:
       with:
         repository: Telegram-FOSS-Team/Telegram-FOSS
         submodules: recursive
-        ref: patch-1
 
     - name: Install dependencies
       run: |
@@ -338,6 +331,10 @@ jobs:
       with:
         name: libvpx
         path: TMessagesProj/jni/libvpx/build
+
+    - name: Patch BoringSSL
+      working-directory: TMessagesProj/jni
+      run: ./patch_boringssl.sh
 
     - name: Add API keys
       run: echo -e 'APP_ID = 12834\nAPP_HASH = c84d9229db1d6be95c067b02b126352c' > API_KEYS
