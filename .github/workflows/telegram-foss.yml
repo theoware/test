@@ -83,6 +83,10 @@ jobs:
     - name: Add API keys
       run: echo -e 'APP_ID = 12834\nAPP_HASH = c84d9229db1d6be95c067b02b126352c' > API_KEYS
 
+    - name: Get dependencies
+      run: |
+        ./gradlew --no-daemon tasks
+
     - name: Cache boringSSL
       id: boringssl-cache
       uses: actions/cache@main
