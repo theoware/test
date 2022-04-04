@@ -84,7 +84,9 @@ jobs:
 
     - name: Patch BoringSSL
       working-directory: TMessagesProj/jni
-      run: ./patch_boringssl.sh
+      run: |
+        patch -d boringssl < patches/boringssl/0001-add-aes-ige-mode.patch
+        patch -d boringssl < patches/boringssl/0001-only-build-what-we-need.patch
 
     - name: Build BoringSSL
       if: steps.boringssl-cache.outputs.cache-hit != 'true'
