@@ -10,6 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       NDK_CCACHE: ${{ github.workspace }}/ccache
+      NDK: ${{ env.ANDROID_HOME }}
     steps:
 
     - name: Download Telegram-FOSS's source code
@@ -68,8 +69,6 @@ jobs:
     - name: Install the android NDK
       if: steps.licenses-cache.outputs.cache-hit != 'true'
       run: |
-        ls -R ${ANDROID_HOME}
-        ls -R ${NDK}
         yes | ${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager --licenses --sdk_root="${ANDROID_HOME}"
 
     - name: Add API keys
