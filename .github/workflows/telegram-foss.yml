@@ -39,12 +39,22 @@ jobs:
         submodules: false
         ref: patch-1
 
+    - name: Cache boringSSL
+      id: boringssl-cache
+      uses: actions/cache@main
+      with:
+        path: |
+          TMessagesProj/jni/boringssl/build/
+        key: boringssl-${{ steps.hash.outputs.boringssl }}
+
     - name: Install dependencies
+      if: steps.boringssl-cache.outputs.cache-hit != 'true'
       run: |
         sudo apt-get update || sudo apt-get update
         sudo apt-get install -y ninja-build golang-go
 
     - name: Cache NDK licenses
+      if: steps.boringssl-cache.outputs.cache-hit != 'true'
       id: licenses-cache
       uses: actions/cache@main
       with:
@@ -57,22 +67,16 @@ jobs:
       run: |
         yes | ${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager --licenses --sdk_root="${ANDROID_HOME}"
 
-    - name: Cache boringSSL
-      id: boringssl-cache
-      uses: actions/cache@main
-      with:
-        path: |
-          TMessagesProj/jni/boringssl/build/
-        key: boringssl-${{ steps.hash.outputs.boringssl }}
-
     - name: Init submodules if cache didn't hit
       if: steps.boringssl-cache.outputs.cache-hit != 'true'
       run: git submodule update --init --recursive --rebase --force
 
     - name: Add API keys
+      if: steps.boringssl-cache.outputs.cache-hit != 'true'
       run: echo -e 'APP_ID = 12834\nAPP_HASH = c84d9229db1d6be95c067b02b126352c' > API_KEYS
 
     - name: Build Telegram-FOSS fake
+      if: steps.boringssl-cache.outputs.cache-hit != 'true'
       run: |
         ./gradlew --no-daemon tasks
 
@@ -135,6 +139,7 @@ jobs:
         sudo apt-get install -y ninja-build golang-go
 
     - name: Cache NDK licenses
+      if: steps.ffmpeg-cache.outputs.cache-hit != 'true'
       id: licenses-cache
       uses: actions/cache@main
       with:
@@ -143,11 +148,12 @@ jobs:
         restore-keys: licenses-
 
     - name: Install the android NDK
-      if: steps.licenses-cache.outputs.cache-hit != 'true'
+      if: steps.licenses-cache.outputs.cache-hit != 'true' && steps.ffmpeg-cache.outputs.cache-hit != 'true'
       run: |
         yes | ${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager --licenses --sdk_root="${ANDROID_HOME}"
 
     - name: Cache FFmpeg
+      if: steps.ffmpeg-cache.outputs.cache-hit != 'true'
       id: ffmpeg-cache
       uses: actions/cache@main
       with:
@@ -160,9 +166,11 @@ jobs:
       run: git submodule update --init --recursive --rebase --force
 
     - name: Add API keys
+      if: steps.ffmpeg-cache.outputs.cache-hit != 'true'
       run: echo -e 'APP_ID = 12834\nAPP_HASH = c84d9229db1d6be95c067b02b126352c' > API_KEYS
 
     - name: Build Telegram-FOSS fake
+      if: steps.ffmpeg-cache.outputs.cache-hit != 'true'
       run: |
         ./gradlew --no-daemon tasks
 
@@ -217,24 +225,6 @@ jobs:
         submodules: false
         ref: patch-1
 
-    - name: Install dependencies
-      run: |
-        sudo apt-get update || sudo apt-get update
-        sudo apt-get install -y ninja-build golang-go yasm
-
-    - name: Cache NDK licenses
-      id: licenses-cache
-      uses: actions/cache@main
-      with:
-        path: ${{ github.workspace }}/ndk/licenses
-        key: licenses-${{ github.sha }}
-        restore-keys: licenses-
-
-    - name: Install the android NDK
-      if: steps.licenses-cache.outputs.cache-hit != 'true'
-      run: |
-        yes | ${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager --licenses --sdk_root="${ANDROID_HOME}"
-
     - name: Cache libvpx
       id: libvpx-cache
       uses: actions/cache@main
@@ -244,14 +234,36 @@ jobs:
           !TMessagesProj/jni/libvpx/build/make
         key: libvpx-${{ steps.hash.outputs.libvpx }}
 
+    - name: Install dependencies
+      if: steps.libvpx-cache.outputs.cache-hit != 'true'
+      run: |
+        sudo apt-get update || sudo apt-get update
+        sudo apt-get install -y ninja-build golang-go yasm
+
+    - name: Cache NDK licenses
+      if: steps.libvpx-cache.outputs.cache-hit != 'true'
+      id: licenses-cache
+      uses: actions/cache@main
+      with:
+        path: ${{ github.workspace }}/ndk/licenses
+        key: licenses-${{ github.sha }}
+        restore-keys: licenses-
+
+    - name: Install the android NDK
+      if: steps.licenses-cache.outputs.cache-hit != 'true' && steps.libvpx-cache.outputs.cache-hit != 'true'
+      run: |
+        yes | ${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager --licenses --sdk_root="${ANDROID_HOME}"
+
     - name: Init submodules if cache didn't hit
       if: steps.libvpx-cache.outputs.cache-hit != 'true'
       run: git submodule update --init --recursive --rebase --force
 
     - name: Add API keys
+      if: steps.libvpx-cache.outputs.cache-hit != 'true'
       run: echo -e 'APP_ID = 12834\nAPP_HASH = c84d9229db1d6be95c067b02b126352c' > API_KEYS
 
     - name: Build Telegram-FOSS fake
+      if: steps.libvpx-cache.outputs.cache-hit != 'true'
       run: |
         ./gradlew --no-daemon tasks
 
