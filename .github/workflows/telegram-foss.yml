@@ -273,7 +273,7 @@ jobs:
       uses: actions/checkout@main
       with:
         repository: Telegram-FOSS-Team/Telegram-FOSS
-        submodules: false
+        submodules: recursive
 
     - name: Install dependencies
       run: |
