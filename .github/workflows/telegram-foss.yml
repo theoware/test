@@ -10,9 +10,6 @@ jobs:
     runs-on: ubuntu-latest
     env:
       NDK_CCACHE: ${{ github.workspace }}/ccache
-      ANDROID_HOME: /opt/ndk
-      NDK: /opt/ndk/ndk/21.4.7075529
-      ANDROID_SDK_ROOT: /opt/ndk
     steps:
 
     - name: Download Telegram-FOSS's source code
