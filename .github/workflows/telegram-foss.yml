@@ -27,23 +27,13 @@ jobs:
         echo "::set-output name=boringssl::$(git rev-parse HEAD)"
         popd
 
-    - name: Cleanup
-      run: rm -rf *
-
-    - name: Download Telegram-FOSS's source code
-      uses: actions/checkout@main
-      with:
-        repository: Telegram-FOSS-Team/Telegram-FOSS
-        clean: true
-        submodules: false
-
     - name: Cache boringSSL
       id: boringssl-cache
       uses: actions/cache@main
       with:
         path: |
           TMessagesProj/jni/boringssl/build/
-        key: boringssl-${{ steps.hash.outputs.boringssl }}
+        key: boringssl-telegram-${{ steps.hash.outputs.boringssl }}
 
     - name: Install dependencies
       if: steps.boringssl-cache.outputs.cache-hit != 'true'
@@ -118,23 +108,13 @@ jobs:
         echo "::set-output name=ffmpeg::$(git rev-parse HEAD)"
         popd
 
-    - name: Cleanup
-      run: rm -rf *
-
-    - name: Download Telegram-FOSS's source code
-      uses: actions/checkout@main
-      with:
-        repository: Telegram-FOSS-Team/Telegram-FOSS
-        clean: true
-        submodules: false
-
     - name: Cache FFmpeg
       id: ffmpeg-cache
       uses: actions/cache@main
       with:
         path: |
           TMessagesProj/jni/ffmpeg/build/
-        key: boringssl-${{ steps.hash.outputs.ffmpeg }}
+        key: ffmpeg-telegram-${{ steps.hash.outputs.ffmpeg }}
 
     - name: Install dependencies
       if: steps.ffmpeg-cache.outputs.cache-hit != 'true'
@@ -208,16 +188,6 @@ jobs:
         echo "::set-output name=libvpx::$(git rev-parse HEAD)"
         popd
 
-    - name: Cleanup
-      run: rm -rf *
-
-    - name: Download Telegram-FOSS's source code
-      uses: actions/checkout@main
-      with:
-        repository: Telegram-FOSS-Team/Telegram-FOSS
-        clean: true
-        submodules: false
-
     - name: Cache libvpx
       id: libvpx-cache
       uses: actions/cache@main
@@ -225,7 +195,7 @@ jobs:
         path: |
           TMessagesProj/jni/libvpx/build/
           !TMessagesProj/jni/libvpx/build/make
-        key: libvpx-${{ steps.hash.outputs.libvpx }}
+        key: libvpx-telegram-${{ steps.hash.outputs.libvpx }}
 
     - name: Install dependencies
       if: steps.libvpx-cache.outputs.cache-hit != 'true'
