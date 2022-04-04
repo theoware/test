@@ -278,6 +278,7 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
+    needs: [boringssl, ffmpeg, libvpx]
     env:
       NDK_CCACHE: ${{ github.workspace }}/ccache
     steps:
