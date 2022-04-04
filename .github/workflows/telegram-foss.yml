@@ -16,8 +16,9 @@ jobs:
     - name: Download Telegram-FOSS's source code
       uses: actions/checkout@main
       with:
-        repository: Telegram-FOSS-Team/Telegram-FOSS
+        repository: theoware/Telegram-FOSS
         submodules: recursive
+        ref: patch-1
 
     - name: Get hashes
       working-directory: TMessagesProj/jni
@@ -33,9 +34,10 @@ jobs:
     - name: Download Telegram-FOSS's source code
       uses: actions/checkout@main
       with:
-        repository: Telegram-FOSS-Team/Telegram-FOSS
+        repository: theoware/Telegram-FOSS
         clean: true
         submodules: false
+        ref: patch-1
 
     - name: Install dependencies
       run: |
@@ -104,8 +106,9 @@ jobs:
     - name: Download Telegram-FOSS's source code
       uses: actions/checkout@main
       with:
-        repository: Telegram-FOSS-Team/Telegram-FOSS
+        repository: theoware/Telegram-FOSS
         submodules: recursive
+        ref: patch-1
 
     - name: Get hashes
       working-directory: TMessagesProj/jni
@@ -121,9 +124,10 @@ jobs:
     - name: Download Telegram-FOSS's source code
       uses: actions/checkout@main
       with:
-        repository: Telegram-FOSS-Team/Telegram-FOSS
+        repository: theoware/Telegram-FOSS
         clean: true
         submodules: false
+        ref: patch-1
 
     - name: Install dependencies
       run: |
@@ -190,8 +194,9 @@ jobs:
     - name: Download Telegram-FOSS's source code
       uses: actions/checkout@main
       with:
-        repository: Telegram-FOSS-Team/Telegram-FOSS
+        repository: theoware/Telegram-FOSS
         submodules: recursive
+        ref: patch-1
 
     - name: Get hashes
       working-directory: TMessagesProj/jni
@@ -207,9 +212,10 @@ jobs:
     - name: Download Telegram-FOSS's source code
       uses: actions/checkout@main
       with:
-        repository: Telegram-FOSS-Team/Telegram-FOSS
+        repository: theoware/Telegram-FOSS
         clean: true
         submodules: false
+        ref: patch-1
 
     - name: Install dependencies
       run: |
@@ -272,8 +278,9 @@ jobs:
     - name: Download Telegram-FOSS's source code
       uses: actions/checkout@main
       with:
-        repository: Telegram-FOSS-Team/Telegram-FOSS
+        repository: theoware/Telegram-FOSS
         submodules: recursive
+        ref: patch-1
 
     - name: Install dependencies
       run: |
