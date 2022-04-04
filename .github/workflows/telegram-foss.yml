@@ -63,7 +63,7 @@ jobs:
         restore-keys: licenses-
 
     - name: Install the android NDK
-      if: steps.licenses-cache.outputs.cache-hit != 'true'
+      if: steps.licenses-cache.outputs.cache-hit != 'true' && steps.boringssl-cache.outputs.cache-hit != 'true'
       run: |
         yes | ${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager --licenses --sdk_root="${ANDROID_HOME}"
 
@@ -133,7 +133,16 @@ jobs:
         submodules: false
         ref: patch-1
 
+    - name: Cache FFmpeg
+      id: ffmpeg-cache
+      uses: actions/cache@main
+      with:
+        path: |
+          TMessagesProj/jni/ffmpeg/build/
+        key: boringssl-${{ steps.hash.outputs.ffmpeg }}
+
     - name: Install dependencies
+      if: steps.ffmpeg-cache.outputs.cache-hit != 'true'
       run: |
         sudo apt-get update || sudo apt-get update
         sudo apt-get install -y ninja-build golang-go
@@ -151,15 +160,6 @@ jobs:
       if: steps.licenses-cache.outputs.cache-hit != 'true' && steps.ffmpeg-cache.outputs.cache-hit != 'true'
       run: |
         yes | ${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager --licenses --sdk_root="${ANDROID_HOME}"
-
-    - name: Cache FFmpeg
-      if: steps.ffmpeg-cache.outputs.cache-hit != 'true'
-      id: ffmpeg-cache
-      uses: actions/cache@main
-      with:
-        path: |
-          TMessagesProj/jni/ffmpeg/build/
-        key: boringssl-${{ steps.hash.outputs.ffmpeg }}
 
     - name: Init submodules if cache didn't hit
       if: steps.ffmpeg-cache.outputs.cache-hit != 'true'
@@ -339,8 +339,6 @@ jobs:
       with:
         name: libvpx
         path: TMessagesProj/jni/libvpx/build
-
-    - run: ls -R .
 
     - name: Add API keys
       run: echo -e 'APP_ID = 12834\nAPP_HASH = c84d9229db1d6be95c067b02b126352c' > API_KEYS
