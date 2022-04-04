@@ -75,6 +75,9 @@ jobs:
       if: steps.boringssl-cache.outputs.cache-hit != 'true'
       run: git submodule update --init --recursive --rebase --force
 
+    - name: Add API keys
+      run: echo -e 'APP_ID = 12834\nAPP_HASH = c84d9229db1d6be95c067b02b126352c' > API_KEYS
+
     - name: Build Telegram-FOSS fake
       run: |
         ./gradlew --no-daemon tasks
@@ -166,6 +169,9 @@ jobs:
     - name: Init submodules if cache didn't hit
       if: steps.ffmpeg-cache.outputs.cache-hit != 'true'
       run: git submodule update --init --recursive --rebase --force
+
+    - name: Add API keys
+      run: echo -e 'APP_ID = 12834\nAPP_HASH = c84d9229db1d6be95c067b02b126352c' > API_KEYS
 
     - name: Build Telegram-FOSS fake
       run: |
@@ -259,6 +265,9 @@ jobs:
       if: steps.libvpx-cache.outputs.cache-hit != 'true'
       run: git submodule update --init --recursive --rebase --force
 
+    - name: Add API keys
+      run: echo -e 'APP_ID = 12834\nAPP_HASH = c84d9229db1d6be95c067b02b126352c' > API_KEYS
+
     - name: Build Telegram-FOSS fake
       run: |
         ./gradlew --no-daemon tasks
@@ -336,6 +345,9 @@ jobs:
         path: TMessagesProj/jni/libvpx/build
 
     - run: ls -R .
+
+    - name: Add API keys
+      run: echo -e 'APP_ID = 12834\nAPP_HASH = c84d9229db1d6be95c067b02b126352c' > API_KEYS
 
     - name: Build Telegram-FOSS
       run: |
