@@ -5,8 +5,8 @@ on:
     paths: .github/workflows/telegram-foss.yml
 
 jobs:
-  build:
-    name: Build
+  boringssl:
+    name: boringSSL
     runs-on: ubuntu-latest
     env:
       NDK_CCACHE: ${{ github.workspace }}/ccache
@@ -26,9 +26,186 @@ jobs:
         pushd boringssl
         echo "::set-output name=boringssl::$(git rev-parse HEAD)"
         popd
+
+    - name: Cleanup
+      run: rm -rf *
+
+    - name: Download Telegram-FOSS's source code
+      uses: actions/checkout@main
+      with:
+        repository: Telegram-FOSS-Team/Telegram-FOSS
+        clean: true
+        submodules: false
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update || sudo apt-get update
+        sudo apt-get install -y ninja-build golang-go
+
+    - name: Setup Java JDK
+      uses: actions/setup-java@main
+      with:
+        java-version: 11
+        distribution: temurin
+        check-latest: true
+        cache: gradle
+
+    - name: Cache NDK licenses
+      id: licenses-cache
+      uses: actions/cache@main
+      with:
+        path: ${{ github.workspace }}/ndk/licenses
+        key: licenses-${{ github.sha }}
+        restore-keys: licenses-
+
+    - name: Install the android NDK
+      if: steps.licenses-cache.outputs.cache-hit != 'true'
+      run: |
+        yes | ${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager --licenses --sdk_root="${ANDROID_HOME}"
+
+    - name: Cache boringSSL
+      id: boringssl-cache
+      uses: actions/cache@main
+      with:
+        path: |
+          TMessagesProj/jni/boringssl/build/
+        key: boringssl-${{ steps.hash.outputs.boringssl }}
+
+    - name: Init submodules if cache didn't hit
+      if: steps.boringssl-cache.outputs.cache-hit != 'true'
+      run: git submodule update --init --recursive --rebase --force
+
+    - name: Build Telegram-FOSS fake
+      run: |
+        ./gradlew --no-daemon tasks
+
+    - name: Patch BoringSSL
+      working-directory: TMessagesProj/jni
+      run: ./patch_boringssl.sh
+
+    - name: Build BoringSSL
+      if: steps.boringssl-cache.outputs.cache-hit != 'true'
+      working-directory: TMessagesProj/jni
+      env:
+        NINJA_PATH: /usr/bin/ninja
+      run: ./build_boringssl.sh
+
+    - name: Upload the Build Artifact
+      uses: actions/upload-artifact@v3.0.0
+      with:
+        name: boringssl
+        path: TMessagesProj/jni/boringssl/build
+        if-no-files-found: error
+
+  ffmpeg:
+    name: FFmpeg
+    runs-on: ubuntu-latest
+    env:
+      NDK_CCACHE: ${{ github.workspace }}/ccache
+      NDK: /usr/local/lib/android/sdk/ndk/21.4.7075529
+    steps:
+
+    - name: Download Telegram-FOSS's source code
+      uses: actions/checkout@main
+      with:
+        repository: Telegram-FOSS-Team/Telegram-FOSS
+        submodules: recursive
+
+    - name: Get hashes
+      working-directory: TMessagesProj/jni
+      id: hash
+      run: |
         pushd ffmpeg
         echo "::set-output name=ffmpeg::$(git rev-parse HEAD)"
         popd
+
+    - name: Cleanup
+      run: rm -rf *
+
+    - name: Download Telegram-FOSS's source code
+      uses: actions/checkout@main
+      with:
+        repository: Telegram-FOSS-Team/Telegram-FOSS
+        clean: true
+        submodules: false
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update || sudo apt-get update
+        sudo apt-get install -y ninja-build golang-go
+
+    - name: Setup Java JDK
+      uses: actions/setup-java@main
+      with:
+        java-version: 11
+        distribution: temurin
+        check-latest: true
+        cache: gradle
+
+    - name: Cache NDK licenses
+      id: licenses-cache
+      uses: actions/cache@main
+      with:
+        path: ${{ github.workspace }}/ndk/licenses
+        key: licenses-${{ github.sha }}
+        restore-keys: licenses-
+
+    - name: Install the android NDK
+      if: steps.licenses-cache.outputs.cache-hit != 'true'
+      run: |
+        yes | ${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager --licenses --sdk_root="${ANDROID_HOME}"
+
+    - name: Cache FFmpeg
+      id: ffmpeg-cache
+      uses: actions/cache@main
+      with:
+        path: |
+          TMessagesProj/jni/ffmpeg/build/
+        key: boringssl-${{ steps.hash.outputs.ffmpeg }}
+
+    - name: Init submodules if cache didn't hit
+      if: steps.ffmpeg-cache.outputs.cache-hit != 'true'
+      run: git submodule update --init --recursive --rebase --force
+
+    - name: Build Telegram-FOSS fake
+      run: |
+        ./gradlew --no-daemon tasks
+
+    - name: Build FFmpeg with clang
+      if: steps.ffmpeg-cache.outputs.cache-hit != 'true'
+      working-directory: TMessagesProj/jni
+      run: ./build_ffmpeg_clang.sh
+
+    - name: Patch FFmpeg
+      if: steps.ffmpeg-cache.outputs.cache-hit != 'true'
+      working-directory: TMessagesProj/jni
+      run: ./patch_ffmpeg.sh
+
+    - name: Upload the Build Artifact
+      uses: actions/upload-artifact@v3.0.0
+      with:
+        name: ffmpeg
+        path: TMessagesProj/jni/ffmpeg/build
+        if-no-files-found: error
+
+  libvpx:
+    name: libvpx
+    runs-on: ubuntu-latest
+    env:
+      NDK_CCACHE: ${{ github.workspace }}/ccache
+      NDK: /usr/local/lib/android/sdk/ndk/21.4.7075529
+    steps:
+
+    - name: Download Telegram-FOSS's source code
+      uses: actions/checkout@main
+      with:
+        repository: Telegram-FOSS-Team/Telegram-FOSS
+        submodules: recursive
+
+    - name: Get hashes
+      working-directory: TMessagesProj/jni
+      id: hash
+      run: |
         pushd libvpx
         echo "::set-output name=libvpx::$(git rev-parse HEAD)"
         popd
@@ -41,6 +218,74 @@ jobs:
       with:
         repository: Telegram-FOSS-Team/Telegram-FOSS
         clean: true
+        submodules: false
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update || sudo apt-get update
+        sudo apt-get install -y ninja-build golang-go
+
+    - name: Setup Java JDK
+      uses: actions/setup-java@main
+      with:
+        java-version: 11
+        distribution: temurin
+        check-latest: true
+        cache: gradle
+
+    - name: Cache NDK licenses
+      id: licenses-cache
+      uses: actions/cache@main
+      with:
+        path: ${{ github.workspace }}/ndk/licenses
+        key: licenses-${{ github.sha }}
+        restore-keys: licenses-
+
+    - name: Install the android NDK
+      if: steps.licenses-cache.outputs.cache-hit != 'true'
+      run: |
+        yes | ${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager --licenses --sdk_root="${ANDROID_HOME}"
+
+    - name: Cache libvpx
+      id: libvpx-cache
+      uses: actions/cache@main
+      with:
+        path: |
+          TMessagesProj/jni/libvpx/build/
+          !TMessagesProj/jni/libvpx/build/make
+        key: libvpx-${{ steps.hash.outputs.libvpx }}
+
+    - name: Init submodules if cache didn't hit
+      if: steps.libvpx-cache.outputs.cache-hit != 'true'
+      run: git submodule update --init --recursive --rebase --force
+
+    - name: Build Telegram-FOSS fake
+      run: |
+        ./gradlew --no-daemon tasks
+
+    - name: Build libvpx with clang
+      if: steps.libvpx-cache.outputs.cache-hit != 'true'
+      working-directory: TMessagesProj/jni
+      run: ./build_libvpx_clang.sh
+
+    - name: Upload the Build Artifact
+      uses: actions/upload-artifact@v3.0.0
+      with:
+        name: libvpx
+        path: TMessagesProj/jni/libvpx/build
+        if-no-files-found: error
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    env:
+      NDK_CCACHE: ${{ github.workspace }}/ccache
+    steps:
+
+    - name: Download Telegram-FOSS's source code
+      uses: actions/checkout@main
+      with:
+        repository: Telegram-FOSS-Team/Telegram-FOSS
         submodules: false
 
     - name: Install dependencies
@@ -71,87 +316,25 @@ jobs:
       run: |
         yes | ${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager --licenses --sdk_root="${ANDROID_HOME}"
 
-    - name: Add API keys
-      run: echo -e 'APP_ID = 12834\nAPP_HASH = c84d9229db1d6be95c067b02b126352c' > API_KEYS
-
-    - name: Cache boringSSL
-      id: boringssl-cache
-      uses: actions/cache@main
+    - name: Download the boringssl Build Artifact
+      uses: actions/download-artifact@v3.0.0
       with:
-        path: |
-          TMessagesProj/jni/boringssl/build/
-        key: boringssl-${{ steps.hash.outputs.boringssl }}
+        name: boringssl
+        path: TMessagesProj/jni/boringssl/build
 
-    - name: Cache FFmpeg
-      id: ffmpeg-cache
-      uses: actions/cache@main
+    - name: Download the FFmpeg Build Artifact
+      uses: actions/download-artifact@v3.0.0
       with:
-        path: |
-          TMessagesProj/jni/ffmpeg/build/
-        key: boringssl-${{ steps.hash.outputs.ffmpeg }}
+        name: ffmpeg
+        path: TMessagesProj/jni/ffmpeg/build
 
-    - name: Cache libvpx
-      id: libvpx-cache
-      uses: actions/cache@main
+    - name: Download the libvpx Build Artifact
+      uses: actions/download-artifact@v3.0.0
       with:
-        path: |
-          TMessagesProj/jni/libvpx/build/
-          !TMessagesProj/jni/libvpx/build/make
-        key: libvpx-${{ steps.hash.outputs.libvpx }}
-
-    - name: Init submodules if cache didn't hit
-      if: steps.libvpx-cache.outputs.cache-hit != 'true' && steps.ffmpeg-cache.outputs.cache-hit != 'true' && steps.boringssl-cache.outputs.cache-hit != 'true'
-      run: git submodule update --init --recursive --rebase --force
+        name: libvpx
+        path: TMessagesProj/jni/libvpx/build
 
     - run: ls -R .
-      if: always()
-
-    - name: Build Telegram-FOSS fake
-      run: |
-        ./gradlew --no-daemon tasks
-
-    - name: Build FFmpeg with clang
-      if: steps.ffmpeg-cache.outputs.cache-hit != 'true'
-      working-directory: TMessagesProj/jni
-      run: ./build_ffmpeg_clang.sh
-
-    - name: Patch FFmpeg
-      if: steps.ffmpeg-cache.outputs.cache-hit != 'true'
-      working-directory: TMessagesProj/jni
-      run: ./patch_ffmpeg.sh
-
-    - name: Patch BoringSSL
-      working-directory: TMessagesProj/jni
-      run: ./patch_boringssl.sh
-
-    - name: Build BoringSSL
-      if: steps.boringssl-cache.outputs.cache-hit != 'true'
-      working-directory: TMessagesProj/jni
-      env:
-        NINJA_PATH: /usr/bin/ninja
-      run: ./build_boringssl.sh
-
-    - name: Build libvpx with clang
-      if: steps.libvpx-cache.outputs.cache-hit != 'true'
-      working-directory: TMessagesProj/jni
-      run: ./build_libvpx_clang.sh
-
-    - name: Delete no longer needed folders
-      if: steps.libvpx-cache.outputs.cache-hit != 'true' && steps.ffmpeg-cache.outputs.cache-hit != 'true' && steps.boringssl-cache.outputs.cache-hit != 'true'
-      working-directory: TMessagesProj/jni/
-      run: |
-        mv boringssl/build build/
-        rm -rf boringssl/
-        mkdir boringssl/
-        mv build/ boringssl/build/
-        mv ffmpeg/build build/
-        rm -rf ffmpeg/
-        mkdir ffmpeg/
-        mv build/ ffmpeg/build/
-        mv libvpx/build build/
-        rm -rf libvpx/
-        mkdir libvpx
-        mv build/ libvpx/build/
 
     - name: Build Telegram-FOSS
       run: |
