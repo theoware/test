@@ -17,11 +17,9 @@ jobs:
     - run: C:\ProgramData\Chocolatey\bin\vswhere.exe -latest -products * -property installationPath -requires Microsoft.VisualStudio.Workload.NativeDesktop -requires  Microsoft.VisualStudio.Component.Windows10SDK.19041 -requires  Microsoft.VisualStudio.Component.VC.ATL.Spectre
       shell: cmd
 
-    - name: Clone mozillabuild
+    - name: Install mozillabuild
       run: |
-        curl https://cdn.dothq.co/artifacts/tools/mozilla-build.zip -o mozilla-build.zip
-        ls
-        7z x mozilla-build.zip -aoa -oC:\mozilla-build 
+        choco install mozillabuild -y
 
     - name: Checkout
       uses: actions/checkout@v3.0.0
