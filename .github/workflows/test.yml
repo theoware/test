@@ -14,9 +14,9 @@ jobs:
     - name: Add msbuild to PATH
       uses: microsoft/setup-msbuild@v1.1
 
-    - run: |
-        dir /s "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\**\*.exe"
-        C:\ProgramData\Chocolatey\bin\vswhere.exe -latest -products * -property installationPath -requires Microsoft.VisualStudio.Workload.NativeDesktop -requires  Microsoft.VisualStudio.Component.Windows10SDK.19041 -requires  Microsoft.VisualStudio.Component.VC.ATL.Spectre
+    - run: gci "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\**\*.exe"
+
+    - run: C:\ProgramData\Chocolatey\bin\vswhere.exe -latest -products * -property installationPath -requires Microsoft.VisualStudio.Workload.NativeDesktop -requires  Microsoft.VisualStudio.Component.Windows10SDK.19041 -requires  Microsoft.VisualStudio.Component.VC.ATL.Spectre
       shell: cmd
 
     - name: Install mozillabuild
