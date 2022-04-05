@@ -17,6 +17,7 @@ jobs:
     - name: Setup VS Dev Environment
       uses: seanmiddleditch/gha-setup-vsdevenv@v4
       with:
+        vswhere: C:\ProgramData\Chocolatey\bin\vswhere.exe
         components: Microsoft.VisualStudio.Workload.NativeDesktop; Microsoft.VisualStudio.Component.Windows10SDK.19041; Microsoft.VisualStudio.Component.VC.ATL.Spectre
 
     - name: Clone mozillabuild
