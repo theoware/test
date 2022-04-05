@@ -10,7 +10,10 @@ jobs:
     name: Build
     runs-on: windows-2022
     steps:
-    
+
+    - name: Add msbuild to PATH
+      uses: microsoft/setup-msbuild@v1.1
+
     - name: Setup VS Dev Environment
       uses: seanmiddleditch/gha-setup-vsdevenv@v4
       with:
