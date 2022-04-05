@@ -33,5 +33,5 @@ jobs:
       with:
         run: mach build
 
-    - run: dir.exe /s
+    - run: gci * -Recurse
       if: always()
