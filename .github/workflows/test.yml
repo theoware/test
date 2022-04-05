@@ -28,10 +28,15 @@ jobs:
       with:
         repository: theoware/Firefox
 
-    - name: Run in MozillaBuild
+    - name: Run mach build
       uses: dothq/mozillabuild-shell-action@1f3c7a98e3e32c336d720e38dd592406397db1f7
       with:
         run: mach build
+
+    - name: Run mach run
+      uses: dothq/mozillabuild-shell-action@1f3c7a98e3e32c336d720e38dd592406397db1f7
+      with:
+        run: mach run
 
     - run: gci * -Recurse
       if: always()
