@@ -14,6 +14,8 @@ jobs:
     - name: Add msbuild to PATH
       uses: microsoft/setup-msbuild@v1.1
 
+    - run: C:\ProgramData\Chocolatey\bin\vswhere.exe -latest -products * -property installationPath -requires Microsoft.VisualStudio.Workload.NativeDesktop -requires  Microsoft.VisualStudio.Component.Windows10SDK.19041 -requires  Microsoft.VisualStudio.Component.VC.ATL.Spectre
+
     - name: Setup VS Dev Environment
       uses: seanmiddleditch/gha-setup-vsdevenv@v4
       with:
