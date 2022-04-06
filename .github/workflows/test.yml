@@ -27,8 +27,15 @@ jobs:
         python3 bootstrap.py --no-interactive .
 
     - run: |
-        grep -v -w enable-artifact-builds mozilla-unified/mozconfig > mozilla-unified/mozconfig
+        grep -v -w "{enable-artifact-builds}" mozconfig > mozconfig
+        echo "{ac_add_options --disable-tests}" >> mozconfig
+        echo "{mk_add_options MOZ_PARALLEL_BUILD=4}" >> mozconfig
+        echo "{ac_add_options --with-ccache=sccache}" >> mozconfig
+        echo "{ac_add_options --enable-release}" >> mozconfig
+        echo "{mk_add_options MOZ_CO_LOCALES=DE}" >> mozconfig
+        echo "{ac_add_options --enable-ui-locale=DE}" >> mozconfig
       shell: bash
+      working-directory: mozilla-unified
 
     - continue-on-error: true
       working-directory: mozilla-unified
