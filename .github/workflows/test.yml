@@ -27,7 +27,7 @@ jobs:
         python3 bootstrap.py --no-interactive .
 
     - run: |
-        grep -v -w "--enable-artifact-builds" mozilla-unified/mozconfig > mozilla-unified/mozconfig
+        grep -v -w enable-artifact-builds mozilla-unified/mozconfig > mozilla-unified/mozconfig
       shell: bash
 
     - continue-on-error: true
