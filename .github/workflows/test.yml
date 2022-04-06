@@ -20,23 +20,38 @@ jobs:
       run: |
         choco install mozillabuild -y
 
+    - working-directory: mozilla-unified
+      run: echo "ac_add_options --enable-artifact-builds" >> mozconfig
+
     - name: Bootstrap a copy of the Firefox source code
       run: |
         Invoke-WebRequest -Uri https://hg.mozilla.org/mozilla-central/raw-file/default/python/mozboot/bin/bootstrap.py -OutFile bootstrap.py
         python3 bootstrap.py --no-interactive
 
-    - name: Run mach
-      working-directory: mozilla-unified
+    - working-directory: mozilla-unified
       continue-on-error: true
-      run: ./mach.ps1
+      run: ./mach.ps1 help
 
-    - name: Run mach build
-      working-directory: mozilla-unified
+    - working-directory: mozilla-unified
+      continue-on-error: true
+      run: ./mach.ps1 help build
+
+    - working-directory: mozilla-unified
+      continue-on-error: true
+      run: ./mach.ps1 help run
+
+    - working-directory: mozilla-unified
       run: ./mach.ps1 build
 
-    - name: Run mach run
-      working-directory: mozilla-unified
+    - working-directory: mozilla-unified
       run: ./mach.ps1 run
 
-    - run: gci * -Recurse
+    - run: ls -R .
+      shell: bash
       if: always()
+
+    - name: Upload a Build Artifact
+      if: always()
+      uses: actions/upload-artifact@v3.0.0
+      with:
+        path: mozilla-unified/obj-x86_64-pc-mingw32\dist\bin\firefox
