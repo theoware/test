@@ -23,7 +23,7 @@ jobs:
     - name: Bootstrap a copy of the Firefox source code
       run: |
         Invoke-WebRequest -Uri https://hg.mozilla.org/mozilla-central/raw-file/default/python/mozboot/bin/bootstrap.py -OutFile bootstrap.py
-        python3 bootstrap.py
+        python3 bootstrap.py --no-interactive
 
     - name: Run mach build
       run: ./mach build --disable-bootstrap
