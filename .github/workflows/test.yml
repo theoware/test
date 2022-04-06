@@ -27,7 +27,8 @@ jobs:
         python3 bootstrap.py --no-interactive .
 
     - run: |
-        grep -v -w "{enable-artifact-builds}" mozconfig > mozconfig
+        mv mozconfig mozconfig2
+        grep -v -w "{enable-artifact-builds}" mozconfig2 > mozconfig
         echo "{ac_add_options --disable-tests}" >> mozconfig
         echo "{mk_add_options MOZ_PARALLEL_BUILD=4}" >> mozconfig
         echo "{ac_add_options --with-ccache=sccache}" >> mozconfig
