@@ -25,13 +25,18 @@ jobs:
         Invoke-WebRequest -Uri https://hg.mozilla.org/mozilla-central/raw-file/default/python/mozboot/bin/bootstrap.py -OutFile bootstrap.py
         python3 bootstrap.py --no-interactive
 
+    - name: Run mach
+      working-directory: mozilla-unified
+      continue-on-error: true
+      run: ./mach.ps1
+
     - name: Run mach build
       working-directory: mozilla-unified
-      run: ./mach build --disable-bootstrap
+      run: ./mach.ps1 build
 
     - name: Run mach run
       working-directory: mozilla-unified
-      run: ./mach run --disable-bootstrap
+      run: ./mach.ps1 run
 
     - run: gci * -Recurse
       if: always()
