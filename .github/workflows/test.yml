@@ -20,15 +20,15 @@ jobs:
       run: |
         choco install mozillabuild -y
 
-    - run: |
-        mkdir mozilla-unified
-        echo "ac_add_options --enable-artifact-builds" > mozilla-unified/mozconfig
-      shell: bash
 
     - name: Bootstrap a copy of the Firefox source code
       run: |
         Invoke-WebRequest -Uri https://hg.mozilla.org/mozilla-central/raw-file/default/python/mozboot/bin/bootstrap.py -OutFile bootstrap.py
         python3 bootstrap.py --no-interactive .
+
+    - run: |
+        grep -v -w "--enable-artifact-builds" mozilla-unified/mozconfig > mozilla-unified/mozconfig
+      shell: bash
 
     - continue-on-error: true
       working-directory: mozilla-unified
@@ -54,6 +54,10 @@ jobs:
 
     - working-directory: mozilla-unified
       run: ./mach.ps1 run
+
+    - run: cat mozilla-unified/mozconfig
+      shell: bash
+      if: always()
 
     - run: ls -R .
       shell: bash
