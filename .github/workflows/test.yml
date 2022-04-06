@@ -23,10 +23,10 @@ jobs:
     - run: echo "ac_add_options --enable-artifact-builds" > mozconfig
       shell: bash
 
-    - name: Download a copy of the Firefox source code
+    - name: Bootstrap a copy of the Firefox source code
       run: |
-        Invoke-WebRequest -Uri https://hg.mozilla.org/mozilla-unified/archive/release.zip -OutFile release.zip
-        Expand-Archive -LiteralPath release.zip -DestinationPath .
+        Invoke-WebRequest -Uri https://hg.mozilla.org/mozilla-central/raw-file/default/python/mozboot/bin/bootstrap.py -OutFile bootstrap.py
+        python3 bootstrap.py --no-interactive .
 
     - continue-on-error: true
       run: ./mach.ps1 help
