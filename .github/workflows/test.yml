@@ -20,8 +20,8 @@ jobs:
       run: |
         choco install mozillabuild -y
 
-    - working-directory: mozilla-unified
-      run: echo "ac_add_options --enable-artifact-builds" >> mozconfig
+    - run: echo "ac_add_options --enable-artifact-builds" > mozconfig
+      shell: bash
 
     - name: Download a copy of the Firefox source code
       run: |
