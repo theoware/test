@@ -10,7 +10,7 @@ jobs:
     name: Build
     runs-on: windows-2022
     env:
-      MOZBUILD_STATE_PATH: C:\Users\runneradmin/.mozbuild
+      MOZBUILD_STATE_PATH: D:\a\test\test\.mozbuild
     steps:
 
     - name: Add msbuild to PATH
@@ -26,9 +26,11 @@ jobs:
         python3 bootstrap.py --no-interactive
 
     - name: Run mach build
+      working-directory: mozilla-unified
       run: ./mach build --disable-bootstrap
 
     - name: Run mach run
+      working-directory: mozilla-unified
       run: ./mach run --disable-bootstrap
 
     - run: gci * -Recurse
