@@ -23,28 +23,28 @@ jobs:
     - working-directory: mozilla-unified
       run: echo "ac_add_options --enable-artifact-builds" >> mozconfig
 
-    - name: Bootstrap a copy of the Firefox source code
+    - name: Download a copy of the Firefox source code
       run: |
-        Invoke-WebRequest -Uri https://hg.mozilla.org/mozilla-central/raw-file/default/python/mozboot/bin/bootstrap.py -OutFile bootstrap.py
-        python3 bootstrap.py --no-interactive
+        Invoke-WebRequest -Uri https://hg.mozilla.org/mozilla-unified/archive/release.zip -OutFile release.zip
+        Expand-Archive -LiteralPath release.zip -DestinationPath .
 
-    - working-directory: mozilla-unified
-      continue-on-error: true
+    - continue-on-error: true
       run: ./mach.ps1 help
 
-    - working-directory: mozilla-unified
-      continue-on-error: true
+    - continue-on-error: true
       run: ./mach.ps1 help build
 
-    - working-directory: mozilla-unified
-      continue-on-error: true
+    - continue-on-error: true
       run: ./mach.ps1 help run
 
-    - working-directory: mozilla-unified
-      run: ./mach.ps1 build
+    - continue-on-error: true
+      run: ./mach.ps1 help configure
 
-    - working-directory: mozilla-unified
-      run: ./mach.ps1 run
+    - run: ./mach.ps1 configure
+
+    - run: ./mach.ps1 build
+
+    - run: ./mach.ps1 run
 
     - run: ls -R .
       shell: bash
