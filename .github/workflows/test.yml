@@ -28,12 +28,12 @@ jobs:
 
     - run: |
         rm mozconfig
-        echo {ac_add_options --disable-tests} >> mozconfig
-        echo {mk_add_options MOZ_PARALLEL_BUILD=4} >> mozconfig
-        echo {ac_add_options --with-ccache=sccache} >> mozconfig
-        echo {ac_add_options --enable-release} >> mozconfig
-        echo {mk_add_options MOZ_CO_LOCALES=DE} >> mozconfig
-        echo {ac_add_options --enable-ui-locale=DE} >> mozconfig
+        echo "ac_add_options --disable-tests" >> mozconfig
+        echo "mk_add_options MOZ_PARALLEL_BUILD=4" >> mozconfig
+        echo "ac_add_options --with-ccache=sccache" >> mozconfig
+        echo "ac_add_options --enable-release" >> mozconfig
+        echo "mk_add_options MOZ_CO_LOCALES=DE" >> mozconfig
+        echo "ac_add_options --enable-ui-locale=DE" >> mozconfig
       shell: bash
       working-directory: mozilla-unified
 
