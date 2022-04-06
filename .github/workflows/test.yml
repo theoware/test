@@ -54,13 +54,18 @@ jobs:
       run: ./mach.ps1 help configure
 
     - working-directory: mozilla-unified
-      run: ./mach.ps1 configure --no-interactive
-
-    - working-directory: mozilla-unified
       run: ./mach.ps1 build --priority high --no-interactive
 
     - working-directory: mozilla-unified
+      if: failed()
+      run: ./mach.ps1 build
+
+    - working-directory: mozilla-unified
       run: ./mach.ps1 run --no-interactive
+
+    - working-directory: mozilla-unified
+      if: failed()
+      run: ./mach.ps1 run
 
     - run: cat mozilla-unified/mozconfig
       shell: bash
