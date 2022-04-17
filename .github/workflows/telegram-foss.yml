@@ -41,15 +41,6 @@ jobs:
         sudo apt-get update || sudo apt-get update
         sudo apt-get install -y ninja-build golang-go
 
-    - name: Cache NDK licenses
-      if: steps.boringssl-cache.outputs.cache-hit != 'true'
-      id: licenses-cache
-      uses: actions/cache@main
-      with:
-        path: ${{ github.workspace }}/ndk/licenses
-        key: licenses-${{ github.sha }}
-        restore-keys: licenses-
-
     - name: Install the android NDK
       if: steps.licenses-cache.outputs.cache-hit != 'true' && steps.boringssl-cache.outputs.cache-hit != 'true'
       run: |
@@ -121,15 +112,6 @@ jobs:
       run: |
         sudo apt-get update || sudo apt-get update
         sudo apt-get install -y ninja-build golang-go
-
-    - name: Cache NDK licenses
-      if: steps.ffmpeg-cache.outputs.cache-hit != 'true'
-      id: licenses-cache
-      uses: actions/cache@main
-      with:
-        path: ${{ github.workspace }}/ndk/licenses
-        key: licenses-${{ github.sha }}
-        restore-keys: licenses-
 
     - name: Install the android NDK
       if: steps.licenses-cache.outputs.cache-hit != 'true' && steps.ffmpeg-cache.outputs.cache-hit != 'true'
@@ -203,15 +185,6 @@ jobs:
         sudo apt-get update || sudo apt-get update
         sudo apt-get install -y ninja-build golang-go yasm
 
-    - name: Cache NDK licenses
-      if: steps.libvpx-cache.outputs.cache-hit != 'true'
-      id: licenses-cache
-      uses: actions/cache@main
-      with:
-        path: ${{ github.workspace }}/ndk/licenses
-        key: licenses-${{ github.sha }}
-        restore-keys: licenses-
-
     - name: Install the android NDK
       if: steps.licenses-cache.outputs.cache-hit != 'true' && steps.libvpx-cache.outputs.cache-hit != 'true'
       run: |
@@ -271,14 +244,6 @@ jobs:
         check-latest: true
         cache: gradle
 
-    - name: Cache NDK licenses
-      id: licenses-cache
-      uses: actions/cache@main
-      with:
-        path: ${{ github.workspace }}/ndk/licenses
-        key: licenses-${{ github.sha }}
-        restore-keys: licenses-
-
     - name: Install the android NDK
       if: steps.licenses-cache.outputs.cache-hit != 'true'
       run: |
@@ -308,12 +273,6 @@ jobs:
 
     - name: Add API keys
       run: echo -e 'APP_ID = 12834\nAPP_HASH = c84d9229db1d6be95c067b02b126352c' > API_KEYS
-
-    - name: Add DeepL translator
-      run: |
-        git remote add NekoX https://github.com/NekoX-Dev/NekoX.git
-        git fetch NekoX
-        git cherry-pick f4a932f06b11db78deef11dbd0b7929f8789c785
 
     - name: Build Telegram-FOSS
       run: |
