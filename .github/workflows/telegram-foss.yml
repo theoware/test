@@ -309,6 +309,12 @@ jobs:
     - name: Add API keys
       run: echo -e 'APP_ID = 12834\nAPP_HASH = c84d9229db1d6be95c067b02b126352c' > API_KEYS
 
+    - name: Add DeepL translator
+      run: |
+        git remote add NekoX https://github.com/NekoX-Dev/NekoX.git
+        git fetch NekoX
+        git cherry-pick f4a932f06b11db78deef11dbd0b7929f8789c785
+
     - name: Build Telegram-FOSS
       run: |
         ./gradlew --no-daemon assembleAfatRelease
