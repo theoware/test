@@ -3,6 +3,7 @@ name: OAndBackupX
 on:
   push:
     paths: .github/workflows/OAndBackupX.yml
+  workflow_dispatch:
 
 jobs:
   build:
