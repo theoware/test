@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-    - run: git clone https://cgit.freedesktop.org/libreoffice/core --depth 1
+    - run: git clone git://anongit.freedesktop.org/libreoffice/core --depth 1
 
     - run: |
         rm -rf setup_native/source/packinfo/DS_Store*
