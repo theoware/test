@@ -8,75 +8,67 @@ jobs:
 
   build:
     name: Build
-    runs-on: windows-2022
-    env:
-      MOZBUILD_STATE_PATH: D:\a\test\test\.mozbuild
+    runs-on: ubuntu-latest
     steps:
 
-    - name: Add msbuild to PATH
-      uses: microsoft/setup-msbuild@v1.1
-
-    - name: Install mozillabuild
-      run: |
-        choco install mozillabuild -y
-
-
-    - name: Bootstrap a copy of the Firefox source code
-      run: |
-        Invoke-WebRequest -Uri https://hg.mozilla.org/mozilla-central/raw-file/default/python/mozboot/bin/bootstrap.py -OutFile bootstrap.py
-        python3 bootstrap.py --no-interactive .
+    - run: git clone https://cgit.freedesktop.org/libreoffice/core --depth 1
 
     - run: |
-        rm mozconfig
-        echo "ac_add_options --disable-tests" >> mozconfig
-        echo "mk_add_options MOZ_PARALLEL_BUILD=4" >> mozconfig
-        echo "ac_add_options --with-ccache=sccache" >> mozconfig
-        echo "ac_add_options --enable-release" >> mozconfig
-        echo "mk_add_options MOZ_CO_LOCALES=DE" >> mozconfig
-        echo "ac_add_options --enable-ui-locale=DE" >> mozconfig
-      shell: bash
-      working-directory: mozilla-unified
+        rm -rf setup_native/source/packinfo/DS_Store*
+        rm -rf oox/qa/unit/data
+        rm -rf writerperfect/qa/unit/data/writer/libmwaw/pass/WriterPlus
+        rm -rf xmlsecurity/qa/unit/signing/data/random_seed
+        rm -rf writerperfect/qa/unit/data/impress/libmwaw/pass/PowerPoint_Mac_2
+        rm -rf sw/qa/extras/uiwriter/data/*
+        rm -rf sw/qa/extras/ooxmlexport/data/*
+        rm -rf sw/qa/extras/rtfexport/data/*
+        rm -rf sw/qa/extras/odfimport/data/*
+        rm -rf sw/qa/extras/ooxmlimport/data/*
+        rm -rf sw/qa/extras/ww8export/data/*
+        rm -rf sc/qa/unit/data/*
+        rm -rf testtools/source/cliversioning/version_libs/*
+        rm -rf qadevOOo/testdocs/qadevlibs/*.jar
+        rm -rf chart2/qa/extras/chart2dump/data/*
+        rm -rf chart2/qa/extras/data/*
+        rm -rf sd/qa/unit/data/*
+        rm -rf sw/qa/extras/odfexport/data/*
+        rm -rf 
+        rm -rf 
 
-    - continue-on-error: true
-      working-directory: mozilla-unified
-      run: ./mach.ps1 help
+    - name: prebuild
+      run: |
+        sed -i -e 's/\/$(OOO_VENDOR)//g' android/Bootstrap/Makefile.shared
+        sed -i -e 's/test_fontconfig=yes/test_fontconfig=no/g' configure.ac
+        sed -i -e 's/test_freetype=yes/test_freetype=no/g' configure.ac
+        sed -i -e '/debug/d' android/CustomTarget_lo_android.mk
+        sed -i -e 's/rm /true /g' android/source/Makefile
+        sed -i -e 's/\.\/gradlew/true/g' android/source/Makefile
+        sed -i -e '/opencl.openclwrapper.hxx/d' -i -e 's/bOpenCL = .*;$/bOpenCL = false;/' cui/source/dialogs/about.cxx
+        sed -i -e '/desktop\/source\/app\/opencl/d' desktop/Library_sofficeapp.mk
+        rm desktop/source/app/opencl.cxx
+        sed -i '/"horst"/d' javaunohelper/test/com/sun/star/lib/uno/helper/UnoUrlTest.java
+        sed -i -e 's/^\(\s*\).*debug.*$/\1 true/' android/CustomTarget_lo_android.mk
+        echo "Typo"
+        sed -i -e 's/share\/share/share/g' android/source/build.gradle
+        ./autogen.sh --enable-release-build --with-vendor=F-Droid --with-android-package-name="org.documentfoundation.libreoffice" --enable-fetch-external=no --with-android-ndk=$$NDK$$ --with-android-sdk=$$SDK$$ --with-distro=LibreOfficeAndroid --disable-dconf --with-build-platform-configure-options="--with-system-jpeg=no --with-system-libxml=no --disable-dbus --disable-gconf --disable-python --disable-gui --disable-gtk --disable-gstreamer-1.0"
+        mkdir -p ../../workdir/UnpackedTarball/owncloud_android_lib/build/outputs/aar
+        cd $_
+        touch owncloud_android_lib-debug.aar owncloud_android_lib-release.aar
+        cd -
+        mkdir -p ../../instdir/program/classes/
+        cd $_
+        touch java_uno.jar juh.jar jurt.jar ridl.jar unoloader.jar unoil.jar
+        cd -
+        make liboSettings.gradle versionCode=15
 
-    - continue-on-error: true
-      working-directory: mozilla-unified
-      run: ./mach.ps1 help build
-
-    - continue-on-error: true
-      working-directory: mozilla-unified
-      run: ./mach.ps1 help run
-
-    - continue-on-error: true
-      working-directory: mozilla-unified
-      run: ./mach.ps1 help configure
-
-    - working-directory: mozilla-unified
-      run: ./mach.ps1 build --priority high --no-interactive
-
-    - working-directory: mozilla-unified
-      if: failure()
-      run: ./mach.ps1 build
-
-    - working-directory: mozilla-unified
-      run: ./mach.ps1 run --no-interactive
-
-    - working-directory: mozilla-unified
-      if: failure()
-      run: ./mach.ps1 run
-
-    - run: cat mozilla-unified/mozconfig
-      shell: bash
-      if: always()
-
-    - run: ls -R .
-      shell: bash
-      if: always()
-
-    - name: Upload a Build Artifact
-      if: always()
-      uses: actions/upload-artifact@v3.0.0
-      with:
-        path: mozilla-unified/obj-x86_64-pc-mingw32\dist\bin\firefox
+    - working-directory: core/android/source
+      run: |
+          echo 'gradle "$@"' > gradlew
+          chmod a+x gradlew
+          pushd ../../
+          rm -r workdir
+          rm -r instdir
+          ln -s ../android/source/$$LOTarballs$$ external/tarballs
+          make
+          popd
+          gradlew StrippedUI
