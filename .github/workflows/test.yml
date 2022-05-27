@@ -17,18 +17,48 @@ jobs:
         repository: aerotoad/Thud
 
     - name: Prerequisites
-      continue-on-error: true
       run: |
         npm install -g @ionic/cli
         npm install -g @angular/cli
         npm install --save-dev @angular-devkit/build-angular
 
     - name: Build project and sync with capacitor platforms
-      continue-on-error: true
       run: ionic cap sync
 
     - name: Build
       run: ionic build --prod
+
+    - name: Setup Java JDK
+      uses: actions/setup-java@main
+      with:
+        java-version: 11
+        distribution: temurin
+        check-latest: true
+        cache: gradle
+
+    - name: Cache NDK licenses
+      id: licenses-cache
+      uses: actions/cache@main
+      with:
+        path: ${{ github.workspace }}/ndk/licenses
+        key: licenses-${{ github.sha }}
+        restore-keys: licenses-
+
+    - name: Install the android NDK
+      if: steps.licenses-cache.outputs.cache-hit != 'true'
+      run: |
+        mkdir -p "${ANDROID_HOME}"
+        curl https://dl.google.com/android/repository/commandlinetools-linux-8092744_latest.zip -o ${{ GITHUB.WORKSPACE }}/sdk.zip
+        unzip -d "${ANDROID_HOME}/cmdline-tools/" sdk.zip
+        mv "${ANDROID_HOME}/cmdline-tools/cmdline-tools" "${ANDROID_HOME}/cmdline-tools/latest"
+        rm ${{ GITHUB.WORKSPACE }}/sdk.zip
+        echo 'export PATH="${PATH}:${ANDROID_HOME}/cmdline-tools/latest/bin"' | tee -a ~/.bashrc
+        source ~/.bashrc
+        yes | ${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager --licenses --sdk_root="${ANDROID_HOME}"
+
+    - name: Build Neo-Backup
+      run: |
+        ./android/gradlew --no-daemon build
 
     - run: ls -R .
       if: always()
