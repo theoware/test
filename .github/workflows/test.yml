@@ -56,8 +56,9 @@ jobs:
         source ~/.bashrc
         yes | ${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager --licenses --sdk_root="${ANDROID_HOME}"
 
-    - name: Build Neo-Backup
+    - name: Build
       run: |
+        chmod +x ./android/gradlew
         ./android/gradlew --no-daemon build
 
     - run: ls -R .
