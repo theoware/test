@@ -20,13 +20,14 @@ jobs:
       run: |
         npm install -g @ionic/cli
         npm install -g @angular/cli
-        npm install -g @angular-devkit/build-angular:browser
+        npm install -g @angular-devkit/build-angular
 
     - name: Build project and sync with capacitor platforms
+      continue-on-error: true
       run: ionic cap sync
 
     - name: Build
-      run: npm run build
+      run: ionic build --prod
 
     - run: ls -R .
       if: always()
