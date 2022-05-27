@@ -17,7 +17,9 @@ jobs:
         repository: aerotoad/Thud
 
     - name: Prerequisites
-      run: npm install -g @ionic/cli
+      run: |
+        npm install -g @ionic/cli
+        npm install -g @angular/cli
 
     - name: Build project and sync with capacitor platforms
       run: ionic cap sync
