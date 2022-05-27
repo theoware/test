@@ -17,10 +17,12 @@ jobs:
         repository: aerotoad/Thud
 
     - name: Prerequisites
+      continue-on-error: true
       run: |
         npm install -g @ionic/cli
         npm install -g @angular/cli
         npm install -g @angular-devkit/build-angular
+        npm install -g @angular-devkit/build-angular:browser
 
     - name: Build project and sync with capacitor platforms
       continue-on-error: true
