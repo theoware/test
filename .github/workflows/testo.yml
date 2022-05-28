@@ -6,31 +6,63 @@ on:
 
 jobs:
   build:
-    name: build-windows
-    runs-on: windows-latest
+    name: Build
+    runs-on: ubuntu-latest
 
     steps:
     - name: Checkout
-      uses: actions/checkout@main
+      uses: actions/checkout@v3.0.2
       with:
-          repository: catright/Wale
+          repository: GloriousEggroll/proton-ge-custom
+          submodules: recursive
           
-    - name: Set up MSBuild
-      uses: microsoft/setup-msbuild@master
+    - name: Get Proton Versions
+      run: echo "RELEASE_VERSION=$(cat VERSION)" >> $GITHUB_ENV
       
-    - name: NuGet Restore
-      run: |
-        cd WindowAudioLoudnessEqualizer
-        nuget restore Wale.sln
+    - name: Install dependencies
+      run: sudo apt update && sudo apt-get install -y ccache fontforge-nox
       
-    - name: Build
-      run: |
-        cd WindowAudioLoudnessEqualizer
-        msbuild
-        
-    - name: Upload artifacts
-      uses: actions/upload-artifact@main
+    - name: Apply patches
+      run: ./patches/protonprep-valve-staging.sh  || true
+
+    - name: Create dir structure
+      run: mkdir build
+
+    - name: Create/Download ccache
+      uses: actions/cache@v3.0.2
       with:
-        name: wale-artifacts
-        path: |
-          .\WindowAudioLoudnessEqualizer\bin\Release\
+        path: ~/.ccache
+        key: ccache-proton-${{ github.sha }}
+        restore-keys: |
+          ccache-proton
+
+    - name: Configure build proton
+      working-directory: ./build/
+      run: ../configure.sh --build-name="${{ env.RELEASE_VERSION }}" --enable-ccache
+
+    - name: Build proton
+      working-directory: ./build/
+      run: make dist
+
+    - name: Rename directory
+      working-directory: ./build/
+      run: mv dist ${{ env.RELEASE_VERSION }}
+
+
+    - name: Move files to their right folder
+      working-directory: ./build/${{ env.RELEASE_VERSION }}/protonfixes/
+      run: |
+        mv cabextract ../files/bin/ && \
+        mv libmspack.so.0 ../files/lib64/ && \
+        mv libmspack.so.0.1.0 ../files/lib64/ && \
+        rm cabextract_1.9-1.debian.tar.xz libmspack_0.10.1-1.debian.tar.xz
+
+    - name: Archive build
+      working-directory: ./build/
+      run: tar -czvf ${{ env.RELEASE_VERSION }}.tar.gz ${{ env.RELEASE_VERSION }}
+
+    - name: Create release
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        gh release create -R ${{ GITHUB.REPOSITORY }} -d -t "$GITHUB_WORKFLOW on $(date "+%A, %d of %B of %Y")" "$(date "+%y.%m.%d.%H.%M.%S")" "build/${{ env.RELEASE_VERSION }}.tar.gz")
