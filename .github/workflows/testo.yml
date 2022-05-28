@@ -61,8 +61,14 @@ jobs:
       working-directory: ./build/
       run: tar -czvf ${{ env.RELEASE_VERSION }}.tar.gz ${{ env.RELEASE_VERSION }}
 
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@v3.1.0
+      with:
+        name: ${{ env.RELEASE_VERSION }}
+        path: build/${{ env.RELEASE_VERSION }}
+
     - name: Create release
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        gh release create -R ${{ GITHUB.REPOSITORY }} -d -t "$GITHUB_WORKFLOW on $(date "+%A, %d of %B of %Y")" "$(date "+%y.%m.%d.%H.%M.%S")" "build/${{ env.RELEASE_VERSION }}.tar.gz")
+        gh release create -R ${{ GITHUB.REPOSITORY }} -d -t "$GITHUB_WORKFLOW on $(date "+%A, %d of %B of %Y")" "$(date "+%y.%m.%d.%H.%M.%S")" "build/${{ env.RELEASE_VERSION }}.tar.gz"
