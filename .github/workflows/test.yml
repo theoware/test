@@ -25,11 +25,10 @@ jobs:
     - name: Prerequisites
       run: |
         sudo apt-get update
-        sudo apt-get install eog ccache python2
+        sudo apt-get install eog ccache python2 build-essential
         curl https://bootstrap.pypa.io/pip/2.7/get-pip.py --output get-pip.py
         sudo python2 get-pip.py
         python2 -m pip install -r requirements.txt
-        sudo apt-get install eog ccache
 
     - name: Setup ccache
       run: |
