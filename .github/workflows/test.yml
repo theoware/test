@@ -24,6 +24,7 @@ jobs:
 
     - name: Prerequisites
       run: |
+        pip install numpy
         pip install -r requirements.txt
         sudo apt-get install eog ccache
 
