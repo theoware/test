@@ -11,56 +11,49 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-    - name: Checkout
+    - name: Checkout Roboto
       uses: actions/checkout@v3.0.2
       with:
-        repository: aerotoad/Thud
+        repository: googlefonts/roboto
+
+    - name: Checkout Harfbuzz
+      uses: actions/checkout@v3.0.2
+      with:
+        repository: behdad/harfbuzz
+        path: harfbuzz
 
     - name: Prerequisites
       run: |
-        npm install -g @ionic/cli
-        npm install -g @angular/cli
-        npm install --save-dev @angular-devkit/build-angular
+        pip install -r requirements.txt
+        sudo apt-get install eog ccache
 
-    - name: Build project and sync with capacitor platforms
-      run: ionic cap sync
-
-    - name: Build
-      run: ionic build --prod
-
-    - name: Setup Java JDK
-      uses: actions/setup-java@main
-      with:
-        java-version: 11
-        distribution: temurin
-        check-latest: true
-        cache: gradle
-
-    - name: Cache NDK licenses
-      id: licenses-cache
-      uses: actions/cache@main
-      with:
-        path: ${{ github.workspace }}/ndk/licenses
-        key: licenses-${{ github.sha }}
-        restore-keys: licenses-
-
-    - name: Install the android NDK
-      if: steps.licenses-cache.outputs.cache-hit != 'true'
+    - name: Setup ccache
       run: |
-        mkdir -p "${ANDROID_HOME}"
-        curl https://dl.google.com/android/repository/commandlinetools-linux-8092744_latest.zip -o ${{ GITHUB.WORKSPACE }}/sdk.zip
-        unzip -d "${ANDROID_HOME}/cmdline-tools/" sdk.zip
-        mv "${ANDROID_HOME}/cmdline-tools/cmdline-tools" "${ANDROID_HOME}/cmdline-tools/latest"
-        rm ${{ GITHUB.WORKSPACE }}/sdk.zip
-        echo 'export PATH="${PATH}:${ANDROID_HOME}/cmdline-tools/latest/bin"' | tee -a ~/.bashrc
+        echo 'export CCACHE_EXEC=/usr/bin/ccache' | tee -a ~/.bashrc
+        echo 'export USE_CCACHE=1' | tee -a ~/.bashrc
         source ~/.bashrc
-        yes | ${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager --licenses --sdk_root="${ANDROID_HOME}"
 
-    - name: Build
-      working-directory: android
+    - name: Ccache caching
+      uses: actions/cache@v3.0.2
+      with:
+        path: ~/.ccache
+        key: ccache-font-${{ github.sha }}
+        restore-keys: |
+          ccache-font
+
+    - name: Build Harfbuzz
+      working-directory: harfbuzz
       run: |
-        chmod +x ./gradlew
-        ./gradlew --no-daemon build
+        ./configure
+        make
+        sudo make install
 
-    - run: ls -R .
-      if: always()
+    - name: Build Roboto
+      run: make v2
+
+    - name: Upload signed APKs
+      uses: actions/upload-artifact@main
+      with:
+        name: out
+        path: |
+          out/
