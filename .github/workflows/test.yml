@@ -28,8 +28,7 @@ jobs:
         sudo apt-get install eog ccache python2
         curl https://bootstrap.pypa.io/pip/2.7/get-pip.py --output get-pip.py
         sudo python2 get-pip.py
-        python2 -m pip install numpy
-        python2 -m pip install booleanOperations compreffor cu2qu Cython git+https://github.com/typesupply/feaTools.git fonttools freetype-py git+https://github.com/googlei18n/nototools pyclipper git+https://github.com/robofab-developers/robofab.git scipy git+https://github.com/googlei18n/ufo2ft.git ufoLib
+        python2 -m pip install -r requirements.txt
         sudo apt-get install eog ccache
 
     - name: Setup ccache
