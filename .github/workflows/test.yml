@@ -24,6 +24,7 @@ jobs:
 
     - name: Prerequisites
       run: |
+        sudo apt-get update
         sudo apt-get install eog ccache python2
         python2 -m pip install numpy
         python2 -m pip install booleanOperations compreffor cu2qu Cython git+https://github.com/typesupply/feaTools.git fonttools freetype-py git+https://github.com/googlei18n/nototools pyclipper git+https://github.com/robofab-developers/robofab.git scipy git+https://github.com/googlei18n/ufo2ft.git ufoLib
