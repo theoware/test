@@ -15,13 +15,35 @@ jobs:
       with:
           repository: Lymphatus/caesium-image-compressor
           
-    - name: Install dependencies
-      run: |
-        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-        sudo apt install cargo qt5-default
+    - name: Cache Qt
+      id: cache-qt
+      uses: actions/cache@v3.0.4
+      with:
+        path: ../Qt
+        key: QtCache
+
+    - name: Install Qt
+      uses: jurplel/install-qt-action@v2.14.0
+      with:
+        version: '6.2.3'
+        host: 'linux'
+        target: 'desktop'
+        dir: ${{ github.workspace }}/qt/
+        archives: "qtimageformats"
+        cached: ${{ steps.cache-qt.outputs.cache-hit }}
+        setup-python: 'false'
+
+    - name: Install Rust target
+      run: rustup target add x86_64-pc-linux-gnu
 
     - name: configure CMake
       run: cmake -DCMAKE_BUILD_TYPE=Release
+
+    - name: Build
+      run: cmake --config Release --target caesium_image_compressor
+
+    - name: Configure CMake
+      run: cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH="${{env.Qt6_Dir}}"
 
     - name: Build
       run: cmake --config Release --target caesium_image_compressor
