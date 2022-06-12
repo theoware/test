@@ -19,7 +19,7 @@ jobs:
       id: cache-qt
       uses: actions/cache@v3.0.4
       with:
-        path: ../Qt
+        path: Qt
         key: QtCache
 
     - name: Install Qt
@@ -28,7 +28,7 @@ jobs:
         version: '6.2.3'
         host: 'linux'
         target: 'desktop'
-        dir: ${{ github.workspace }}/qt/
+        dir: Qt
         cached: ${{ steps.cache-qt.outputs.cache-hit }}
         setup-python: 'false'
 
@@ -42,7 +42,7 @@ jobs:
       run: cmake --config Release --target caesium_image_compressor
 
     - name: Configure CMake
-      run: cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH="${{env.Qt6_Dir}}"
+      run: cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH="$PWD/Qt"
 
     - name: Build
       run: cmake --config Release --target caesium_image_compressor
