@@ -35,12 +35,6 @@ jobs:
     - name: Install Rust target
       run: rustup target add x86_64-unknown-linux-gnu
 
-    - name: configure CMake
-      run: cmake -DCMAKE_BUILD_TYPE=Release
-
-    - name: Build
-      run: cmake --config Release --target caesium_image_compressor
-
     - name: Configure CMake
       run: cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH="$PWD/Qt"
 
