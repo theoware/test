@@ -23,7 +23,7 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt update
-        sudo apt-get install -y ccache vagrant vagrant-sshfs vagrant-virtualbox
+        sudo apt-get install -y ccache vagrant vagrant-sshfs virtualbox
       
     - name: Apply patches
       run: ./patches/protonprep-lutris-staging.sh  || true
@@ -37,8 +37,6 @@ jobs:
           ccache-proton
 
     - name: Build wine
-      env:
-        VAGRANT_DEFAULT_PROVIDER: virtualbox vagrant up
       run: |
         ./makebuild.sh name winerepo branch  
 
