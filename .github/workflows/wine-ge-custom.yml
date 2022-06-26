@@ -24,7 +24,7 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt update
-        sudo apt-get install -y ccache vagrant vagrant-sshfs libvirt vagrant-libvirt
+        sudo apt-get install -y ccache vagrant vagrant-sshfs vagrant-libvirt
       
     - name: Apply patches
       run: ./patches/protonprep-lutris-staging.sh  || true
