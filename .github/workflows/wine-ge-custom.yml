@@ -28,7 +28,7 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt update
-        sudo apt-get install -y ccache vagrant vagrant-sshfs virtualbox
+        sudo apt-get install -y ccache vagrant vagrant-sshfs
       
     - name: Apply patches
       run: ./patches/protonprep-lutris-staging.sh  || true
