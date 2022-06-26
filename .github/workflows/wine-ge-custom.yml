@@ -1,0 +1,49 @@
+name: Wine GE custom
+
+on:
+  push:
+    paths: .github/workflows/wine-ge-custom.yml
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3.0.2
+      with:
+          repository: GloriousEggroll/wine-ge-custom
+          submodules: recursive
+          
+    - name: Get Proton Versions
+      run: echo "RELEASE_VERSION=$(cat VERSION)" >> $GITHUB_ENV
+      
+    - name: Install dependencies
+      run: |
+        sudo apt update
+        sudo apt-get install -y ccache vagrant vagrant-sshfs vagrant-virtualbox
+      
+    - name: Apply patches
+      run: ./patches/protonprep-lutris-staging.sh  || true
+
+    - name: Ccache caching
+      uses: actions/cache@v3.0.2
+      with:
+        path: ~/.ccache
+        key: ccache-proton-${{ github.sha }}
+        restore-keys: |
+          ccache-proton
+
+    - name: Build wine
+      env:
+        VAGRANT_DEFAULT_PROVIDER: virtualbox vagrant up
+      run: |
+        ./makebuild.sh name winerepo branch  
+
+    - name: Create release
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        gh release create -R ${{ GITHUB.REPOSITORY }} -d -t "$GITHUB_WORKFLOW on $(date "+%A, %d of %B of %Y")" "$(date "+%y.%m.%d.%H.%M.%S")" "wine-ge-custom/vagrant_share/wine-lutris-*-x86_64.tar.xz"
