@@ -24,7 +24,7 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt update
-        sudo apt-get install -y ccache vagrant vagrant-sshfs
+        sudo apt-get install -y ccache vagrant vagrant-sshfs libvirt vagrant-libvirt
       
     - name: Apply patches
       run: ./patches/protonprep-lutris-staging.sh  || true
@@ -39,7 +39,7 @@ jobs:
 
     - name: Build wine
       run: |
-        ./makebuild.sh name winerepo branch  
+        ./makebuild.sh lutris http://github.com/gloriouseggroll/wine master
 
     - name: Create release
       env:
