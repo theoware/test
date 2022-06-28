@@ -12,4 +12,4 @@ jobs:
     steps:
 
     - name: Get Proton Versions
-      run: echo "RELEASE_VERSION=$(echo 'Lutris Wine GE-Proton7-11' | cut -d ' ' -f 3 | cut -d '-' -f 2 | sed 's/[^0-9]*//g' && echo . && cat VERSION | cut -d ' ' -f 3 | cut -d '-' -f 3)" >> $GITHUB_ENV
+      run: echo "RELEASE_VERSION=$(echo 'Lutris Wine GE-Proton7-11' | cut -d ' ' -f 3 | cut -d '-' -f 2 | sed 's/[^0-9]*//g' && echo . && echo 'Lutris Wine GE-Proton7-11' | cut -d ' ' -f 3 | cut -d '-' -f 3)" >> $GITHUB_ENV
