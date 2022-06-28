@@ -127,8 +127,8 @@ jobs:
 
     - name: Apply patches
       run: |
-        ssh ubuntu@buildbot-bionic-i386 "cd buildbot/runners/wine/ && bash patches/protonprep.sh"
-        ssh ubuntu@buildbot-bionic-amd64 "cd buildbot/runners/wine/ && bash patches/protonprep.sh"
+        ssh ubuntu@buildbot-bionic-i386 "bash patches/protonprep.sh"
+        ssh ubuntu@buildbot-bionic-amd64 "bash patches/protonprep.sh"
 
     - name: Build Wine GE
       run: |
