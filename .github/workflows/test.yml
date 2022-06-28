@@ -11,42 +11,5 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-    - name: Download source code
-      uses: actions/checkout@v3.0.2
-      with:
-        repository: mtotschnig/MyExpenses
-        ref: r532
-
-    - name: Setup Java JDK
-      uses: actions/setup-java@v3.4.0
-      with:
-        java-version: 11
-        distribution: temurin
-        check-latest: true
-        cache: gradle
-
-    - name: Cache NDK licenses
-      id: licenses-cache
-      uses: actions/cache@v3.0.4
-      with:
-        path: ${{ github.workspace }}/ndk/licenses
-        key: licenses-${{ github.sha }}
-        restore-keys: licenses-
-
-    - name: Install the android NDK
-      if: steps.licenses-cache.outputs.cache-hit != 'true'
-      run: |
-        mkdir -p "${ANDROID_HOME}"
-        curl https://dl.google.com/android/repository/commandlinetools-linux-8092744_latest.zip -o ${{ GITHUB.WORKSPACE }}/sdk.zip
-        unzip -d "${ANDROID_HOME}/cmdline-tools/" sdk.zip
-        mv "${ANDROID_HOME}/cmdline-tools/cmdline-tools" "${ANDROID_HOME}/cmdline-tools/latest"
-        rm ${{ GITHUB.WORKSPACE }}/sdk.zip
-        echo 'export PATH="${PATH}:${ANDROID_HOME}/cmdline-tools/latest/bin"' | tee -a ~/.bashrc
-        source ~/.bashrc
-        yes | ${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager --licenses --sdk_root="${ANDROID_HOME}"
-
-    - name: Build
-      run: |
-        ./gradlew --no-daemon build -x lint -x lintdebug
-
-    - run: ls -R .
+    - name: Get Proton Versions
+      run: echo "RELEASE_VERSION=$(echo "Lutris Wine GE-Proton7-11" | cut -d ' ' -f 3 | cut -d '-' -f 2 | sed 's/[^0-9]*//g' && echo . && cat VERSION | cut -d ' ' -f 3 | cut -d '-' -f 3)" >> $GITHUB_ENV
