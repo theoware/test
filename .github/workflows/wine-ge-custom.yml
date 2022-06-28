@@ -18,7 +18,7 @@ jobs:
         submodules: recursive
 
     - name: Get Proton Versions
-      run: echo "RELEASE_VERSION=$(cat VERSION | cut -d ' ' -f 3 | cut -d '-' -f 1)" >> $GITHUB_ENV
+      run: echo "RELEASE_VERSION=$( echo $(cat VERSION | cut -d ' ' -f 3 | cut -d '-' -f 2 | sed 's/[^0-9]*//g' && echo . && cat VERSION | cut -d ' ' -f 3 | cut -d '-' -f 3)| paste -d " " - | sed 's/ //g' )" >> $GITHUB_ENV
 
     - name: Install dependencies
       working-directory: ./buildbot
@@ -100,10 +100,10 @@ jobs:
       run: |
         ssh ubuntu@buildbot-bionic-i386 "rm -r ~/buildbot/runners/wine/patches/"
         ssh ubuntu@buildbot-bionic-amd64 "rm -r ~/buildbot/runners/wine/patches/"
-        ssh ubuntu@buildbot-bionic-i386 "cd buildbot/runners/wine && git clone -b wine-${{ env.RELEASE_VERSION }} https://github.com/wine-mirror/wine/"
-        ssh ubuntu@buildbot-bionic-amd64 "cd buildbot/runners/wine && git clone -b wine-${{ env.RELEASE_VERSION }} https://github.com/wine-mirror/wine/"
-        ssh ubuntu@buildbot-bionic-i386 "cd buildbot/runners/wine && git clone -b v${{ env.RELEASE_VERSION }} https://github.com/wine-staging/wine-staging"
-        ssh ubuntu@buildbot-bionic-amd64 "cd buildbot/runners/wine && git clone -b v${{ env.RELEASE_VERSION }} https://github.com/wine-staging/wine-staging"
+        ssh ubuntu@buildbot-bionic-i386 "cd buildbot/runners/wine && git clone -b wine-${{ env.RELEASE_VERSION }} git://source.winehq.org/git/wine.git"
+        ssh ubuntu@buildbot-bionic-amd64 "cd buildbot/runners/wine && git clone -b wine-${{ env.RELEASE_VERSION }} git://source.winehq.org/git/wine.git"
+        ssh ubuntu@buildbot-bionic-i386 "cd buildbot/runners/wine && git clone -b v${{ env.RELEASE_VERSION }} https://github.com/wine-staging/wine-staging.git"
+        ssh ubuntu@buildbot-bionic-amd64 "cd buildbot/runners/wine && git clone -b v${{ env.RELEASE_VERSION }} https://github.com/wine-staging/wine-staging.git"
         scp -r patches ubuntu@buildbot-bionic-i386:~/buildbot/runners/wine/
         scp -r patches ubuntu@buildbot-bionic-amd64:~/buildbot/runners/wine/
         scp build.sh ubuntu@buildbot-bionic-i386:~/buildbot/runners/wine/
@@ -111,14 +111,12 @@ jobs:
 
     - name: Execute buildbot32-sshsetup
       run: |
-        ssh ubuntu@buildbot-bionic-i386 'ls ~/.ssh'
         ssh ubuntu@buildbot-bionic-i386 'sudo chown -R ubuntu:ubuntu ~/.ssh/config'
         ssh ubuntu@buildbot-bionic-i386 "ssh-keygen -q -t rsa -N '' -f ~/.ssh/id_rsa <<<y >/dev/null 2>&1"
         ssh ubuntu@buildbot-bionic-i386 'sshpass -p "ubuntu" ssh-copy-id -o StrictHostKeyChecking=no ubuntu@buildbot64'
           
     - name: Execute buildbot64-sshsetup
       run: |
-        ssh ubuntu@buildbot-bionic-amd64 'ls ~/.ssh'
         ssh ubuntu@buildbot-bionic-amd64 'sudo chown -R ubuntu:ubuntu ~/.ssh/config'
         ssh ubuntu@buildbot-bionic-amd64 "ssh-keygen -q -t rsa -N '' -f ~/.ssh/id_rsa <<<y >/dev/null 2>&1"
         ssh ubuntu@buildbot-bionic-amd64 'sshpass -p "ubuntu" ssh-copy-id -o StrictHostKeyChecking=no ubuntu@buildbot32'
@@ -128,9 +126,6 @@ jobs:
         ssh ubuntu@buildbot-bionic-i386 "cd buildbot/runners/wine/ && bash patches/protonprep.sh"
         ssh ubuntu@buildbot-bionic-amd64 "cd buildbot/runners/wine/ && bash patches/protonprep.sh"
 
-    - name: Ccache
-      uses: hendrikmuhs/ccache-action@v1.2.2
-
     - name: Build Wine GE
       run: |
         ssh ubuntu@buildbot-bionic-i386 "cd buildbot/runners/wine && mv wine wine-src"
@@ -139,11 +134,10 @@ jobs:
   
     - name: Move Archive
       run: |
-        ssh ubuntu@buildbot-bionic-amd64 "cd buildbot/runners/wine && ls"
+        ssh ubuntu@buildbot-bionic-amd64 "cd buildbot/runners/wine"
         ssh ubuntu@buildbot-bionic-amd64 "mv buildbot/runners/wine/wine-*.tar.xz ~/"
-        ssh ubuntu@buildbot-bionic-amd64 "cd ~/ && ls"
-        scp ubuntu@buildbot-bionic-amd64:~/wine-*.tar.xz /home/runner/work/${{ github.event.repository.name }}/${{ github.event.repository.name }}/
-        ls
+        ssh ubuntu@buildbot-bionic-amd64 "cd ~/"
+        scp ubuntu@buildbot-bionic-amd64:~/wine-*.tar.xz ${{ GITHUB.WORKSPACE }}
         mv wine-lutris-${{ env.RELEASE_VERSION }}-x86_64.tar.xz wine-lutris-ge-${{ env.RELEASE_VERSION }}-x86_64.tar.xz
 
     - name: Upload a Build Artifact
