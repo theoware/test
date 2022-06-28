@@ -132,8 +132,8 @@ jobs:
 
     - name: Apply patches
       run: |
-        ssh ubuntu@buildbot-bionic-i386 "bash $(find * -name protonprep-lutris.sh)"
-        ssh ubuntu@buildbot-bionic-amd64 "bash $(find * -name protonprep-lutris.sh)"
+        ssh ubuntu@buildbot-bionic-i386 "bash ~/buildbot/runners/wine/patches/protonprep-lutris.sh"
+        ssh ubuntu@buildbot-bionic-amd64 "bash ~/buildbot/runners/wine/patches/protonprep-lutris.sh"
 
     - name: Build Wine GE
       run: |
