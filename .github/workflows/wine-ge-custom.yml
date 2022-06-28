@@ -125,10 +125,15 @@ jobs:
         ssh ubuntu@buildbot-bionic-amd64 "ssh-keygen -q -t rsa -N '' -f ~/.ssh/id_rsa <<<y >/dev/null 2>&1"
         ssh ubuntu@buildbot-bionic-amd64 'sshpass -p "ubuntu" ssh-copy-id -o StrictHostKeyChecking=no ubuntu@buildbot32'
 
+    - name: TEST
+      run: |
+        ssh ubuntu@buildbot-bionic-i386 "ls ."
+        ssh ubuntu@buildbot-bionic-amd64 "ls ."
+
     - name: Apply patches
       run: |
-        ssh ubuntu@buildbot-bionic-i386 "bash patches/protonprep-lutris.sh"
-        ssh ubuntu@buildbot-bionic-amd64 "bash patches/protonprep-lutris.sh"
+        ssh ubuntu@buildbot-bionic-i386 "bash $(find * -name protonprep-lutris.sh)"
+        ssh ubuntu@buildbot-bionic-amd64 "bash $(find * -name protonprep-lutris.sh)"
 
     - name: Build Wine GE
       run: |
