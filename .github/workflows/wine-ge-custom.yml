@@ -127,8 +127,9 @@ jobs:
 
     - name: Apply patches
       run: |
-        ssh ubuntu@buildbot-bionic-i386 "echo $PWD && cd ${{ GITHUB.WORKSPACE }} && bash patches/protonprep.sh"
-        ssh ubuntu@buildbot-bionic-amd64 "echo $PWD && cd ${{ GITHUB.WORKSPACE }} && bash patches/protonprep.sh"
+        ls patches/
+        ssh ubuntu@buildbot-bionic-i386 "echo $PWD && bash patches/protonprep.sh"
+        ssh ubuntu@buildbot-bionic-amd64 "echo $PWD && bash patches/protonprep.sh"
 
     - name: Build Wine GE
       run: |
