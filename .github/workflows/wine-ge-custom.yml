@@ -13,7 +13,8 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3.0.2
       with:
-        repository: GloriousEggroll/wine-ge-custom
+        repository: manueliglesiasgarcia/wine-ge-custom
+        ref: patch-2
         submodules: recursive
 
     - name: Get Proton Versions
