@@ -41,6 +41,7 @@ jobs:
 
     - name: Execute 1-setup-container-networking.sh
       run: |
+        sleep 10
         mkdir ~/.ssh/
         touch ~/.ssh/config
         sudo ./1-setup-container-networking.sh buildbot-bionic-i386 buildbot-bionic-amd64
