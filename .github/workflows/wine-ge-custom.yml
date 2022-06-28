@@ -27,21 +27,20 @@ jobs:
         sudo adduser $USER lxd
         newgrp lxd
         id
-          
+
     - name: Setup lxc containers
       run: |
         cat buildbot/preseed | sudo lxd init --preseed
         sudo lxc launch images:ubuntu/bionic/i386 buildbot-bionic-i386
         sudo lxc launch images:ubuntu/bionic/amd64 buildbot-bionic-amd64
-      
+
     - name: Add and execute 0-buildbot-usersetup.sh
       run: |
         sudo lxc exec buildbot-bionic-amd64 -- bash -c "echo -e 'ubuntu\nubuntu' | passwd ubuntu && echo 'ubuntu ALL=NOPASSWD: ALL' | EDITOR='tee -a' visudo"
         sudo lxc exec buildbot-bionic-i386 -- bash -c "echo -e 'ubuntu\nubuntu' | passwd ubuntu && echo 'ubuntu ALL=NOPASSWD: ALL' | EDITOR='tee -a' visudo"
-  
+
     - name: Execute 1-setup-container-networking.sh
       run: |
-        sleep 10
         mkdir ~/.ssh/
         touch ~/.ssh/config
         sudo ./1-setup-container-networking.sh buildbot-bionic-i386 buildbot-bionic-amd64
@@ -127,6 +126,9 @@ jobs:
       run: |
         ssh ubuntu@buildbot-bionic-i386 "cd buildbot/runners/wine/ && bash patches/protonprep.sh"
         ssh ubuntu@buildbot-bionic-amd64 "cd buildbot/runners/wine/ && bash patches/protonprep.sh"
+
+    - name: Ccache
+      uses: hendrikmuhs/ccache-action@v1.2.2
 
     - name: Build Wine GE
       run: |
