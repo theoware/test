@@ -8,15 +8,17 @@ on:
 jobs:
   build-wine-ge:
     runs-on: ubuntu-18.04
-    env:
-      RELEASE_VERSION: 7.11
     steps:
 
     - name: Checkout
       uses: actions/checkout@v3.0.2
       with:
-        repository: GloriousEggroll/wine-ge-custom
+        repository: manueliglesiasgarcia/wine-ge-custom
+        ref: patch-2
         submodules: recursive
+
+    - name: Get Proton Versions
+      run: echo "RELEASE_VERSION=$(cat VERSION | cut -d ' ' -f 3 | cut -d '-' -f 1)" >> $GITHUB_ENV
 
     - name: Install dependencies
       working-directory: ./buildbot
@@ -25,9 +27,6 @@ jobs:
         sudo adduser $USER lxd
         newgrp lxd
         id
-
-    - name: Get the build script
-      run: wget https://raw.githubusercontent.com/GloriousEggroll/wine-ge-custom/c6a25294dbe83b418e053c59ce698a25b55eabd9/build.sh -O build.sh
 
     - name: Setup lxc containers
       run: |
@@ -128,6 +127,9 @@ jobs:
       run: |
         ssh ubuntu@buildbot-bionic-i386 "cd buildbot/runners/wine/ && bash patches/protonprep.sh"
         ssh ubuntu@buildbot-bionic-amd64 "cd buildbot/runners/wine/ && bash patches/protonprep.sh"
+
+    - name: Ccache
+      uses: hendrikmuhs/ccache-action@v1.2.2
 
     - name: Build Wine GE
       run: |
