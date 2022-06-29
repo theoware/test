@@ -51,6 +51,8 @@ jobs:
     - name: Execute setup-container.sh
       working-directory: ./buildbot
       run: |
+        ssh ubuntu@buildbot-bionic-i386 "sudo apt update"
+        ssh ubuntu@buildbot-bionic-amd64 "sudo apt update"
         ./setup-container.sh buildbot-bionic-i386
         ./setup-container.sh buildbot-bionic-amd64
 
