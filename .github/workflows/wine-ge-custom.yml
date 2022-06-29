@@ -17,6 +17,7 @@ jobs:
       with:
         repository: GloriousEggroll/wine-ge-custom
         submodules: recursive
+        fetch-depth: 0
 
     - name: Install dependencies
       working-directory: ./buildbot
