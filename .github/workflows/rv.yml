@@ -10,11 +10,29 @@ jobs:
       RV_PAT: ${{ secrets.RV_PAT }}
     steps:
 
-      - name: Checkout
+      - name: Checkout revanced-magisk-module
         uses: actions/checkout@v3
         with:
           repository: j-hc/revanced-magisk-module
- 
+
+      - name: Checkout revanced-cli
+        uses: actions/checkout@v3
+        with:
+          repository: revanced/revanced-cli
+          path: revanced-cli
+
+      - name: Checkout revanced-integrations
+        uses: actions/checkout@v3
+        with:
+          repository: revanced/revanced-integrations
+          path: revanced-integrations
+
+      - name: Checkout revanced-patches
+        uses: actions/checkout@v3
+        with:
+          repository: revanced/revanced-patches
+          path: revanced-patches
+
       - uses: actions/setup-java@v3
         with:
           distribution: "zulu"
@@ -24,35 +42,17 @@ jobs:
       - name: Add Token
         run: echo "$RV_PAT" | base64 -d > ~/.gradle/gradle.properties
 
-      - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          repository: revanced/revanced-cli
-          path: revanced-cli
-
       - name: Build revanced-cli
         working-directory: revanced-cli
         run: |
           ./gradlew build
           mv build/libs/revanced-cli-*-all.jar ../
 
-      - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          repository: revanced/revanced-integrations
-          path: revanced-integrations
-
       - name: Build revanced-integrations
         working-directory: revanced-integrations
         run: |
           ./gradlew build
           mv app/build/outputs/apk/release/app-release-unsigned.apk ../
-
-      - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          repository: revanced/revanced-patches
-          path: revanced-patches
 
       - name: Build revanced-patches
         working-directory: revanced-patches
