@@ -40,7 +40,9 @@ jobs:
           cache: gradle
 
       - name: Add Token
-        run: echo "$RV_PAT" | base64 -d > ~/.gradle/gradle.properties
+        run: |
+          mkdir -p ~/.gradle
+          echo "$RV_PAT" | base64 -d > ~/.gradle/gradle.properties
 
       - name: Build revanced-cli
         working-directory: revanced-cli
