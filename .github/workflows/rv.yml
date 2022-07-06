@@ -1,0 +1,139 @@
+on: 
+  workflow_dispatch:
+  push:
+    paths: .github/workflows/rv.yml
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    env:
+      RV_PAT: ${{ secrets.RV_PAT }}
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          repository: j-hc/revanced-magisk-module
+ 
+      - uses: actions/setup-java@v3
+        with:
+          distribution: "zulu"
+          java-version: "17"
+          cache: gradle
+
+      - name: Add Token
+        run: echo "$RV_PAT" | base64 -d > ~/.gradle/gradle.properties
+
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          repository: revanced/revanced-cli
+          path: revanced-cli
+
+      - name: Build revanced-cli
+        working-directory: revanced-cli
+        run: |
+          ./gradlew build
+          mv build/libs/revanced-cli-*-all.jar ../
+
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          repository: revanced/revanced-integrations
+          path: revanced-integrations
+
+      - name: Build revanced-integrations
+        working-directory: revanced-integrations
+        run: |
+          ./gradlew build
+          mv app/build/outputs/apk/release/app-release-unsigned.apk ../
+
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          repository: revanced/revanced-patches
+          path: revanced-patches
+
+      - name: Build revanced-patches
+        working-directory: revanced-patches
+        run: |
+          ./gradlew build
+          mv build/libs/revanced-patches-*.jar ../
+
+      - name: Build
+        env: 
+          WGET_HEADER: "User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101 Firefox/102.0"
+        run: |
+          function req() {
+            wget -nv --show-progress -O $2 --header="$WGET_HEADER" $1
+          }
+
+          function dl_yt() {
+            URL="https://www.apkmirror.com$(req $1 - | tr '\n' ' ' | sed -n 's/href="/@/g; s;.*BUNDLE</span>[^@]*@\([^#]*\).*;\1;p')"
+            URL="https://www.apkmirror.com$(req $URL - | tr '\n' ' ' | sed -n 's;.*href="\(.*key=[^"]*\)">.*;\1;p')"
+            URL="https://www.apkmirror.com$(req $URL - | tr '\n' ' ' | sed -n 's;.*href="\(.*key=[^"]*\)">.*;\1;p')"
+            req $URL $2
+          }
+
+          RV_CLI_JAR=$(find * -name revanced-cli-*-all.jar -type f)
+          RV_PATCHES_JAR=$(find * -name revanced-patches-*.jar -type f)
+          RV_INTEGRATIONS_APK=$(find * -name app-release-unsigned.apk -type f)
+
+          SUPPORTED_VERSIONS=$(unzip -p $RV_PATCHES_JAR | strings -n 8 -s , | sed -rn 's/.*youtube,versions,(([0-9.]*,*)*),Lk.*/\1/p')
+          echo "Supported versions of the patch: $SUPPORTED_VERSIONS"
+          LAST_VER=$(echo $SUPPORTED_VERSIONS | awk -F, '{ print $NF }')
+          echo "Choosing $LAST_VER"
+          BASE_APK="base-v${LAST_VER}.apk"
+
+          dl_yt "https://www.apkmirror.com/apk/google-inc/youtube/youtube-${LAST_VER//./-}-release/" yt-stock-v$LAST_VER.zip
+          unzip -p yt-stock-v$LAST_VER.zip base.apk >$BASE_APK
+
+          java -jar $RV_CLI_JAR -a $BASE_APK -c -o revanced-base.apk -b $RV_PATCHES_JAR -e microg-support -e premium-heading -m $RV_INTEGRATIONS_APK
+          mv -f revanced-base.apk ./revanced-magisk/revanced-base.apk
+
+          echo "Creating the magisk module..."
+          OUTPUT="revanced-magisk-v${LAST_VER}.zip"
+          sed -i "s/version=v.*$/version=v${LAST_VER}/g" ./revanced-magisk/module.prop
+
+          cd revanced-magisk
+          zip -r ../$OUTPUT .
+
+          echo "Created the magisk module '${OUTPUT}'"
+
+      - name: Remove the Token
+        if: always()
+        run: rm -f ~/.gradle/gradle.properties
+
+      - id: get_output_name
+        run: |
+          echo ::set-output name=OUTPUT::$(find . -maxdepth 1 -name "revanced-magisk-*.zip" -printf '%P')
+          echo ::set-output name=VERSION::$(find . -maxdepth 1 -name "revanced-magisk-*.zip" -printf '%P' | sed -n 's/.*revanced-magisk-\(.*\)\.zip.*/\1/p')
+
+      - name: Current Date
+        id: date
+        run: |
+          echo "::set-output name=DATE::$(date +'%m-%d')"
+          echo "::set-output name=YYYY::$(date +'%4Y')"
+
+      - name: Unzip the module
+        if: ${{ github.event_name }} != workflow_dispatch
+        run: unzip ${{ steps.get_output_name.outputs.OUTPUT }} -d module
+
+      - name: Upload the Magisk Module
+        if: ${{ github.event_name }} != workflow_dispatch
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ steps.get_output_name.outputs.OUTPUT }}
+          path: module/*
+
+      - name: Upload release
+        if: ${{ github.event_name }} == workflow_dispatch
+        uses: svenstaro/upload-release-action@v2
+        with:
+          body: ${{ steps.date.outputs.DATE }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ${{ steps.get_output_name.outputs.OUTPUT }}
+          asset_name: ${{ steps.get_output_name.outputs.OUTPUT }}
+          release_name: ${{ steps.get_output_name.outputs.OUTPUT }}
+          tag: ${{ steps.date.outputs.YYYY }}-${{ steps.get_output_name.outputs.VERSION }}-${{ steps.date.outputs.DATE }}
+          overwrite: true
