@@ -11,5 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-    - name: Get Proton Versions
-      run: echo "RELEASE_VERSION=$(echo 'Lutris Wine GE-Proton7-11' | cut -d ' ' -f 3 | cut -d '-' -f 2 | sed 's/[^0-9]*//g' && echo . && echo 'Lutris Wine GE-Proton7-11' | cut -d ' ' -f 3 | cut -d '-' -f 3)" >> $GITHUB_ENV
+    - continue-on-error: true
+      run: echo ${{ github.event_name }}
+
+    - run: echo {{ github.event.name }}
