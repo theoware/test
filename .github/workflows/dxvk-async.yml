@@ -23,6 +23,7 @@ jobs:
       with:
         repository: doitsujin/dxvk
         ref: v${{ env.VERSION }}
+        clean: false
 
     - name: Apply patches
       run: |
