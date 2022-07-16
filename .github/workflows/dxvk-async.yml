@@ -16,19 +16,18 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3.0.2
       with:
-        repository: Sporif/dxvk-async
+        repository: doitsujin/dxvk
+        ref: v${{ env.VERSION }}
 
     - name: Checkout
       uses: actions/checkout@v3.0.2
       with:
-        repository: doitsujin/dxvk
-        ref: v${{ env.VERSION }}
-        clean: false
+        repository: Sporif/dxvk-async
+        path: patches/
 
     - name: Apply patches
       run: |
-        ls .
-        git apply dxvk-async-af418dc.patch
+        git apply patches/dxvk-async-af418dc.patch
 
     - name: Build release
       id: build-release
