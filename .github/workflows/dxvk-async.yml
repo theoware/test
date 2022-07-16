@@ -27,6 +27,7 @@ jobs:
 
     - name: Apply patches
       run: |
+        mv patches/* .
         git apply patches/dxvk-async-af418dc.patch
 
     - name: Build release
